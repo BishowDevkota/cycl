@@ -52,7 +52,13 @@ export default function HeroManagement() {
   }, []);
 
   useEffect(() => {
-    fetchHeroes();
+    const timerId = window.setTimeout(() => {
+      void fetchHeroes();
+    }, 0);
+
+    return () => {
+      window.clearTimeout(timerId);
+    };
   }, [fetchHeroes]);
 
   const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {

@@ -40,7 +40,13 @@ export default function ContactManagement() {
   }, []);
 
   useEffect(() => {
-    fetchContacts();
+    const timerId = window.setTimeout(() => {
+      void fetchContacts();
+    }, 0);
+
+    return () => {
+      window.clearTimeout(timerId);
+    };
   }, [fetchContacts]);
 
   const handleContactFieldChange = (
