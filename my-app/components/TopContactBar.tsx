@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 
 type ContactItem = {
@@ -22,18 +23,17 @@ type NavItem = {
   label: string;
   href: string;
   hasDropdown?: boolean;
-  isActive?: boolean;
 };
 
 const navItems: NavItem[] = [
-  { label: "Home", href: "/", isActive: true },
-  { label: "About Us", href: "#", hasDropdown: true },
-  { label: "Loans", href: "#", hasDropdown: true },
-  { label: "Savings", href: "#", hasDropdown: true },
-  { label: "Reports", href: "#", hasDropdown: true },
-  { label: "Branches", href: "#" },
-  { label: "News & Notices", href: "#", hasDropdown: true },
-  { label: "Contact", href: "#" },
+  { label: "Home", href: "/" },
+  { label: "About Us", href: "/about-us", hasDropdown: true },
+  { label: "Loans", href: "/loans", hasDropdown: true },
+  { label: "Savings", href: "/savings", hasDropdown: true },
+  { label: "Reports", href: "/reports", hasDropdown: true },
+  { label: "Branches", href: "/branches" },
+  { label: "News & Notices", href: "/news-notices", hasDropdown: true },
+  { label: "Contact", href: "/contact" },
 ];
 
 const utilityLinks = [
@@ -42,6 +42,7 @@ const utilityLinks = [
 ];
 
 export function TopContactBar() {
+  const pathname = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [contact, setContact] = useState<PublicContactDetails | null>(null);
 
@@ -88,10 +89,12 @@ export function TopContactBar() {
   const facebookLink = contact?.facebook.link?.trim() || "#";
   const whatsappText = contact?.whatsapp.text?.trim() || "WhatsApp";
   const whatsappLink = contact?.whatsapp.link?.trim() || "#";
+  const isActiveRoute = (href: string) => pathname === href;
 
   return (
-    <header className="w-full">
-      <div className="w-full bg-[#005d59] text-white">
+    <>
+      <div className="relative w-full pt-12">
+      <div className="absolute inset-x-0 top-0 z-20 w-full bg-[#005d59] text-white">
         <div className="mx-auto flex h-12 w-full max-w-[1420px] items-center justify-between px-4 sm:px-6 lg:px-10">
           <div className="flex min-w-0 items-center gap-3 text-[11px] font-medium sm:gap-6 sm:text-sm lg:text-base">
             <Link
@@ -175,7 +178,9 @@ export function TopContactBar() {
         </div>
       </div>
 
-      <div className="w-full bg-white shadow-[0_1px_0_rgba(0,0,0,0.08)]">
+      </div>
+
+      <div className="sticky top-0 z-70 w-full border-b border-zinc-200/80 bg-white shadow-[0_8px_22px_rgba(7,100,110,0.12)]">
         <div className="mx-auto flex min-h-[88px] w-full max-w-[1420px] items-center justify-between gap-3 px-4 sm:min-h-[94px] sm:px-6 lg:px-10">
           <Link href="/" className="flex min-w-0 flex-shrink-0 items-center">
             <Image
@@ -188,34 +193,43 @@ export function TopContactBar() {
             />
           </Link>
 
-          <nav className="hidden flex-1 items-center justify-between px-4 text-[15px] font-medium text-zinc-800 xl:flex 2xl:px-8 2xl:text-[16px]">
-            {navItems.map((item) => (
-              <Link
-                key={item.label}
-                href={item.href}
-                className={`relative inline-flex items-center gap-1 transition-colors hover:text-[#005d59] ${
-                  item.isActive ? "text-[#005d59]" : ""
-                }`}
-              >
-                <span>{item.label}</span>
-                {item.hasDropdown && (
-                  <svg
-                    className="h-4 w-4"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    <path d="m6 9 6 6 6-6" />
-                  </svg>
-                )}
-                {item.isActive && (
-                  <span className="absolute -bottom-[26px] left-0 right-0 mx-auto h-1 w-7 rounded-full bg-[#0d837f]" />
-                )}
-              </Link>
-            ))}
+          <nav className="hidden flex-1 items-center justify-between px-4 text-[15px] font-semibold text-zinc-800 xl:flex 2xl:px-8 2xl:text-[16px]">
+            {navItems.map((item) => {
+              const isActive = isActiveRoute(item.href);
+
+              return (
+                <Link
+                  key={item.label}
+                  href={item.href}
+                  className={`group relative inline-flex items-center gap-1 py-1 font-semibold transition-colors duration-200 ${
+                    isActive ? "text-[#005d59]" : "text-zinc-800 hover:text-[#005d59]"
+                  }`}
+                  aria-current={isActive ? "page" : undefined}
+                >
+                  <span className="relative inline-block pb-1">
+                    {item.label}
+                    <span
+                      className={`absolute -bottom-1 left-0 h-1 rounded-full bg-[#0d837f] transition-all duration-300 ease-out ${
+                        isActive ? "w-full" : "w-0 group-hover:w-full"
+                      }`}
+                    />
+                  </span>
+                  {item.hasDropdown && (
+                    <svg
+                      className="h-4 w-4"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <path d="m6 9 6 6 6-6" />
+                    </svg>
+                  )}
+                </Link>
+              );
+            })}
           </nav>
 
           <div className="flex items-center gap-3 sm:gap-4">
@@ -292,8 +306,9 @@ export function TopContactBar() {
                   key={`mobile-${item.label}`}
                   href={item.href}
                   className={`inline-flex items-center justify-between rounded-lg px-2 py-2 hover:bg-zinc-50 ${
-                    item.isActive ? "text-[#005d59]" : ""
+                    isActiveRoute(item.href) ? "text-[#005d59]" : ""
                   }`}
+                  aria-current={isActiveRoute(item.href) ? "page" : undefined}
                   onClick={() => setMobileMenuOpen(false)}
                 >
                   <span>{item.label}</span>
@@ -324,6 +339,6 @@ export function TopContactBar() {
           </div>
         )}
       </div>
-    </header>
+    </>
   );
 }

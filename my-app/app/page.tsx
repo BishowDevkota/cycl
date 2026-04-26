@@ -1,56 +1,24 @@
 import { HeroSection } from '@/components/HeroSection';
+import { WelcomeSection } from '@/components/WelcomeSection';
 import { CompanyStatsSection } from '@/components/CompanyStatsSection';
 import { Footer } from '@/components/Footer';
 import Image from 'next/image';
 import Link from 'next/link';
-import { getAboutCompanyInfo } from '@/lib/about-company-info-service';
 import { getMessageFromCeo } from '@/lib/message-from-ceo-service';
 
 export default async function Home() {
-  const aboutCompanyInfo = await getAboutCompanyInfo();
   const messageFromCeo = await getMessageFromCeo();
 
   return (
     <div className="flex flex-col min-h-screen">
       <HeroSection />
+      <WelcomeSection />
 
       <main className="relative flex-1 w-full overflow-hidden bg-[linear-gradient(180deg,#f7fafc_0%,#ffffff_45%,#f6f8fb_100%)] py-12 sm:py-16 lg:py-20">
         <div className="pointer-events-none absolute -top-14 left-1/2 h-56 w-[65vw] -translate-x-1/2 rounded-full bg-[#8ec5b9]/20 blur-3xl" />
         <div className="pointer-events-none absolute bottom-6 right-[-6rem] h-40 w-40 rounded-full bg-[#f3c98f]/25 blur-3xl" />
 
-        <div className="relative mx-auto grid w-full max-w-7xl grid-cols-1 gap-7 px-4 sm:px-6 lg:grid-cols-2 lg:gap-8 lg:px-8">
-          <article className="animate-section-fade-up group relative overflow-hidden rounded-[28px] border border-slate-200/80 bg-white/95 p-6 shadow-[0_18px_44px_rgba(15,23,42,0.08)] ring-1 ring-white/70 backdrop-blur sm:p-8 lg:p-10">
-            <h2 className="text-3xl font-semibold leading-tight text-[#112742] sm:text-4xl lg:text-[2.35rem]">
-              {aboutCompanyInfo?.heading || 'The CYC Nepal Laghubitta Bittiya Sanstha Ltd.'}
-            </h2>
-
-            <div className="mt-5 h-[3px] w-24 rounded-full bg-gradient-to-r from-[#f6921e] to-[#f8b866]" />
-
-            <p className="mt-6 max-w-[62ch] whitespace-pre-line text-base leading-8 text-slate-700 sm:text-[17px]">
-              {aboutCompanyInfo?.description || 'The CYC Nepal Laghubitta Bittiya Sanstha Ltd. is a leading microfinance in Nepal.'}
-            </p>
-
-            <Link
-              href="#"
-              className="mt-8 inline-flex items-center justify-center gap-2 rounded-full border border-[#112742]/10 bg-[#112742] px-7 py-3 text-sm font-semibold uppercase tracking-[0.08em] text-white transition-all duration-300 hover:-translate-y-0.5 hover:bg-[#0d837f] hover:shadow-[0_14px_26px_rgba(13,131,127,0.28)]"
-            >
-              Read More
-              <svg
-                className="h-4 w-4"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                aria-hidden="true"
-              >
-                <path d="M5 12h14" />
-                <path d="m12 5 7 7-7 7" />
-              </svg>
-            </Link>
-          </article>
-
+        <div className="relative mx-auto w-full max-w-5xl px-4 sm:px-6 lg:px-8">
           <article className="animate-section-fade-up [animation-delay:140ms] relative overflow-hidden rounded-[28px] border border-[#f2d8b7]/70 bg-[linear-gradient(155deg,#fff9f1_0%,#fffdf8_42%,#f7efe4_100%)] p-6 shadow-[0_18px_44px_rgba(122,79,26,0.12)] ring-1 ring-white/80 sm:p-8 lg:p-10">
             <h2 className="text-3xl font-semibold leading-tight text-[#112742] sm:text-4xl lg:text-[2.3rem]">
               {messageFromCeo?.heading || 'Message From CEO'}
