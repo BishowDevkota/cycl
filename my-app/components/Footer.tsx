@@ -1,144 +1,131 @@
 'use client';
 
 export function Footer() {
-  const currentYear = new Date().getFullYear();
+  const usefulLinks = [
+    {
+      label: 'Nepal Rastra Bank',
+      href: 'https://www.nrb.org.np',
+    },
+    {
+      label: 'Reliable Nepal Life Insurance',
+      href: 'https://reliablenepallife.com.np',
+    },
+    {
+      label: 'Karja Suchana Kendra',
+      href: 'https://www.karjasuchana.com.np',
+    },
+  ];
+
+  const aboutUsLinks = [
+    { label: 'About', href: 'https://cycnlbsl.org.np/about-us' },
+    { label: 'News', href: 'https://cycnlbsl.org.np/news' },
+    { label: 'Notices', href: 'https://cycnlbsl.org.np/notices' },
+    { label: 'Contact', href: 'https://cycnlbsl.org.np/contact-us' },
+  ];
 
   return (
-    <footer className="bg-[#005b5c] text-gray-100">
-      {/* Main Footer Content */}
-      <div className="mx-auto max-w-7xl px-8 py-16">
-        <div className="grid grid-cols-1 gap-12 md:grid-cols-4">
-          {/* Product and Services */}
+    <footer className="relative overflow-hidden bg-[#005b5c] text-gray-100">
+      <div className="pointer-events-none absolute -left-24 top-8 h-56 w-56 rounded-full bg-[#f6921e]/12 blur-3xl" />
+      <div className="pointer-events-none absolute bottom-6 right-[-3.5rem] h-44 w-44 rounded-full bg-[#72b4a8]/20 blur-3xl" />
+
+      <div className="relative mx-auto max-w-7xl px-6 py-14 sm:px-8 lg:px-10">
+        <div className="grid grid-cols-1 gap-10 md:grid-cols-2 lg:grid-cols-4 lg:gap-12">
           <div>
-            <h3 className="mb-4 border-b border-gray-400 pb-3 text-base font-semibold text-white">
-              Product and Services
+            <h3 className="mb-4 border-b border-[#f6921e]/70 pb-3 text-base font-bold tracking-wide text-white">
+              About CYC Nepal
             </h3>
-            <ul className="space-y-2 text-sm">
-              <li>
-                <a href="#" className="transition-colors hover:text-[#f6921e]">
-                  Loan Product
-                </a>
-              </li>
-              <li>
-                <a href="#" className="transition-colors hover:text-[#f6921e]">
-                  Savings Product
-                </a>
-              </li>
-              <li>
-                <a href="#" className="transition-colors hover:text-[#f6921e]">
-                  Micro insurance
-                </a>
-              </li>
-              <li>
-                <a href="#" className="transition-colors hover:text-[#f6921e]">
-                  Remittance Service
-                </a>
-              </li>
+            <p className="text-sm font-medium leading-7 text-justify text-gray-100/95">
+              CYC Nepal Laghubitta Bittiya Sanstha previously known as CYC
+              (Chartare Youth Club) is a leading Microfinance in Nepal which is
+              located in Sabhagriha Chowk,Pokhara.
+            </p>
+          </div>
+
+          <div>
+            <h3 className="mb-4 border-b border-[#f6921e]/70 pb-3 text-base font-bold tracking-wide text-white">
+              Useful Links
+            </h3>
+            <ul className="space-y-2 text-sm leading-7">
+              {usefulLinks.map((link) => (
+                <li key={link.label}>
+                  <a
+                    href={link.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="group inline-flex font-semibold text-gray-100 transition-colors hover:text-[#f6921e]"
+                  >
+                    <span className="border-b border-transparent bg-gradient-to-r from-[#f6921e] to-[#f8b866] bg-[length:0%_2px] bg-left-bottom bg-no-repeat pb-0.5 transition-all duration-300 group-hover:bg-[length:100%_2px]">
+                      {link.label}
+                    </span>
+                  </a>
+                </li>
+              ))}
             </ul>
           </div>
 
-          {/* Grievance Hearing Officer */}
           <div>
-            <h3 className="mb-4 border-b border-gray-400 pb-3 text-base font-semibold text-white">
-              Grievance Hearing Officer
+            <h3 className="mb-4 border-b border-[#f6921e]/70 pb-3 text-base font-bold tracking-wide text-white">
+              About Us
             </h3>
-            <div className="space-y-3">
-              {/* Officer Image */}
-              <div className="mb-4">
-                <div className="h-24 w-20 overflow-hidden rounded-sm bg-gradient-to-br from-pink-400 to-purple-500">
-                  <img
-                    src="/officer-placeholder.jpg"
-                    alt="Esori Prasad Sharma"
-                    className="h-full w-full object-cover"
-                    onError={(e) => {
-                      (e.target as HTMLImageElement).src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 120"%3E%3Crect fill="%23c084fc" width="100" height="120"/%3E%3C/svg%3E';
-                    }}
-                  />
-                </div>
-              </div>
+            <ul className="space-y-2 text-sm leading-7">
+              {aboutUsLinks.map((link) => (
+                <li key={link.label}>
+                  <a
+                    href={link.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="group inline-flex font-semibold text-gray-100 transition-colors hover:text-[#f6921e]"
+                  >
+                    <span className="border-b border-transparent bg-gradient-to-r from-[#f6921e] to-[#f8b866] bg-[length:0%_2px] bg-left-bottom bg-no-repeat pb-0.5 transition-all duration-300 group-hover:bg-[length:100%_2px]">
+                      {link.label}
+                    </span>
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
 
-              {/* Officer Details */}
-              <div className="text-xs space-y-1">
-                <p className="text-gray-100">Esori Prasad Sharma</p>
-                <p className="text-gray-300">Asst. Officer</p>
-                <p className="text-gray-300">Contact-9847621734</p>
-                <p className="mt-2 text-gray-400">E-Mail</p>
-                <p className="text-gray-300">esori.nesdo@gmail.com</p>
-                <p className="text-gray-300">gunaso.nesdosmfi@gmail.com</p>
-              </div>
+          <div>
+            <h3 className="mb-4 border-b border-[#f6921e]/70 pb-3 text-base font-bold tracking-wide text-white">
+              Contact Us
+            </h3>
+            <div className="space-y-2 text-sm font-semibold leading-7 text-gray-100/95">
+              <p>
+                <a
+                  href="https://maps.google.com/?q=Sabhagriha+Chowk+Pokhara"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="transition-colors hover:text-[#f6921e]"
+                >
+                  Sabhagriha Chowk,Pokhara
+                </a>
+              </p>
+              <p>
+                <a
+                  href="tel:+977061590894"
+                  className="transition-colors hover:text-[#f6921e]"
+                >
+                  +(977) 061-590894, 590895
+                </a>
+              </p>
+              <p>
+                <a
+                  href="mailto:info@cycnlbsl.org.np"
+                  className="transition-colors hover:text-[#f6921e]"
+                >
+                  info@cycnlbsl.org.np
+                </a>
+              </p>
             </div>
-          </div>
-
-          {/* Important links */}
-          <div>
-            <h3 className="mb-4 border-b border-gray-400 pb-3 text-base font-semibold text-white">
-              Important links
-            </h3>
-            <ul className="space-y-2 text-sm">
-              <li>
-                <a href="#" className="transition-colors hover:text-[#f6921e]">
-                  Nepal Rastra Bank
-                </a>
-              </li>
-              <li>
-                <a href="#" className="transition-colors hover:text-[#f6921e]">
-                  NRB Grievence
-                </a>
-              </li>
-              <li>
-                <a href="#" className="transition-colors hover:text-[#f6921e]">
-                  Inland Revenue Department
-                </a>
-              </li>
-              <li>
-                <a href="#" className="transition-colors hover:text-[#f6921e]">
-                  Ministry of Finance
-                </a>
-              </li>
-              <li>
-                <a href="#" className="transition-colors hover:text-[#f6921e]">
-                  Ministry of Home Affairs
-                </a>
-              </li>
-            </ul>
-          </div>
-
-          {/* Quick Links */}
-          <div>
-            <h3 className="mb-4 border-b border-gray-400 pb-3 text-base font-semibold text-white">
-              Quick Links
-            </h3>
-            <ul className="space-y-2 text-sm">
-              <li>
-                <a href="#" className="transition-colors hover:text-[#f6921e]">
-                  FAQ
-                </a>
-              </li>
-              <li>
-                <a href="#" className="transition-colors hover:text-[#f6921e]">
-                  Career
-                </a>
-              </li>
-              <li>
-                <a href="#" className="transition-colors hover:text-[#f6921e]">
-                  Gallery
-                </a>
-              </li>
-              <li>
-                <a href="#" className="transition-colors hover:text-[#f6921e]">
-                  Departments
-                </a>
-              </li>
-            </ul>
           </div>
         </div>
       </div>
 
-      {/* Red Footer Bar */}
-      <div className="bg-red-600 py-4">
-        <div className="mx-auto max-w-7xl px-8">
-          <p className="text-center text-sm font-semibold text-white">
-            © {currentYear} NESDO Sambridha Laghubitta Sanstha Ltd.
+      <div className="border-t border-[#f6921e]/50 bg-[#00494a] py-4">
+        <div className="mx-auto max-w-7xl px-6 text-center sm:px-8 lg:px-10">
+          <p className="text-sm font-semibold leading-6 text-gray-100">
+            2026 © CYC Nepal Laghubitta Bittiya Sanstha Ltd. All rights
+            reserved. Developed By Techvion Technology
           </p>
         </div>
       </div>
