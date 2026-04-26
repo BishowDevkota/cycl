@@ -1,0 +1,152 @@
+import { NextRequest, NextResponse } from "next/server";
+import { getAdminSessionFromRequestCookies } from "@/lib/admin-auth";
+import {
+  createAboutCompanyInfo,
+  deleteAboutCompanyInfo,
+  getAllAboutCompanyInfos,
+  updateAboutCompanyInfo,
+  type AboutCompanyInfo,
+} from "@/lib/about-company-info-service";
+
+function hasRequiredFields(data: Partial<AboutCompanyInfo>) {
+  return Boolean(data.heading?.trim() && data.description?.trim());
+}
+
+export async function GET(request: NextRequest) {
+  try {
+    const session = await getAdminSessionFromRequestCookies();
+    if (!session) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const url = new URL(request.url);
+    const id = url.searchParams.get("id");
+
+    if (id) {
+      const aboutCompanyInfos = await getAllAboutCompanyInfos();
+      const aboutCompanyInfo = aboutCompanyInfos.find(
+        (item) => item._id?.toString() === id,
+      );
+
+      return NextResponse.json(aboutCompanyInfo || null);
+    }
+
+    const aboutCompanyInfos = await getAllAboutCompanyInfos();
+    return NextResponse.json(aboutCompanyInfos);
+  } catch (error) {
+    console.error("Error fetching about company info:", error);
+    return NextResponse.json(
+      { error: "Failed to fetch about company info" },
+      { status: 500 },
+    );
+  }
+}
+
+export async function POST(request: NextRequest) {
+  try {
+    const session = await getAdminSessionFromRequestCookies();
+    if (!session) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const data = (await request.json()) as Partial<Omit<AboutCompanyInfo, "_id">>;
+
+    if (!hasRequiredFields(data)) {
+      return NextResponse.json(
+        { error: "Heading and description are required" },
+        { status: 400 },
+      );
+    }
+
+    const aboutCompanyInfo = await createAboutCompanyInfo({
+      heading: data.heading?.trim() || "",
+      description: data.description?.trim() || "",
+    });
+
+    return NextResponse.json(aboutCompanyInfo, { status: 201 });
+  } catch (error) {
+    console.error("Error creating about company info:", error);
+    return NextResponse.json(
+      { error: "Failed to create about company info" },
+      { status: 500 },
+    );
+  }
+}
+
+export async function PUT(request: NextRequest) {
+  try {
+    const session = await getAdminSessionFromRequestCookies();
+    if (!session) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const url = new URL(request.url);
+    const id = url.searchParams.get("id");
+
+    if (!id) {
+      return NextResponse.json({ error: "ID parameter required" }, { status: 400 });
+    }
+
+    const data = (await request.json()) as Partial<AboutCompanyInfo>;
+
+    if (!hasRequiredFields(data)) {
+      return NextResponse.json(
+        { error: "Heading and description are required" },
+        { status: 400 },
+      );
+    }
+
+    const aboutCompanyInfo = await updateAboutCompanyInfo(id, {
+      heading: data.heading?.trim(),
+      description: data.description?.trim(),
+    });
+
+    if (!aboutCompanyInfo) {
+      return NextResponse.json(
+        { error: "About company info not found" },
+        { status: 404 },
+      );
+    }
+
+    return NextResponse.json(aboutCompanyInfo);
+  } catch (error) {
+    console.error("Error updating about company info:", error);
+    return NextResponse.json(
+      { error: "Failed to update about company info" },
+      { status: 500 },
+    );
+  }
+}
+
+export async function DELETE(request: NextRequest) {
+  try {
+    const session = await getAdminSessionFromRequestCookies();
+    if (!session) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const url = new URL(request.url);
+    const id = url.searchParams.get("id");
+
+    if (!id) {
+      return NextResponse.json({ error: "ID parameter required" }, { status: 400 });
+    }
+
+    const deleted = await deleteAboutCompanyInfo(id);
+
+    if (!deleted) {
+      return NextResponse.json(
+        { error: "About company info not found" },
+        { status: 404 },
+      );
+    }
+
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    console.error("Error deleting about company info:", error);
+    return NextResponse.json(
+      { error: "Failed to delete about company info" },
+      { status: 500 },
+    );
+  }
+}

@@ -5,6 +5,8 @@ import type { HeroSection, HeroSlide } from "@/lib/hero-service";
 
 type HeroSlideInput = HeroSlide & { clientId: string };
 
+const DEFAULT_SECTION_TITLE = "Homepage Hero";
+
 function createEmptySlide(): HeroSlideInput {
   return {
     clientId: crypto.randomUUID(),
@@ -19,7 +21,7 @@ function createEmptySlide(): HeroSlideInput {
 
 function createEmptyForm() {
   return {
-    title: "",
+    title: DEFAULT_SECTION_TITLE,
     slides: [createEmptySlide()],
     isActive: false,
   };
@@ -60,10 +62,6 @@ export default function HeroManagement() {
       window.clearTimeout(timerId);
     };
   }, [fetchHeroes]);
-
-  const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({ ...formData, title: e.target.value });
-  };
 
   const handleActiveChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, isActive: e.target.checked });
@@ -164,7 +162,7 @@ export default function HeroManagement() {
     setEditingId(hero._id?.toString() || null);
     setRemovedImagePublicIds([]);
     setFormData({
-      title: hero.title,
+      title: hero.title || DEFAULT_SECTION_TITLE,
       isActive: hero.isActive,
       slides:
         slides.length > 0
@@ -177,11 +175,6 @@ export default function HeroManagement() {
   };
 
   const handleSave = async () => {
-    if (!formData.title.trim()) {
-      setError("Section title is required");
-      return;
-    }
-
     if (!formData.slides.length) {
       setError("At least one slide is required");
       return;
@@ -203,7 +196,7 @@ export default function HeroManagement() {
       const method = editingId ? "PUT" : "POST";
 
       const payload = {
-        title: formData.title,
+        title: formData.title || DEFAULT_SECTION_TITLE,
         isActive: formData.isActive,
           slides: formData.slides.map((slide) => ({
             title: slide.title,
@@ -283,19 +276,6 @@ export default function HeroManagement() {
         </div>
 
         <div className="space-y-6">
-          <div>
-            <label className="block text-sm font-medium mb-2">
-              Section Title *
-            </label>
-            <input
-              type="text"
-              value={formData.title}
-              onChange={handleTitleChange}
-              placeholder="Homepage Hero"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-
           <div className="space-y-6">
             <div className="flex items-center justify-between">
               <h3 className="text-xl font-semibold">Slides</h3>
@@ -466,7 +446,7 @@ export default function HeroManagement() {
                   {hero.slides?.[0]?.imageUrl ? (
                     <img
                       src={hero.slides[0].imageUrl}
-                      alt={hero.title}
+                      alt={hero.slides?.[0]?.title || "Hero slide preview"}
                       className="w-full h-full object-cover rounded-lg"
                     />
                   ) : (
@@ -478,7 +458,7 @@ export default function HeroManagement() {
                 <div className="flex-1">
                   <div className="flex items-start justify-between">
                     <div>
-                      <h3 className="text-xl font-semibold">{hero.title}</h3>
+                      <h3 className="text-xl font-semibold">Hero Section</h3>
                       <p className="text-gray-600 mt-2">
                         {(hero.slides?.length || 0)} slide
                         {hero.slides?.length === 1 ? "" : "s"}

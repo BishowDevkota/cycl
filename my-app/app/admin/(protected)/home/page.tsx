@@ -36,6 +36,32 @@ export default function AdminHomePage() {
             Manage contacts
           </span>
         </Link>
+
+        <Link
+          href="/admin/home/about-company-info"
+          className="group rounded-xl border border-zinc-200 p-5 transition hover:border-zinc-300 hover:shadow-md"
+        >
+          <p className="text-lg font-semibold text-zinc-900">About Company Info</p>
+          <p className="mt-2 text-sm text-zinc-600">
+            Manage the heading and description that describe the company.
+          </p>
+          <span className="mt-4 inline-flex text-sm font-medium text-zinc-900">
+            Manage about info
+          </span>
+        </Link>
+
+        <Link
+          href="/admin/home/message-from-ceo"
+          className="group rounded-xl border border-zinc-200 p-5 transition hover:border-zinc-300 hover:shadow-md"
+        >
+          <p className="text-lg font-semibold text-zinc-900">Message From CEO</p>
+          <p className="mt-2 text-sm text-zinc-600">
+            Manage the CEO message content, text, and uploaded image.
+          </p>
+          <span className="mt-4 inline-flex text-sm font-medium text-zinc-900">
+            Manage CEO message
+          </span>
+        </Link>
       </div>
     </main>
   );
