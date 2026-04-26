@@ -125,7 +125,7 @@ export default function HeroManagement() {
         uploadFormData.append("oldPublicId", slide.imagePublicId);
       }
 
-      const response = await fetch("/api/admin/home/hero/upload", {
+      const response = await fetch("/api/admin/upload", {
         method: "POST",
         body: uploadFormData,
       });

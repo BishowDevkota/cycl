@@ -11,7 +11,7 @@ export function ContactSection() {
   useEffect(() => {
     const fetchContact = async () => {
       try {
-        const response = await fetch("/api/contact");
+        const response = await fetch("/api/home/contact");
         const data = await response.json();
         setContact(data);
       } catch (error) {
