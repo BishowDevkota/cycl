@@ -1,5 +1,43 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
+## Admin Authentication Setup
+
+This project includes a MongoDB-backed admin authentication system with:
+
+- `POST /api/admin/login` and `POST /api/admin/logout`
+- Protected routes under `/admin/*`
+- Protected dashboard page at `/admin/dahboard`
+
+### 1. Configure environment variables
+
+Copy `.env.example` to `.env.local` and set values:
+
+```bash
+cp .env.example .env.local
+```
+
+Required values:
+
+- `MONGODB_URI`
+- `MONGODB_DB`
+- `AUTH_SECRET`
+
+### 2. Create or update an admin user
+
+Set `ADMIN_EMAIL` and `ADMIN_PASSWORD` in `.env.local`, then run:
+
+```bash
+npm run create-admin
+```
+
+### 3. Start the app
+
+```bash
+npm run dev
+```
+
+Open `/admin/login` to sign in.
+
 ## Getting Started
 
 First, run the development server:
