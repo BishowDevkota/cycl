@@ -31,7 +31,7 @@ export default function HeroCarousel({
   }
 
   return (
-    <section className="relative w-full h-[500px] overflow-hidden">
+    <section className="relative w-full h-[calc(100svh-136px)] max-h-[calc(100dvh-136px)] min-h-[300px] sm:h-[calc(100svh-142px)] sm:max-h-[calc(100dvh-142px)] overflow-hidden">
       {slides.map((slide, index) => {
         const isActive = index === activeIndex;
 
@@ -46,19 +46,21 @@ export default function HeroCarousel({
               src={slide.imageUrl}
               alt={slide.title}
               fill
+              sizes="100vw"
               className="object-cover"
               priority={index === 0}
+              unoptimized
             />
 
             <div className="absolute inset-0 bg-black/40"></div>
 
             <div className="absolute inset-0 flex flex-col items-center justify-center text-white px-4 sm:px-6 lg:px-8">
-              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-4 text-center">
+              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4 text-center leading-tight">
                 {slide.title}
               </h1>
 
               {slide.subtitle && (
-                <p className="text-lg sm:text-xl text-gray-100 mb-8 text-center max-w-3xl">
+                <p className="text-base sm:text-lg text-gray-100 mb-8 text-center max-w-3xl">
                   {slide.subtitle}
                 </p>
               )}

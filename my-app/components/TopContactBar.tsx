@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
@@ -92,10 +93,10 @@ export function TopContactBar() {
     <header className="w-full">
       <div className="w-full bg-[#005d59] text-white">
         <div className="mx-auto flex h-12 w-full max-w-[1420px] items-center justify-between px-4 sm:px-6 lg:px-10">
-          <div className="flex items-center gap-4 text-xs font-medium sm:gap-8 sm:text-sm lg:text-[17px]">
+          <div className="flex min-w-0 items-center gap-3 text-[11px] font-medium sm:gap-6 sm:text-sm lg:text-base">
             <Link
               href={phoneLink}
-              className="inline-flex items-center gap-2 transition-colors hover:text-zinc-200"
+              className="inline-flex min-w-0 items-center gap-2 transition-colors hover:text-zinc-200"
             >
               <svg
                 className="h-4 w-4"
@@ -108,12 +109,12 @@ export function TopContactBar() {
               >
                 <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.8 19.8 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.11 4.18 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.72c.12.9.33 1.78.63 2.62a2 2 0 0 1-.45 2.11L8 9.73a16 16 0 0 0 6.27 6.27l1.28-1.28a2 2 0 0 1 2.11-.45c.84.3 1.72.51 2.62.63A2 2 0 0 1 22 16.92z" />
               </svg>
-              <span>{phoneText}</span>
+              <span className="max-w-[34vw] truncate sm:max-w-none">{phoneText}</span>
             </Link>
 
             <Link
               href={emailLink}
-              className="inline-flex items-center gap-2 transition-colors hover:text-zinc-200"
+              className="inline-flex min-w-0 items-center gap-2 transition-colors hover:text-zinc-200"
             >
               <svg
                 className="h-4 w-4"
@@ -127,11 +128,11 @@ export function TopContactBar() {
                 <rect x="3" y="5" width="18" height="14" rx="2" ry="2" />
                 <path d="m3 7 9 6 9-6" />
               </svg>
-              <span>{emailText}</span>
+              <span className="max-w-[34vw] truncate sm:max-w-none">{emailText}</span>
             </Link>
           </div>
 
-          <div className="hidden items-center gap-4 text-sm lg:flex lg:text-[17px]">
+          <div className="hidden items-center gap-4 text-sm lg:flex lg:text-base">
             {utilityLinks.map((link, index) => (
               <div key={link.label} className="flex items-center gap-4">
                 {index > 0 && <span className="h-5 w-px bg-white/40" aria-hidden="true" />}
@@ -161,11 +162,6 @@ export function TopContactBar() {
                   <path d="M23 4.57a9.2 9.2 0 0 1-2.63.72A4.58 4.58 0 0 0 22.4 2.8a9.12 9.12 0 0 1-2.9 1.1 4.56 4.56 0 0 0-7.76 4.16A12.94 12.94 0 0 1 2.35 3.7a4.56 4.56 0 0 0 1.41 6.09A4.52 4.52 0 0 1 1.7 9.3v.06a4.56 4.56 0 0 0 3.65 4.46c-.36.1-.74.16-1.13.16-.28 0-.55-.03-.81-.08a4.56 4.56 0 0 0 4.26 3.16A9.15 9.15 0 0 1 1 19a12.9 12.9 0 0 0 6.97 2.04c8.36 0 12.94-6.93 12.94-12.94 0-.2 0-.39-.01-.58A9.28 9.28 0 0 0 23 4.57z" />
                 </svg>
               </Link>
-              <Link href="#" aria-label="LinkedIn" className="transition-colors hover:text-zinc-200">
-                <svg className="h-4 w-4" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M4.98 3.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5zM3 9h4v12H3zM9 9h3.83v1.71h.06c.53-1.01 1.84-2.08 3.79-2.08C20.41 8.63 21 11.05 21 14.2V21h-4v-5.9c0-1.41-.03-3.23-1.97-3.23-1.98 0-2.28 1.54-2.28 3.13V21H9z" />
-                </svg>
-              </Link>
               <Link
                 href={whatsappLink}
                 aria-label={whatsappText}
@@ -185,38 +181,19 @@ export function TopContactBar() {
       </div>
 
       <div className="w-full bg-white shadow-[0_1px_0_rgba(0,0,0,0.08)]">
-        <div className="mx-auto flex min-h-[94px] w-full max-w-[1420px] items-center justify-between px-4 sm:px-6 lg:px-10">
-          <Link href="/" className="flex items-center gap-3">
-            <svg className="h-12 w-12 sm:h-14 sm:w-14" viewBox="0 0 64 64" fill="none">
-              <path
-                d="M31.6 58c-1.5-11.4-7.8-21.1-18.4-28.8 3.8-1.4 7.1-1.6 10-.4C31.2 32 34 41.9 31.6 58z"
-                fill="#187c4f"
-              />
-              <path
-                d="M35.1 52.2c5.8-8.3 14.1-13.2 24.9-14.9-2.4 3.3-5.1 5.7-8.2 7.1-8.1 3.8-13.9 6.2-16.7 7.8z"
-                fill="#1f9d61"
-              />
-              <path
-                d="M15.3 25.8C16.9 14.4 22.6 7.2 32.2 4c.2 4.1-.4 7.3-1.8 9.8-4.1 7.5-9.1 11.6-15.1 12z"
-                fill="#4caf73"
-              />
-              <path
-                d="M37.5 26.3c1.4-8.9 6.7-15.5 16-19.8.1 3.3-.5 6-2 8.3-4.1 6.1-8.8 10-14 11.5z"
-                fill="#6fbe84"
-              />
-            </svg>
-
-            <div className="leading-tight">
-              <p className="text-2xl font-extrabold tracking-tight text-[#005b67] sm:text-4xl">
-                CYC NEPAL
-              </p>
-              <p className="text-[9px] font-semibold tracking-[0.12em] text-[#3d4f5f] sm:text-[10px]">
-                LAGHUBITTA BITIYA SANSTHA LTD.
-              </p>
-            </div>
+        <div className="mx-auto flex min-h-[88px] w-full max-w-[1420px] items-center justify-between gap-3 px-4 sm:min-h-[94px] sm:px-6 lg:px-10">
+          <Link href="/" className="flex min-w-0 flex-shrink-0 items-center">
+            <Image
+              src="/cyc-logo.jpg"
+              alt="Cyc Nepal Laghubitta Bittiya Sanstha Ltd."
+              width={1024}
+              height={250}
+              priority
+              className="h-9 w-auto max-w-[62vw] sm:h-11 sm:max-w-[60vw] lg:h-[56px] lg:max-w-[46vw] xl:h-[64px] xl:max-w-[38vw]"
+            />
           </Link>
 
-          <nav className="hidden items-center gap-7 text-[18px] font-medium text-zinc-800 xl:flex">
+          <nav className="hidden flex-1 items-center justify-between px-4 text-[15px] font-medium text-zinc-800 xl:flex 2xl:px-8 2xl:text-[16px]">
             {navItems.map((item) => (
               <Link
                 key={item.label}
@@ -240,7 +217,7 @@ export function TopContactBar() {
                   </svg>
                 )}
                 {item.isActive && (
-                  <span className="absolute -bottom-[28px] left-0 right-0 mx-auto h-1 w-8 rounded-full bg-[#0d837f]" />
+                  <span className="absolute -bottom-[26px] left-0 right-0 mx-auto h-1 w-7 rounded-full bg-[#0d837f]" />
                 )}
               </Link>
             ))}
