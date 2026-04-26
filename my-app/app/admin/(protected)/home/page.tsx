@@ -62,6 +62,19 @@ export default function AdminHomePage() {
             Manage CEO message
           </span>
         </Link>
+
+        <Link
+          href="/admin/home/company-stats"
+          className="group rounded-xl border border-zinc-200 p-5 transition hover:border-zinc-300 hover:shadow-md"
+        >
+          <p className="text-lg font-semibold text-zinc-900">Company Stats</p>
+          <p className="mt-2 text-sm text-zinc-600">
+            Manage homepage statistics like branches, centers, deposits, and staff.
+          </p>
+          <span className="mt-4 inline-flex text-sm font-medium text-zinc-900">
+            Manage company stats
+          </span>
+        </Link>
       </div>
     </main>
   );
