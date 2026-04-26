@@ -1,5 +1,6 @@
 import { HeroSection } from '@/components/HeroSection';
 import { CompanyStatsSection } from '@/components/CompanyStatsSection';
+import { Footer } from '@/components/Footer';
 import Image from 'next/image';
 import Link from 'next/link';
 import { getAboutCompanyInfo } from '@/lib/about-company-info-service';
@@ -113,6 +114,8 @@ export default async function Home() {
 
         <CompanyStatsSection />
       </main>
+
+      <Footer />
     </div>
   );
 }
