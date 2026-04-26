@@ -1,4 +1,27 @@
 @import "tailwindcss";
 
+@keyframes section-fade-up {
+  0% {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-section-fade-up {
+  animation: section-fade-up 700ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-section-fade-up {
+    animation: none;
+  }
+}
+
+
 
 
