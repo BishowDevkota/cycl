@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 
 export function WelcomeSection() {
@@ -18,6 +19,14 @@ export function WelcomeSection() {
               className="relative mt-5 h-[240px] w-full max-w-[520px] overflow-hidden border-[5px] border-[#d6ab33] bg-white/8 shadow-[0_10px_30px_rgba(0,0,0,0.12)] sm:mt-6 sm:h-[320px] lg:mt-7 lg:h-[395px]"
               aria-label="Certificate placeholder"
             >
+              <Image
+                src="/welcome-certificate.png"
+                alt="CYC certificate"
+                fill
+                sizes="(max-width: 640px) 100vw, (max-width: 1024px) 520px, 520px"
+                className="object-cover"
+                priority
+              />
               <div className="absolute inset-[8px] border border-white/60 bg-white/6" aria-hidden="true" />
             </div>
           </div>
