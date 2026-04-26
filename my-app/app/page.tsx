@@ -11,26 +11,32 @@ export default function Home() {
         <div className="mx-auto grid w-full max-w-7xl grid-cols-1 gap-6 px-4 sm:px-6 lg:grid-cols-2 lg:px-8">
           <article className="bg-[#F9F9F9] p-6 sm:p-8 lg:p-10">
             <h2 className="text-3xl font-semibold leading-tight text-[#1f3359] sm:text-4xl">
-              Welcome to NESDO
+              The CYC Nepal
               <br />
-              Sambridha Laghubitta
+              Laghubitta Bittiya
               <br />
-              Bittiye Sanstha Limited
+              Sanstha Ltd.
             </h2>
 
             <div className="mt-5 h-1 w-32 rounded-full bg-[#f6921e]" />
 
             <p className="mt-6 text-base leading-8 text-[#2f2f2f] sm:text-[17px]">
-              NESDO Sambridha Laghubitta Bittiya Sanstha Ltd is promoted by National
-              Educational and Social Development Organization, NESDO Nepal. The
-              institution is dedicated to inclusive micro-finance services and supports
-              underprivileged families through branch networks across Nepal.
+              The CYC Nepal Laghubitta Bittiya Sanstha Ltd. is a leading microfinance in
+              Nepal. It was registered on 11 February 2019 as a public company as a
+              class &lsquo;D&rsquo; financial institution with Nepal Rastra Bank under Act,
+              2063 and started formal microfinance operation from 15 March, 2019. CYC
+              Nepal Laghubitta Bittiya Sanstha was previously known as CYC (Chartare
+              Youth Club), located at Samikshalaya Road, Baglung.
             </p>
 
             <p className="mt-4 text-base leading-8 text-[#2f2f2f] sm:text-[17px]">
-              With a strong social foundation, NSLBSL continues to expand opportunities
-              for self-reliant livelihoods through accessible financial programs in
-              multiple districts.
+              Currently, CYC Nepal Laghubitta Bittiya Sanstha is providing microfinance
+              services to more than 59,000 deprived households from hilly and mountainous
+              regions of Nepal, with prime focus on low-income households, asset-less,
+              and self-employed people in the informal sector. Besides financial
+              services, it also focuses on social development, cultural promotion,
+              educational development, and skill development through its 124 fully
+              operated branch offices located all over Nepal.
             </p>
 
             <Link
