@@ -8,7 +8,11 @@ import { getAboutCompanyInfo } from '@/services/about-company-info-service';
 import NewsAndNotices from '@/components/NewsAndNotices';
 import ContactHome from '@/components/ContactHome';
 import { MessageFromCeoSection } from '@/components/public/MessageFromCeoSection';
+
 import { getContactDetails } from '@/services/contact-service';
+
+
+
 
 export default async function Home() {
   const aboutCompanyInfo = await getAboutCompanyInfo();

@@ -36,31 +36,27 @@ const navItems: NavItem[] = [
     label: "About Us",
     href: "/about-us",
     children: [
-      { label: "Company Profile", href: "/about-us#profile" },
-      { label: "Chairman Message", href: "/about-us#chairman" },
-      { label: "Board of Directors", href: "/about-us#board" },
-      { label: "Management Team", href: "/about-us#management" },
+      { label: "Introduction", href: "/about-us" },
+      { label: "Chairman Message", href: "/about-us/chairman-message" },
+      { label: "Board of Directors", href: "/about-us/board-of-directors" },
+      { label: "Management Team", href: "/about-us/management-team" },
     ],
   },
   {
     label: "Loans",
     href: "/loans",
     children: [
-      { label: "All Loan Products", href: "/loans" },
-      { label: "Micro Enterprise Loan", href: "/loans/micro-enterprise-loan" },
-      { label: "Agriculture Loan", href: "/loans/agriculture-loan" },
-      { label: "Group Business Loan", href: "/loans/group-business-loan" },
+      { label: "Loan Categories", href: "/loans/loan-categories" },
+      { label: "EMI Calculator", href: "/loans/emi-calculator" },
+      {
+        label: "Loan Interest Calculator",
+        href: "/loans/loan-interest-calculator",
+      },
     ],
   },
   {
     label: "Savings",
     href: "/savings",
-    children: [
-      { label: "All Savings Products", href: "/savings" },
-      { label: "Regular Savings", href: "/savings/regular-savings" },
-      { label: "Fixed Deposit", href: "/savings/fixed-deposit" },
-      { label: "Recurring Savings", href: "/savings/recurring-savings" },
-    ],
   },
   {
     label: "Financial Highlights",
