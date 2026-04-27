@@ -11,7 +11,6 @@ import { MessageFromCeoSection } from '@/components/public/MessageFromCeoSection
 
 
 
-
 export default async function Home() {
   const aboutCompanyInfo = await getAboutCompanyInfo();
   const messageFromCeo = await getMessageFromCeo();
