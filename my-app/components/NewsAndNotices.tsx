@@ -143,13 +143,6 @@ export default function NewsAndNotices() {
           position: relative;
         }
 
-        .ne-section::after {
-          content: '';
-          position: absolute;
-          top: 0; left: 0; right: 0;
-          height: 1px;
-          background: rgba(0, 0, 0, 0.07);
-        }
 
         .ne-bg-accent {
           position: absolute;
@@ -158,7 +151,7 @@ export default function NewsAndNotices() {
           width: 420px;
           height: 420px;
           border-radius: 50%;
-          background: radial-gradient(circle, rgba(168,216,185,0.18) 0%, transparent 70%);
+        //   background: radial-gradient(circle, rgba(168,216,185,0.18) 0%, transparent 70%);
           pointer-events: none;
         }
 

@@ -3,7 +3,9 @@ import { RichTextContent } from "@/components/public/RichTextContent";
 import type { MessageFromCeo } from "@/services/message-from-ceo-service";
 
 type MessageFromCeoSectionProps = {
-  messageFromCeo: MessageFromCeo | null;
+  messageFromCeo: MessageFromCeo | null;  
+  buttonLabel: string;
+  buttonHref: string;
 };
 
 export function MessageFromCeoSection({
@@ -14,12 +16,12 @@ export function MessageFromCeoSection({
   const ceoDesignation = "Chief Executive Officer";
 
   return (
-    <section className="relative overflow-hidden bg-[#f8fafc] px-4 py-16 md:px-6 lg:py-24">
+    <section className="relative overflow-hidden px-4 py-16 md:px-6 lg:py-24">
       {/* Subtle background decoration */}
-      <div className="pointer-events-none absolute -right-24 -top-24 h-96 w-96 rounded-full bg-emerald-500/5 blur-3xl" />
+      <div className="pointer-events-none absolute -right-24 -top-24 h-96 w-96 rounded-full b " />
       
       <div className="relative z-10 mx-auto max-w-6xl">
-        <div className="overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-2xl">
+        <div className="overflow-hidden rounded-2xl border bg-white shadow-2xl">
           <div className="grid lg:grid-cols-5">
             
             {/* Left Column: Image & Dark Blue Label */}

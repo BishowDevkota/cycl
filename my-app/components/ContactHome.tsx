@@ -26,10 +26,11 @@ export default function ContactHome() {
           --off-white: #F9F9F9;
           --text-dark: #1a2e2e;
           --text-mid: #3d5a5a;
+          
         }
 
         .contact-section {
-          background: var(--off-white);
+          background: var(--color-off-white-);
           padding: 10px 0 110px;
           font-family: 'DM Sans', sans-serif;
           position: relative;

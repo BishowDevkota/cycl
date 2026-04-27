@@ -157,33 +157,11 @@ export default function ServicesSection({
         }
 
         .services-section {
-          background: var(--off-white);
+          background: var(--teal-mid);
           padding: 100px 24px;
           position: relative;
           overflow: hidden;
           font-family: 'DM Sans', sans-serif;
-        }
-
-        .services-section::before {
-          content: '';
-          position: absolute;
-          top: -80px; right: -80px;
-          width: 400px; height: 400px;
-          background: radial-gradient(circle, var(--mint) 0%, transparent 70%);
-          opacity: 0.35;
-          border-radius: 50%;
-          pointer-events: none;
-        }
-
-        .services-section::after {
-          content: '';
-          position: absolute;
-          bottom: -60px; left: -60px;
-          width: 320px; height: 320px;
-          background: radial-gradient(circle, var(--blush) 0%, transparent 70%);
-          opacity: 0.6;
-          border-radius: 50%;
-          pointer-events: none;
         }
 
         .services-container {
@@ -204,7 +182,7 @@ export default function ServicesSection({
         .eyebrow-line {
           width: 40px;
           height: 2px;
-          background: var(--teal-mid);
+          background: var(--color-off-white);
           border-radius: 2px;
         }
 
@@ -213,13 +191,13 @@ export default function ServicesSection({
           font-weight: ;
           letter-spacing: 0.15em;
           text-transform: uppercase;
-          color: var(--teal-mid);
+          color: var(--color-off-white);
         }
 
         .services-heading {
           font-family: sans-serif;
           font-size: 40px;
-          color: var(--teal-deep);
+          color: var(--color-off-white);
           text-align: center;
           margin: 0 0 16px 0;
           line-height: 1.15;
@@ -229,7 +207,7 @@ export default function ServicesSection({
         .services-subtext {
           text-align: center;
           font-size: 1.05rem;
-          color: #5a7070;
+          color: var(--color-off-white);
           max-width: 520px;
           margin: 0 auto 72px;
           line-height: 1.7;
@@ -276,18 +254,18 @@ export default function ServicesSection({
           box-shadow: 0 20px 60px rgba(0,91,92,0.13);
         }
 
-        .service-card::before {
-          content: '';
-          position: absolute;
-          top: 0; right: 0;
-          width: 80px; height: 80px;
-          background: linear-gradient(135deg, var(--mint) 0%, transparent 60%);
-          opacity: 0.35;
-          border-radius: 0 20px 0 80px;
-          transition: opacity 0.3s;
-        }
+        // .service-card::before {
+        //   content: '';
+        //   position: absolute;
+        //   top: 0; right: 0;
+        //   width: 80px; height: 80px;
+        //   background: linear-gradient(135deg, var(--mint) 0%, transparent 60%);
+        //   opacity: 0.35;
+        //   border-radius: 0 20px 0 80px;
+        //   transition: opacity 0.3s;
+        // }
 
-        .service-card:hover::before { opacity: 0.65; }
+        // .service-card:hover::before { opacity: 0.65; }
 
         .icon-wrapper {
           height: 100px;
@@ -379,10 +357,10 @@ export default function ServicesSection({
         }
 
         .link-arrow {
-          width: 20px;
-          height: 20px;
+          width: 25px;
+          height: 25px;
           border-radius: 50%;
-          background: var(--mint);
+          background: var(--color-off-white);
           display: flex;
           align-items: center;
           justify-content: center;

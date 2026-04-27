@@ -143,27 +143,27 @@ export function CompanyStatsSection() {
           font-family: 'DM Sans', sans-serif;
         }
 
-        .highlights-section::before {
-          content: '';
-          position: absolute;
-          top: -80px; right: -80px;
-          width: 400px; height: 400px;
-          background: radial-gradient(circle, var(--mint) 0%, transparent 70%);
-          opacity: 0.35;
-          border-radius: 50%;
-          pointer-events: none;
-        }
+        // .highlights-section::before {
+        //   content: '';
+        //   position: absolute;
+        //   top: -80px; right: -80px;
+        //   width: 400px; height: 400px;
+        //   background: radial-gradient(circle, var(--mint) 0%, transparent 70%);
+        //   opacity: 0.35;
+        //   border-radius: 50%;
+        //   pointer-events: none;
+        // }
 
-        .highlights-section::after {
-          content: '';
-          position: absolute;
-          bottom: -60px; left: -60px;
-          width: 320px; height: 320px;
-          background: radial-gradient(circle, var(--blush) 0%, transparent 70%);
-          opacity: 0.6;
-          border-radius: 50%;
-          pointer-events: none;
-        }
+        // .highlights-section::after {
+        //   content: '';
+        //   position: absolute;
+        //   bottom: -60px; left: -60px;
+        //   width: 320px; height: 320px;
+        //   background: radial-gradient(circle, var(--blush) 0%, transparent 70%);
+        //   opacity: 0.6;
+        //   border-radius: 50%;
+        //   pointer-events: none;
+        // }
 
         .highlights-container {
           max-width: 1200px;
@@ -241,16 +241,16 @@ export function CompanyStatsSection() {
           box-shadow: 0 20px 60px rgba(0,91,92,0.13);
         }
 
-        .highlight-card::before {
-          content: '';
-          position: absolute;
-          top: 0; right: 0;
-          width: 80px; height: 80px;
-          background: linear-gradient(135deg, var(--mint) 0%, transparent 60%);
-          opacity: 0.35;
-          border-radius: 0 20px 0 80px;
-          transition: opacity 0.3s;
-        }
+        // .highlight-card::before {
+        //   content: '';
+        //   position: absolute;
+        //   top: 0; right: 0;
+        //   width: 80px; height: 80px;
+        //   background: linear-gradient(135deg, var(--mint) 0%, transparent 60%);
+        //   opacity: 0.35;
+        //   border-radius: 0 20px 0 80px;
+        //   transition: opacity 0.3s;
+        // }
 
         .highlight-card:hover::before { opacity: 0.65; }
 
