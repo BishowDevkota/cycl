@@ -437,14 +437,6 @@ export default function ServicesSection(): React.JSX.Element {
               </div>
             ))}
           </div>
-
-          <div className="services-cta-strip">
-            <div className="cta-text">
-              <h3>Ready to get started?</h3>
-              <p>Join thousands of members already growing with us.</p>
-            </div>
-            <button className="cta-button">Become a Member →</button>
-          </div>
         </div>
       </section>
     </>
