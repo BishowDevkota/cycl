@@ -6,16 +6,18 @@ import { ActiveNoticePopup } from '@/components/home/ActiveNoticePopup';
 import { RichTextContent } from '@/components/public/RichTextContent';
 import Image from 'next/image';
 import Link from 'next/link';
-import { getMessageFromCeo } from '@/lib/message-from-ceo-service';
+import { getAboutCompanyInfo } from '@/services/about-company-info-service';
+import { getMessageFromCeo } from '@/services/message-from-ceo-service';
 
 export default async function Home() {
+  const aboutCompanyInfo = await getAboutCompanyInfo();
   const messageFromCeo = await getMessageFromCeo();
 
   return (
     <div className="flex flex-col min-h-screen">
       <ActiveNoticePopup />
       <HeroSection />
-      <WelcomeSection />
+      <WelcomeSection aboutCompanyInfo={aboutCompanyInfo} />
 
       <main className="relative flex-1 w-full overflow-hidden bg-[linear-gradient(180deg,#f7fafc_0%,#ffffff_45%,#f6f8fb_100%)] py-12 sm:py-16 lg:py-20">
         <div className="pointer-events-none absolute -top-14 left-1/2 h-56 w-[65vw] -translate-x-1/2 rounded-full bg-[#8ec5b9]/20 blur-3xl" />

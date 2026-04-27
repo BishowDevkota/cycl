@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useState, type ChangeEvent } from "react";
 import Image from "next/image";
-import type { AboutCompanyInfo } from "@/lib/about-company-info-service";
+import type { AboutCompanyInfo } from "@/services/about-company-info-service";
 import { RichTextEditor } from "@/components/admin/RichTextEditor";
 import { hasRichTextContent } from "@/lib/rich-text";
 

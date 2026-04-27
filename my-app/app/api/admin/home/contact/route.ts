@@ -6,7 +6,7 @@ import {
   updateContactDetails,
   deleteContactDetails,
   type ContactDetails,
-} from "@/lib/contact-service";
+} from "@/services/contact-service";
 
 type ContactItemLike =
   | ContactDetails["phone"]

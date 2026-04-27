@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import type { ContactDetails } from "@/lib/contact-service";
+import type { ContactDetails } from "@/services/contact-service";
 
 export function ContactSection() {
   const [contact, setContact] = useState<ContactDetails | null>(null);

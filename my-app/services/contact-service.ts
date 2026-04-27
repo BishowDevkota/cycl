@@ -1,57 +1,56 @@
-import { getDb } from "./mongodb";
+import { getDb } from "@/lib/mongodb";
 import { ObjectId } from "mongodb";
 
-export interface HeroSlide {
-  title: string;
-  subtitle?: string;
-  imageUrl: string;
-  imagePublicId: string;
-  ctaText?: string;
-  ctaLink?: string;
+export interface ContactItem {
+  text: string;
+  link: string;
 }
 
-export interface HeroSection {
+export interface ContactDetails {
   _id?: ObjectId;
-  title: string;
-  slides: HeroSlide[];
+  phone: ContactItem;
+  email: ContactItem;
+  facebook: ContactItem;
+  whatsapp: ContactItem;
+  location: ContactItem;
   isActive: boolean;
   createdAt?: Date;
   updatedAt?: Date;
 }
 
-const COLLECTION_NAME = "hero_sections";
+const COLLECTION_NAME = "contact_details";
 
-export async function getHeroSection(): Promise<HeroSection | null> {
+export async function getContactDetails(): Promise<ContactDetails | null> {
   const db = await getDb();
-  const hero = await db
-    .collection<HeroSection>(COLLECTION_NAME)
+  const contact = await db
+    .collection<ContactDetails>(COLLECTION_NAME)
     .findOne({ isActive: true });
-  return hero || null;
+  return contact || null;
 }
 
-export async function getAllHeroSections(): Promise<HeroSection[]> {
+export async function getAllContactDetails(): Promise<ContactDetails[]> {
   const db = await getDb();
-  const heroes = await db
-    .collection<HeroSection>(COLLECTION_NAME)
+  const contacts = await db
+    .collection<ContactDetails>(COLLECTION_NAME)
     .find({})
     .toArray();
-  return heroes;
+  return contacts;
 }
 
-export async function createHeroSection(
-  data: Omit<HeroSection, "_id">,
-): Promise<HeroSection> {
+export async function createContactDetails(
+  data: Omit<ContactDetails, "_id">,
+): Promise<ContactDetails> {
   const db = await getDb();
 
   // If this is being set as active, deactivate all others
   if (data.isActive) {
     await db
-      .collection<HeroSection>(COLLECTION_NAME)
+      .collection<ContactDetails>(COLLECTION_NAME)
       .updateMany({}, { $set: { isActive: false } });
   }
 
   const result = await db
-    .collection<HeroSection>(COLLECTION_NAME)
+    .collection<ContactDetails>(COLLECTION_NAME)
     .insertOne({
       ...data,
       createdAt: new Date(),
@@ -66,16 +65,16 @@ export async function createHeroSection(
   };
 }
 
-export async function updateHeroSection(
+export async function updateContactDetails(
   id: string,
-  data: Partial<HeroSection>,
-): Promise<HeroSection | null> {
+  data: Partial<ContactDetails>,
+): Promise<ContactDetails | null> {
   const db = await getDb();
 
   // If this is being set as active, deactivate all others
   if (data.isActive) {
     await db
-      .collection<HeroSection>(COLLECTION_NAME)
+      .collection<ContactDetails>(COLLECTION_NAME)
       .updateMany(
         { _id: { $ne: new ObjectId(id) } },
         { $set: { isActive: false } },
@@ -83,7 +82,7 @@ export async function updateHeroSection(
   }
 
   const result = await db
-    .collection<HeroSection>(COLLECTION_NAME)
+    .collection<ContactDetails>(COLLECTION_NAME)
     .findOneAndUpdate(
       { _id: new ObjectId(id) },
       {
@@ -98,10 +97,10 @@ export async function updateHeroSection(
   return result || null;
 }
 
-export async function deleteHeroSection(id: string): Promise<boolean> {
+export async function deleteContactDetails(id: string): Promise<boolean> {
   const db = await getDb();
   const result = await db
-    .collection<HeroSection>(COLLECTION_NAME)
+    .collection<ContactDetails>(COLLECTION_NAME)
     .deleteOne({ _id: new ObjectId(id) });
   return result.deletedCount > 0;
 }

@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import type { CompanyStats } from "@/lib/company-stats-service";
+import type { CompanyStats } from "@/services/company-stats-service";
 
 const FIELD_CONFIG: Array<{
   key: keyof Omit<CompanyStats, "_id" | "createdAt" | "updatedAt">;

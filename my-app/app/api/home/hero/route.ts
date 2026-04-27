@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getHeroSection } from "@/lib/hero-service";
+import { getHeroSection } from "@/services/hero-service";
 
 export async function GET() {
   try {

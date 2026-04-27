@@ -2,7 +2,7 @@ import Image from "next/image";
 import { PublicPageShell } from "@/components/public/PublicPageShell";
 import { SectionHeading } from "@/components/public/SectionHeading";
 import { RichTextContent } from "@/components/public/RichTextContent";
-import { getAboutCompanyInfo } from "@/lib/about-company-info-service";
+import { getAboutCompanyInfo } from "@/services/about-company-info-service";
 import {
   aboutCompanyProfile,
   boardOfDirectors,

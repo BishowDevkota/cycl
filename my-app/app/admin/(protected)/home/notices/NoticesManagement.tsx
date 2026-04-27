@@ -1,30 +1,39 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
-import type { MessageFromCeo } from "@/services/message-from-ceo-service";
-import { RichTextEditor } from "@/components/admin/RichTextEditor";
+import { useCallback, useEffect, useState, type ChangeEvent } from "react";
+import Image from "next/image";
+import type { HomeNotice } from "@/services/home-notice-service";
 import { hasRichTextContent } from "@/lib/rich-text";
+import { RichTextEditor } from "@/components/admin/RichTextEditor";
 
-function createEmptyForm(): Omit<MessageFromCeo, "_id" | "createdAt" | "updatedAt"> {
+function createEmptyForm(): Omit<HomeNotice, "_id" | "createdAt" | "updatedAt"> {
   return {
-    heading: "",
-    description: "",
+    title: "",
+    text: "",
     imageUrl: "",
     imagePublicId: "",
   };
 }
 
-export default function MessageFromCeoManagement() {
-  const [items, setItems] = useState<MessageFromCeo[]>([]);
+function hasImage(formData: Omit<HomeNotice, "_id" | "createdAt" | "updatedAt">) {
+  return Boolean(formData.imageUrl.trim() && formData.imagePublicId.trim());
+}
+
+function hasText(formData: Omit<HomeNotice, "_id" | "createdAt" | "updatedAt">) {
+  return hasRichTextContent(formData.text);
+}
+
+export default function NoticesManagement() {
+  const [items, setItems] = useState<HomeNotice[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [editingId, setEditingId] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
+  const [editingId, setEditingId] = useState<string | null>(null);
   const [formData, setFormData] = useState(createEmptyForm());
 
   const fetchItems = useCallback(async () => {
     try {
-      const response = await fetch("/api/admin/home/message-from-ceo");
+      const response = await fetch("/api/admin/home/notices");
       if (!response.ok) {
         throw new Error("Failed to fetch");
       }
@@ -32,7 +41,7 @@ export default function MessageFromCeoManagement() {
       const data = await response.json();
       setItems(Array.isArray(data) ? data : []);
     } catch {
-      setError("Failed to load message from CEO");
+      setError("Failed to load home notices");
     } finally {
       setLoading(false);
     }
@@ -48,8 +57,8 @@ export default function MessageFromCeoManagement() {
     };
   }, [fetchItems]);
 
-  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
+  const handleImageUpload = async (event: ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
     if (!file) return;
 
     setUploading(true);
@@ -84,20 +93,15 @@ export default function MessageFromCeoManagement() {
   };
 
   const handleSave = async () => {
-    if (
-      !formData.heading.trim() ||
-      !hasRichTextContent(formData.description) ||
-      !formData.imageUrl.trim() ||
-      !formData.imagePublicId.trim()
-    ) {
-      setError("Heading, description, and image are required");
+    if (!hasImage(formData) && !hasText(formData)) {
+      setError("Add text, image, or both.");
       return;
     }
 
     try {
       const url = editingId
-        ? `/api/admin/home/message-from-ceo?id=${editingId}`
-        : "/api/admin/home/message-from-ceo";
+        ? `/api/admin/home/notices?id=${editingId}`
+        : "/api/admin/home/notices";
       const method = editingId ? "PUT" : "POST";
 
       const response = await fetch(url, {
@@ -116,25 +120,25 @@ export default function MessageFromCeoManagement() {
       setEditingId(null);
       await fetchItems();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to save message from CEO");
+      setError(err instanceof Error ? err.message : "Failed to save home notice");
     }
   };
 
-  const handleEdit = (item: MessageFromCeo) => {
+  const handleEdit = (item: HomeNotice) => {
     setEditingId(item._id?.toString() || null);
     setFormData({
-      heading: item.heading,
-      description: item.description,
+      title: item.title,
+      text: item.text,
       imageUrl: item.imageUrl,
       imagePublicId: item.imagePublicId,
     });
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm("Are you sure you want to delete this entry?")) return;
+    if (!confirm("Are you sure you want to delete this notice?")) return;
 
     try {
-      const response = await fetch(`/api/admin/home/message-from-ceo?id=${id}`, {
+      const response = await fetch(`/api/admin/home/notices?id=${id}`, {
         method: "DELETE",
       });
 
@@ -145,7 +149,7 @@ export default function MessageFromCeoManagement() {
       setError("");
       await fetchItems();
     } catch {
-      setError("Failed to delete message from CEO");
+      setError("Failed to delete home notice");
     }
   };
 
@@ -155,14 +159,14 @@ export default function MessageFromCeoManagement() {
   };
 
   if (loading) {
-    return <div className="p-6">Loading message from CEO...</div>;
+    return <div className="p-6">Loading home notices...</div>;
   }
 
   return (
     <div className="p-6">
-      <h1 className="mb-2 text-3xl font-bold">Manage Message From CEO</h1>
+      <h1 className="mb-2 text-3xl font-bold">Manage Home Notices</h1>
       <p className="mb-6 text-sm text-gray-600">
-        Create and update the public CEO message section.
+        Create notices for the homepage popup. You can add text, image, or both.
       </p>
 
       {error && (
@@ -174,44 +178,45 @@ export default function MessageFromCeoManagement() {
       <div className="grid gap-6 md:grid-cols-2">
         <div className="rounded-lg border border-gray-200 bg-white p-6">
           <h2 className="mb-4 text-xl font-semibold">
-            {editingId ? "Edit CEO Message" : "Create CEO Message"}
+            {editingId ? "Edit Home Notice" : "Create Home Notice"}
           </h2>
 
           <div className="space-y-4">
             <div>
-              <label className="mb-1 block text-sm font-medium">Heading</label>
+              <label className="mb-1 block text-sm font-medium">Title (optional)</label>
               <input
                 type="text"
-                value={formData.heading}
-                onChange={(e) =>
-                  setFormData((prev) => ({ ...prev, heading: e.target.value }))
+                value={formData.title}
+                onChange={(event) =>
+                  setFormData((prev) => ({ ...prev, title: event.target.value }))
                 }
                 className="w-full rounded-lg border border-gray-300 px-3 py-2"
-                placeholder="Message from CEO"
+                placeholder="Notice title"
               />
             </div>
 
-            <div>
-              <RichTextEditor
-                label="Description"
-                value={formData.description}
-                onChange={(e) =>
-                  setFormData((prev) => ({ ...prev, description: e }))
-                }
-                placeholder="Write the CEO message here"
-                helperText="Use bold, italic, lists, quotes, and links to format the message."
-              />
-            </div>
+            <RichTextEditor
+              label="Text Content (optional)"
+              value={formData.text}
+              onChange={(value) => setFormData((prev) => ({ ...prev, text: value }))}
+              placeholder="Write notice text here"
+              helperText="If both image and text are added, image is shown first then text."
+            />
 
             <div>
-              <label className="mb-1 block text-sm font-medium">Image</label>
-              {formData.imageUrl && (
-                <img
-                  src={formData.imageUrl}
-                  alt="CEO preview"
-                  className="mb-3 h-56 w-full rounded-lg object-cover"
-                />
-              )}
+              <label className="mb-1 block text-sm font-medium">Image (optional)</label>
+              {formData.imageUrl ? (
+                <div className="mb-3 overflow-hidden rounded-lg border border-gray-200">
+                  <Image
+                    src={formData.imageUrl}
+                    alt="Notice preview"
+                    width={1200}
+                    height={800}
+                    className="h-56 w-full object-cover"
+                  />
+                </div>
+              ) : null}
+
               <input
                 type="file"
                 accept="image/*"
@@ -244,24 +249,35 @@ export default function MessageFromCeoManagement() {
         </div>
 
         <div className="rounded-lg border border-gray-200 bg-white p-6">
-          <h2 className="mb-4 text-xl font-semibold">Saved Entries</h2>
+          <h2 className="mb-4 text-xl font-semibold">Saved Notices</h2>
 
           {items.length === 0 ? (
-            <p className="text-gray-500">No CEO messages created yet.</p>
+            <p className="text-gray-500">No home notices created yet.</p>
           ) : (
             <div className="space-y-4">
-              {items.map((item) => (
+              {items.map((item, index) => (
                 <div key={item._id?.toString()} className="rounded-lg border border-gray-200 p-4">
-                  <img
-                    src={item.imageUrl}
-                    alt={item.heading}
-                    className="mb-3 h-40 w-full rounded-lg object-cover"
-                  />
-                  <h3 className="text-lg font-semibold text-gray-900">{item.heading}</h3>
-                  <div
-                    className="rich-text-content mt-2 max-h-28 overflow-hidden text-sm text-gray-600"
-                    dangerouslySetInnerHTML={{ __html: item.description }}
-                  />
+                  <h3 className="text-lg font-semibold text-gray-900">
+                    {item.title || `Notice ${items.length - index}`}
+                  </h3>
+
+                  {item.imageUrl ? (
+                    <Image
+                      src={item.imageUrl}
+                      alt={item.title || "Notice image"}
+                      width={800}
+                      height={450}
+                      className="mt-3 h-40 w-full rounded-lg object-cover"
+                    />
+                  ) : null}
+
+                  {hasRichTextContent(item.text) ? (
+                    <div
+                      className="rich-text-content mt-3 max-h-28 overflow-hidden text-sm text-gray-600"
+                      dangerouslySetInnerHTML={{ __html: item.text }}
+                    />
+                  ) : null}
+
                   <div className="mt-4 flex gap-2">
                     <button
                       type="button"

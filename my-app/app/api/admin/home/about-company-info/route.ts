@@ -7,7 +7,7 @@ import {
   getAllAboutCompanyInfos,
   updateAboutCompanyInfo,
   type AboutCompanyInfo,
-} from "@/lib/about-company-info-service";
+} from "@/services/about-company-info-service";
 import { hasRichTextContent } from "@/lib/rich-text";
 
 function hasRequiredFields(data: Partial<AboutCompanyInfo>) {
