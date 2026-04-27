@@ -88,6 +88,19 @@ export default function AdminHomePage() {
             Manage notices
           </span>
         </Link>
+
+        <Link
+          href="/admin/home/services"
+          className="group rounded-xl border border-zinc-200 p-5 transition hover:border-zinc-300 hover:shadow-md"
+        >
+          <p className="text-lg font-semibold text-zinc-900">Our Services Cards</p>
+          <p className="mt-2 text-sm text-zinc-600">
+            Manage dynamic service cards shown in the homepage Our Services section.
+          </p>
+          <span className="mt-4 inline-flex text-sm font-medium text-zinc-900">
+            Manage services
+          </span>
+        </Link>
       </div>
     </main>
   );
