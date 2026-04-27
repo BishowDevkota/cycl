@@ -26,7 +26,7 @@ export function Footer() {
   return (
     <footer className="relative overflow-hidden bg-[#005b5c] text-gray-100">
       <div className="pointer-events-none absolute -left-24 top-8 h-56 w-56 rounded-full bg-[#f6921e]/12 blur-3xl" />
-      <div className="pointer-events-none absolute bottom-6 right-[-3.5rem] h-44 w-44 rounded-full bg-[#72b4a8]/20 blur-3xl" />
+      <div className="pointer-events-none absolute bottom-6 -right-14 h-44 w-44 rounded-full bg-[#72b4a8]/20 blur-3xl" />
 
       <div className="relative mx-auto max-w-7xl px-6 py-14 sm:px-8 lg:px-10">
         <div className="grid grid-cols-1 gap-10 md:grid-cols-2 lg:grid-cols-4 lg:gap-12">
@@ -54,7 +54,7 @@ export function Footer() {
                     rel="noopener noreferrer"
                     className="group inline-flex font-semibold text-gray-100 transition-colors hover:text-[#f6921e]"
                   >
-                    <span className="border-b border-transparent bg-gradient-to-r from-[#f6921e] to-[#f8b866] bg-[length:0%_2px] bg-left-bottom bg-no-repeat pb-0.5 transition-all duration-300 group-hover:bg-[length:100%_2px]">
+                    <span className="border-b border-transparent bg-linear-to-r from-[#f6921e] to-[#f8b866] bg-size-[0%_2px] bg-bottom-left bg-no-repeat pb-0.5 transition-all duration-300 group-hover:bg-size-[100%_2px]">
                       {link.label}
                     </span>
                   </a>
@@ -76,7 +76,7 @@ export function Footer() {
                     rel="noopener noreferrer"
                     className="group inline-flex font-semibold text-gray-100 transition-colors hover:text-[#f6921e]"
                   >
-                    <span className="border-b border-transparent bg-gradient-to-r from-[#f6921e] to-[#f8b866] bg-[length:0%_2px] bg-left-bottom bg-no-repeat pb-0.5 transition-all duration-300 group-hover:bg-[length:100%_2px]">
+                    <span className="border-b border-transparent bg-linear-to-r from-[#f6921e] to-[#f8b866] bg-size-[0%_2px] bg-bottom-left bg-no-repeat pb-0.5 transition-all duration-300 group-hover:bg-size-[100%_2px]">
                       {link.label}
                     </span>
                   </a>

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getAllCompanyStats, getCompanyStats } from "@/services/company-stats-service";
+import { getAllCompanyStats } from "@/services/company-stats-service";
 
 export async function GET(request: NextRequest) {
   try {
@@ -8,12 +8,13 @@ export async function GET(request: NextRequest) {
 
     if (id) {
       const allStats = await getAllCompanyStats();
-      const stats = allStats.find((item) => item._id?.toString() === id);
-      return NextResponse.json(stats || null);
+      const stat = allStats.find((item) => item._id?.toString() === id);
+      return NextResponse.json(stat || null);
     }
 
-    const stats = await getCompanyStats();
-    return NextResponse.json(stats || null);
+    const stats = await getAllCompanyStats();
+    const activeStats = stats.filter((item) => item.isActive);
+    return NextResponse.json(activeStats);
   } catch (error) {
     console.error("Error fetching company stats:", error);
     return NextResponse.json(

@@ -58,7 +58,7 @@ export default function HeroCarousel({
   const currentTime = now ? timeFormatter.format(now) : "--:--:-- --";
 
   return (
-    <section className="relative w-full h-[calc(100svh-136px)] max-h-[calc(100dvh-136px)] min-h-[300px] sm:h-[calc(100svh-142px)] sm:max-h-[calc(100dvh-142px)] overflow-hidden">
+    <section className="relative w-full h-[calc(100svh-136px)] max-h-[calc(100dvh-136px)] min-h-75 sm:h-[calc(100svh-142px)] sm:max-h-[calc(100dvh-142px)] overflow-hidden">
       {slides.map((slide, index) => {
         const isActive = index === activeIndex;
 
@@ -105,7 +105,7 @@ export default function HeroCarousel({
         );
       })}
 
-      <div className="absolute right-3 top-3 z-20 inline-flex items-stretch overflow-hidden rounded-sm border border-white/55 bg-[#A8D8B9] text-black sm:right-5 sm:top-5">
+      <div className="absolute right-3 top-3 z-20 inline-flex items-stretch overflow-hidden rounded-sm border border-white/55 bg-mint text-black sm:right-5 sm:top-5">
         <div className="inline-flex items-center gap-2 px-2.5 py-1.5 sm:px-3 sm:py-1.5">
           <svg
             className="h-4 w-4"

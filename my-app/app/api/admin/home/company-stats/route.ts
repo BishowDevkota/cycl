@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getAdminSessionFromRequestCookies } from "@/lib/admin-auth";
+import { deleteCloudinaryImage } from "@/lib/cloudinary";
 import {
   createCompanyStats,
   deleteCompanyStats,
@@ -13,25 +14,28 @@ function normalizeField(value: unknown) {
 }
 
 function normalizePayload(payload: Partial<CompanyStats>): Omit<CompanyStats, "_id"> {
+  const displayOrder =
+    typeof payload.displayOrder === "number" && Number.isFinite(payload.displayOrder)
+      ? payload.displayOrder
+      : Number(payload.displayOrder) || 0;
+
+  const isActive =
+    typeof payload.isActive === "boolean"
+      ? payload.isActive
+      : String(payload.isActive).toLowerCase() !== "false";
+
   return {
-    numberOfBranchOffice: normalizeField(payload.numberOfBranchOffice),
-    loanOutstandingNpr: normalizeField(payload.loanOutstandingNpr),
-    numberOfCenters: normalizeField(payload.numberOfCenters),
-    savingDepositNpr: normalizeField(payload.savingDepositNpr),
-    totalStaffIncludingTrainee: normalizeField(payload.totalStaffIncludingTrainee),
-    activeClients: normalizeField(payload.activeClients),
+    heading: normalizeField(payload.heading),
+    value: normalizeField(payload.value),
+    imageUrl: normalizeField(payload.imageUrl),
+    imagePublicId: normalizeField(payload.imagePublicId),
+    displayOrder,
+    isActive,
   };
 }
 
 function hasRequiredFields(data: Omit<CompanyStats, "_id">) {
-  return Boolean(
-    data.numberOfBranchOffice &&
-      data.loanOutstandingNpr &&
-      data.numberOfCenters &&
-      data.savingDepositNpr &&
-      data.totalStaffIncludingTrainee &&
-      data.activeClients,
-  );
+  return Boolean(data.heading && data.value && data.imageUrl);
 }
 
 export async function GET(request: NextRequest) {
@@ -103,7 +107,9 @@ export async function PUT(request: NextRequest) {
       return NextResponse.json({ error: "ID parameter required" }, { status: 400 });
     }
 
-    const payload = (await request.json()) as Partial<CompanyStats>;
+    const payload = (await request.json()) as Partial<CompanyStats> & {
+      removedImagePublicId?: string;
+    };
     const data = normalizePayload(payload);
 
     if (!hasRequiredFields(data)) {
@@ -111,6 +117,14 @@ export async function PUT(request: NextRequest) {
         { error: "All company stats fields are required" },
         { status: 400 },
       );
+    }
+
+    if (payload.removedImagePublicId) {
+      try {
+        await deleteCloudinaryImage(payload.removedImagePublicId);
+      } catch (error) {
+        console.error("Failed to delete replaced company stats image:", error);
+      }
     }
 
     const stats = await updateCompanyStats(id, data);

@@ -1,58 +1,115 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import Image from "next/image";
-import type { CompanyStats } from "@/services/company-stats-service";
 
-const STATS_FIELDS: Array<{
-  key: keyof Omit<CompanyStats, "_id" | "createdAt" | "updatedAt">;
-  label: string;
-  image: string;
-}> = [
+export interface CompanyStatCard {
+  _id?: string;
+  heading: string;
+  value: string;
+  imageUrl: string;
+  displayOrder: number;
+  isActive: boolean;
+}
+
+const fallbackStats: CompanyStatCard[] = [
   {
-    key: "numberOfBranchOffice",
-    label: "Branch Offices",
-    image: "/company highlights/office branch.avif",
+    _id: "fallback-1",
+    heading: "Branch Offices",
+    value: "3321",
+    imageUrl: "/company highlights/office branch.png",
+    displayOrder: 0,
+    isActive: true,
   },
   {
-    key: "loanOutstandingNpr",
-    label: "Loan Outstanding",
-    image: "/company highlights/loan_outstanding.avif",
+    _id: "fallback-2",
+    heading: "Loan Outstanding",
+    value: "514,651 NPR",
+    imageUrl: "/company highlights/loan_outstanding.png",
+    displayOrder: 1,
+    isActive: true,
   },
   {
-    key: "numberOfCenters",
-    label: "Number of Centers",
-    image: "/company highlights/centers.avif",
+    _id: "fallback-3",
+    heading: "Number of Centers",
+    value: "274",
+    imageUrl: "/company highlights/centers.webp",
+    displayOrder: 2,
+    isActive: true,
   },
   {
-    key: "savingDepositNpr",
-    label: "Savings & Deposits",
-    image: "/company highlights/saving_deposit.avif",
+    _id: "fallback-4",
+    heading: "Savings & Deposits",
+    value: "1,150,000 NPR",
+    imageUrl: "/company highlights/saving_deposit.png",
+    displayOrder: 3,
+    isActive: true,
   },
   {
-    key: "totalStaffIncludingTrainee",
-    label: "Total Staff",
-    image: "/company highlights/staff_icon.avif",
+    _id: "fallback-5",
+    heading: "Total Staff",
+    value: "65",
+    imageUrl: "/company highlights/staff_icon.webp",
+    displayOrder: 4,
+    isActive: true,
   },
   {
-    key: "activeClients",
-    label: "Active Clients",
-    image: "/company highlights/client.jpg",
+    _id: "fallback-6",
+    heading: "Active Clients",
+    value: "62,263",
+    imageUrl: "/company highlights/client.jpg",
+    displayOrder: 5,
+    isActive: true,
   },
 ];
 
 export function CompanyStatsSection() {
   const [visible, setVisible] = useState(false);
+  const [stats, setStats] = useState<CompanyStatCard[]>([]);
   const sectionRef = useRef<HTMLElement | null>(null);
 
-  const stats: CompanyStats = {
-    numberOfBranchOffice: "3321",
-    loanOutstandingNpr: "3321",
-    numberOfCenters: "32321",
-    savingDepositNpr: "514651",
-    totalStaffIncludingTrainee: "65",
-    activeClients: "62263",
-  };
+  useEffect(() => {
+    let active = true;
+
+    const fetchStats = async () => {
+      try {
+        const response = await fetch("/api/home/company-stats", {
+          cache: "no-store",
+        });
+
+        if (!response.ok) {
+          throw new Error("Failed to load company stats");
+        }
+
+        const data = (await response.json()) as unknown;
+        const statItems = Array.isArray(data) ? data : [];
+
+        if (!active) return;
+
+        setStats(
+          statItems
+            .filter(
+              (item): item is CompanyStatCard =>
+                typeof item === "object" &&
+                item !== null &&
+                typeof item.heading === "string" &&
+                typeof item.value === "string" &&
+                typeof item.imageUrl === "string",
+            )
+            .sort((a, b) => a.displayOrder - b.displayOrder),
+        );
+      } catch (error) {
+        console.error("Error fetching public company stats:", error);
+      }
+    };
+
+    void fetchStats();
+
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  const renderedStats = stats.length > 0 ? stats : fallbackStats;
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -80,7 +137,7 @@ export function CompanyStatsSection() {
 
         .highlights-section {
           background: var(--off-white);
-          padding: 100px 24px;
+          padding: 72px 24px;
           position: relative;
           overflow: hidden;
           font-family: 'DM Sans', sans-serif;
@@ -117,7 +174,7 @@ export function CompanyStatsSection() {
 
         .highlights-header {
           text-align: center;
-          margin-bottom: 72px;
+          margin-bottom: 48px;
         }
 
         .highlights-heading {
@@ -139,18 +196,24 @@ export function CompanyStatsSection() {
 
         .highlights-grid {
           display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-          gap: 28px;
+          grid-template-columns: repeat(3, minmax(0, 1fr));
+          gap: 24px;
+          align-items: stretch;
         }
 
         .highlight-card {
           background: #fff;
           border-radius: 20px;
-          padding: 40px 32px 36px;
+          padding: 28px 24px;
           position: relative;
           overflow: hidden;
           border: 1px solid rgba(0,91,92,0.08);
           cursor: default;
+          min-height: 250px;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          text-align: center;
           transition: transform 0.35s cubic-bezier(.22,.68,0,1.2),
                       box-shadow 0.35s ease,
                       border-color 0.3s ease;
@@ -192,8 +255,8 @@ export function CompanyStatsSection() {
         .highlight-card:hover::before { opacity: 0.65; }
 
         .icon-wrapper {
-          height: 100px;
-          margin-bottom: 28px;
+          height: 82px;
+          margin-bottom: 18px;
           position: relative;
           display: flex;
           align-items: center;
@@ -216,9 +279,9 @@ export function CompanyStatsSection() {
 
         .stat-label {
           font-family: 'DM Serif Display', serif;
-          font-size: 1.9rem;
+          font-size: 1.6rem;
           color: var(--teal-deep);
-          margin: 0 0 16px 0;
+          margin: 0 0 12px 0;
           line-height: 1.2;
           font-weight: 400;
         }
@@ -226,8 +289,8 @@ export function CompanyStatsSection() {
         .stat-value {
           font-size: 1rem;
           color: #536060;
-          line-height: 1.7;
-          margin: 0 0 26px 0;
+          line-height: 1.6;
+          margin: 0;
           font-weight: 500;
         }
 
@@ -236,19 +299,25 @@ export function CompanyStatsSection() {
           height: 2px;
           background: var(--mint);
           border-radius: 2px;
-          margin-bottom: 20px;
+          margin-bottom: 14px;
           transition: width 0.3s ease;
         }
 
         .highlight-card:hover .card-divider { width: 56px; }
 
+        @media (max-width: 1024px) {
+          .highlights-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        }
+
         @media (max-width: 768px) {
-          .highlights-section { padding: 72px 16px; }
+          .highlights-section { padding: 56px 16px; }
+          .highlights-header { margin-bottom: 32px; }
+          .highlights-grid { grid-template-columns: 1fr; }
           .highlights-grid { gap: 20px; }
-          .highlight-card { padding: 32px 24px 28px; }
-          .icon-wrapper { height: 92px; }
+          .highlight-card { padding: 24px 20px; min-height: 220px; }
+          .icon-wrapper { height: 74px; }
           .service-icon-image { width: 64px; height: 64px; }
-          .stat-label { font-size: 1.7rem; }
+          .stat-label { font-size: 1.4rem; }
         }
       `}</style>
 
@@ -262,23 +331,21 @@ export function CompanyStatsSection() {
           </div>
 
           <div className="highlights-grid">
-            {STATS_FIELDS.map((field) => (
+            {renderedStats.map((item, index) => (
               <div
-                key={field.key}
+                key={item._id || `${item.heading}-${index}`}
                 className={`highlight-card ${visible ? "visible" : ""}`}
               >
                 <div className="icon-wrapper">
-                  <Image
-                    src={field.image}
-                    alt={field.label}
-                    width={72}
-                    height={72}
+                  <img
+                    src={item.imageUrl || "/company highlights/office branch.png"}
+                    alt={item.heading}
                     className="service-icon-image"
                   />
                 </div>
-                <p className="stat-label">{field.label}</p>
+                <p className="stat-label">{item.heading}</p>
                 <div className="card-divider" />
-                <p className="stat-value">{stats[field.key] || "-"}</p>
+                <p className="stat-value">{item.value || "-"}</p>
               </div>
             ))}
           </div>

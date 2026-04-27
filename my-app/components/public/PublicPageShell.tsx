@@ -30,11 +30,11 @@ export function PublicPageShell({
           aria-hidden="true"
         />
         <div
-          className="pointer-events-none absolute bottom-[-3.5rem] right-[-3.5rem] h-56 w-56 rounded-full bg-white/20 blur-3xl"
+          className="pointer-events-none absolute -bottom-14 -right-14 h-56 w-56 rounded-full bg-white/20 blur-3xl"
           aria-hidden="true"
         />
 
-        <div className="relative mx-auto max-w-7xl px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
+        <div className="relative mx-auto max-w-screen-2xl px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
           <p className="text-xs font-semibold uppercase tracking-[0.24em] text-[#ffe6c2]">
             {eyebrow}
           </p>
@@ -62,7 +62,7 @@ export function PublicPageShell({
       </header>
 
       <main className="flex-1 py-10 sm:py-12 lg:py-14">
-        <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">{children}</div>
+        <div className="mx-auto w-full max-w-screen-2xl px-4 sm:px-6 lg:px-8">{children}</div>
       </main>
 
       <Footer />

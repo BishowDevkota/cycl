@@ -175,7 +175,7 @@ export function TopContactBar() {
     <>
       <div className="relative w-full pt-12">
       <div className="absolute inset-x-0 top-0 z-20 w-full bg-[#005d59] text-white">
-        <div className="mx-auto flex h-12 w-full max-w-[1420px] items-center justify-between px-4 sm:px-6 lg:px-10">
+        <div className="mx-auto flex h-12 w-full max-w-355 items-center justify-between px-4 sm:px-6 lg:px-10">
           <div className="flex min-w-0 items-center gap-3 text-[11px] font-medium sm:gap-6 sm:text-sm lg:text-base">
             <Link
               href={phoneLink}
@@ -261,15 +261,15 @@ export function TopContactBar() {
       </div>
 
       <div className="sticky top-0 z-70 w-full border-b border-zinc-200/80 bg-white shadow-[0_8px_22px_rgba(7,100,110,0.12)]">
-        <div className="mx-auto flex min-h-[88px] w-full max-w-[1420px] items-center justify-between gap-3 px-4 sm:min-h-[94px] sm:px-6 lg:px-10">
-          <Link href="/" className="flex min-w-0 flex-shrink-0 items-center">
+        <div className="mx-auto flex min-h-22 w-full max-w-355 items-center justify-between gap-3 px-4 sm:min-h-23.5 sm:px-6 lg:px-10">
+          <Link href="/" className="flex min-w-0 shrink-0 items-center">
             <Image
               src="/cyc-logo.jpg"
               alt="Cyc Nepal Laghubitta Bittiya Sanstha Ltd."
               width={1024}
               height={250}
               priority
-              className="h-9 w-auto max-w-[62vw] sm:h-11 sm:max-w-[60vw] lg:h-[56px] lg:max-w-[46vw] xl:h-[64px] xl:max-w-[38vw]"
+              className="h-9 w-auto max-w-[62vw] sm:h-11 sm:max-w-[60vw] lg:h-14 lg:max-w-[46vw] xl:h-16 xl:max-w-[38vw]"
             />
           </Link>
 
@@ -311,7 +311,7 @@ export function TopContactBar() {
                   </Link>
 
                   {hasDropdown && (
-                    <div className="pointer-events-none absolute left-1/2 top-full z-[90] w-72 -translate-x-1/2 pt-4 opacity-0 transition-all duration-200 group-hover:pointer-events-auto group-hover:opacity-100">
+                    <div className="pointer-events-none absolute left-1/2 top-full z-90 w-72 -translate-x-1/2 pt-4 opacity-0 transition-all duration-200 group-hover:pointer-events-auto group-hover:opacity-100">
                       <div className="overflow-hidden rounded-2xl border border-[#d8e6ee] bg-white p-2 shadow-[0_24px_36px_rgba(6,61,73,0.2)]">
                         {item.children?.map((child) => {
                           const isChildActive = isActiveRoute(child.href);
@@ -360,7 +360,7 @@ export function TopContactBar() {
 
             <Link
               href="#"
-              className="hidden rounded-xl bg-gradient-to-r from-[#047886] to-[#0e8c9f] px-6 py-3 text-base font-semibold text-white shadow-[0_8px_18px_rgba(7,100,110,0.28)] transition hover:brightness-105 sm:inline-block"
+              className="hidden rounded-xl bg-linear-to-r from-[#047886] to-[#0e8c9f] px-6 py-3 text-base font-semibold text-white shadow-[0_8px_18px_rgba(7,100,110,0.28)] transition hover:brightness-105 sm:inline-block"
             >
               Apply Now
             </Link>
@@ -406,7 +406,7 @@ export function TopContactBar() {
 
         {mobileMenuOpen && (
           <div className="border-t border-zinc-200 px-4 py-4 xl:hidden">
-            <div className="mx-auto flex w-full max-w-[1420px] flex-col gap-4 text-base font-medium text-zinc-800">
+            <div className="mx-auto flex w-full max-w-355 flex-col gap-4 text-base font-medium text-zinc-800">
               {navItems.map((item) => {
                 const isActive = isNavItemActive(item);
 
@@ -467,7 +467,7 @@ export function TopContactBar() {
 
               <Link
                 href="#"
-                className="inline-flex justify-center rounded-xl bg-gradient-to-r from-[#047886] to-[#0e8c9f] px-5 py-3 font-semibold text-white"
+                className="inline-flex justify-center rounded-xl bg-linear-to-r from-[#047886] to-[#0e8c9f] px-5 py-3 font-semibold text-white"
                 onClick={() => setMobileMenuOpen(false)}
               >
                 Apply Now

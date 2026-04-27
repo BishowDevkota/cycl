@@ -1,53 +1,54 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState, type ChangeEvent } from "react";
 import type { CompanyStats } from "@/services/company-stats-service";
 
+type CompanyStatsForm = {
+  heading: string;
+  value: string;
+  imageUrl: string;
+  imagePublicId: string;
+  displayOrder: string;
+  isActive: boolean;
+};
+
 const FIELD_CONFIG: Array<{
-  key: keyof Omit<CompanyStats, "_id" | "createdAt" | "updatedAt">;
+  key: keyof Omit<CompanyStatsForm, "isActive">;
   label: string;
   placeholder: string;
+  type?: string;
 }> = [
   {
-    key: "numberOfBranchOffice",
-    label: "Number of Branch Office",
-    placeholder: "124",
+    key: "heading",
+    label: "Card Heading",
+    placeholder: "Branch Offices",
   },
   {
-    key: "loanOutstandingNpr",
-    label: "Loan Outstanding (NPR)",
-    placeholder: "NaN",
+    key: "value",
+    label: "Card Data",
+    placeholder: "3321",
   },
   {
-    key: "numberOfCenters",
-    label: "Number of Centers",
-    placeholder: "NaN",
+    key: "imageUrl",
+    label: "Image URL",
+    placeholder: "/company highlights/office branch.png",
   },
   {
-    key: "savingDepositNpr",
-    label: "Saving & Deposit (NPR)",
-    placeholder: "NaN",
-  },
-  {
-    key: "totalStaffIncludingTrainee",
-    label: "Total Staff (Including Trainee)",
-    placeholder: "497",
-  },
-  {
-    key: "activeClients",
-    label: "Number of Active Clients",
-    placeholder: "75358",
+    key: "displayOrder",
+    label: "Display Order",
+    placeholder: "0",
+    type: "number",
   },
 ];
 
-function createEmptyForm(): Omit<CompanyStats, "_id" | "createdAt" | "updatedAt"> {
+function createEmptyForm(): CompanyStatsForm {
   return {
-    numberOfBranchOffice: "",
-    loanOutstandingNpr: "",
-    numberOfCenters: "",
-    savingDepositNpr: "",
-    totalStaffIncludingTrainee: "",
-    activeClients: "",
+    heading: "",
+    value: "",
+    imageUrl: "",
+    imagePublicId: "",
+    displayOrder: "0",
+    isActive: true,
   };
 }
 
@@ -55,8 +56,10 @@ export default function CompanyStatsManagement() {
   const [items, setItems] = useState<CompanyStats[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [uploading, setUploading] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
-  const [formData, setFormData] = useState(createEmptyForm());
+  const [originalImagePublicId, setOriginalImagePublicId] = useState("");
+  const [formData, setFormData] = useState<CompanyStatsForm>(createEmptyForm());
 
   const fetchItems = useCallback(async () => {
     try {
@@ -85,13 +88,56 @@ export default function CompanyStatsManagement() {
   }, [fetchItems]);
 
   const handleChange = (
-    key: keyof Omit<CompanyStats, "_id" | "createdAt" | "updatedAt">,
+    key: keyof Omit<CompanyStatsForm, "isActive">,
     value: string,
   ) => {
     setFormData((prev) => ({
       ...prev,
       [key]: value,
     }));
+  };
+
+  const handleToggleActive = (value: boolean) => {
+    setFormData((prev) => ({
+      ...prev,
+      isActive: value,
+    }));
+  };
+
+  const handleImageUpload = async (event: ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    setUploading(true);
+
+    try {
+      const uploadFormData = new FormData();
+      uploadFormData.append("file", file);
+
+      if (formData.imagePublicId) {
+        uploadFormData.append("oldPublicId", formData.imagePublicId);
+      }
+
+      const response = await fetch("/api/admin/upload", {
+        method: "POST",
+        body: uploadFormData,
+      });
+
+      if (!response.ok) {
+        throw new Error("Upload failed");
+      }
+
+      const result = await response.json();
+      setFormData((prev) => ({
+        ...prev,
+        imageUrl: result.secure_url,
+        imagePublicId: result.public_id,
+      }));
+    } catch {
+      setError("Failed to upload image");
+    } finally {
+      setUploading(false);
+    }
   };
 
   const hasMissingFields = FIELD_CONFIG.some(({ key }) => {
@@ -111,10 +157,22 @@ export default function CompanyStatsManagement() {
         : "/api/admin/home/company-stats";
       const method = editingId ? "PUT" : "POST";
 
+      const payload = {
+        heading: formData.heading,
+        value: formData.value,
+        imageUrl: formData.imageUrl,
+        imagePublicId: formData.imagePublicId,
+        displayOrder: Number(formData.displayOrder) || 0,
+        isActive: formData.isActive,
+        ...(editingId && originalImagePublicId && originalImagePublicId !== formData.imagePublicId
+          ? { removedImagePublicId: originalImagePublicId }
+          : {}),
+      };
+
       const response = await fetch(url, {
         method,
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(payload),
       });
 
       if (!response.ok) {
@@ -133,13 +191,14 @@ export default function CompanyStatsManagement() {
 
   const handleEdit = (item: CompanyStats) => {
     setEditingId(item._id?.toString() || null);
+    setOriginalImagePublicId(item.imagePublicId ?? "");
     setFormData({
-      numberOfBranchOffice: item.numberOfBranchOffice ?? "",
-      loanOutstandingNpr: item.loanOutstandingNpr ?? "",
-      numberOfCenters: item.numberOfCenters ?? "",
-      savingDepositNpr: item.savingDepositNpr ?? "",
-      totalStaffIncludingTrainee: item.totalStaffIncludingTrainee ?? "",
-      activeClients: item.activeClients ?? "",
+      heading: item.heading ?? "",
+      value: item.value ?? "",
+      imageUrl: item.imageUrl ?? "",
+      imagePublicId: item.imagePublicId ?? "",
+      displayOrder: String(item.displayOrder ?? 0),
+      isActive: item.isActive ?? true,
     });
   };
 
@@ -164,6 +223,7 @@ export default function CompanyStatsManagement() {
 
   const handleNew = () => {
     setEditingId(null);
+    setOriginalImagePublicId("");
     setFormData(createEmptyForm());
   };
 
@@ -197,7 +257,7 @@ export default function CompanyStatsManagement() {
                   {field.label}
                 </label>
                 <input
-                  type="text"
+                  type={field.type || "text"}
                   value={formData[field.key] ?? ""}
                   onChange={(e) => handleChange(field.key, e.target.value)}
                   className="w-full rounded-lg border border-gray-300 px-3 py-2"
@@ -205,6 +265,43 @@ export default function CompanyStatsManagement() {
                 />
               </div>
             ))}
+
+            <div>
+              <label className="mb-1 block text-sm font-medium">Upload Image</label>
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleImageUpload}
+                disabled={uploading}
+                className="w-full rounded-lg border border-gray-300 px-3 py-2"
+              />
+              {uploading && (
+                <p className="mt-2 text-sm text-blue-600">Uploading image...</p>
+              )}
+              {formData.imageUrl ? (
+                <div className="mt-3 rounded-lg border border-gray-200 bg-gray-50 p-3">
+                  <p className="text-sm font-medium text-gray-700">Preview</p>
+                  <img
+                    src={formData.imageUrl}
+                    alt={formData.heading || "Company stat image"}
+                    className="mt-2 max-h-40 w-full rounded-lg object-contain"
+                  />
+                </div>
+              ) : null}
+            </div>
+
+            <div className="flex items-center gap-3">
+              <input
+                id="company-stats-active"
+                type="checkbox"
+                checked={formData.isActive}
+                onChange={(e) => handleToggleActive(e.target.checked)}
+                className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+              />
+              <label htmlFor="company-stats-active" className="text-sm font-medium text-gray-700">
+                Publish this card
+              </label>
+            </div>
 
             <div className="flex gap-2 pt-2">
               <button
@@ -231,18 +328,17 @@ export default function CompanyStatsManagement() {
           <h2 className="mb-4 text-xl font-semibold">Saved Records</h2>
 
           {items.length === 0 ? (
-            <p className="text-gray-500">No company stats created yet.</p>
+            <p className="text-gray-500">No company stats cards created yet.</p>
           ) : (
             <div className="space-y-4">
               {items.map((item) => (
                 <div key={item._id?.toString()} className="rounded-lg border border-gray-200 p-4">
                   <div className="grid grid-cols-1 gap-2 text-sm text-gray-700 sm:grid-cols-2">
-                    <p><span className="font-medium">Number of Branch Office:</span> {item.numberOfBranchOffice}</p>
-                    <p><span className="font-medium">Loan Outstanding (NPR):</span> {item.loanOutstandingNpr}</p>
-                    <p><span className="font-medium">Number of Centers:</span> {item.numberOfCenters}</p>
-                    <p><span className="font-medium">Saving & Deposit (NPR):</span> {item.savingDepositNpr}</p>
-                    <p><span className="font-medium">Total Staff (Including Trainee):</span> {item.totalStaffIncludingTrainee}</p>
-                    <p><span className="font-medium">Active Clients:</span> {item.activeClients}</p>
+                    <p><span className="font-medium">Heading:</span> {item.heading}</p>
+                    <p><span className="font-medium">Value:</span> {item.value}</p>
+                    <p><span className="font-medium">Image URL:</span> {item.imageUrl}</p>
+                    <p><span className="font-medium">Display order:</span> {item.displayOrder}</p>
+                    <p><span className="font-medium">Active:</span> {item.isActive ? "Yes" : "No"}</p>
                   </div>
 
                   <div className="mt-4 flex gap-2">
