@@ -1,10 +1,12 @@
 import { ObjectId } from "mongodb";
-import { getDb } from "./mongodb";
+import { getDb } from "@/lib/mongodb";
 
 export interface AboutCompanyInfo {
   _id?: ObjectId;
   heading: string;
   description: string;
+  imageUrl: string;
+  imagePublicId: string;
   createdAt?: Date;
   updatedAt?: Date;
 }

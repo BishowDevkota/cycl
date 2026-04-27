@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import type { HeroSection, HeroSlide } from "@/lib/hero-service";
+import type { HeroSection, HeroSlide } from "@/services/hero-service";
 
 type HeroSlideInput = HeroSlide & { clientId: string };
 

@@ -1,16 +1,72 @@
 "use client";
 
-import Link from "next/link";
-import { useMemo, useState } from "react";
-import { getActiveNoticeItems } from "@/lib/public-content";
+import { useEffect, useMemo, useState } from "react";
+import Image from "next/image";
+import { hasRichTextContent } from "@/lib/rich-text";
+
+type HomeNotice = {
+  _id?: string;
+  title: string;
+  text: string;
+  imageUrl: string;
+  imagePublicId: string;
+  createdAt?: string;
+  updatedAt?: string;
+};
 
 export function ActiveNoticePopup() {
-  const notices = useMemo(() => getActiveNoticeItems(), []);
-  const [isOpen, setIsOpen] = useState(notices.length > 0);
-  const [selectedId, setSelectedId] = useState(notices[0]?.id ?? "");
+  const [notices, setNotices] = useState<HomeNotice[]>([]);
+  const [isOpen, setIsOpen] = useState(false);
+  const [selectedId, setSelectedId] = useState("");
+
+  useEffect(() => {
+    let active = true;
+
+    const fetchNotices = async () => {
+      try {
+        const response = await fetch("/api/home/notices", { cache: "no-store" });
+        if (!response.ok) {
+          throw new Error("Failed to load notices");
+        }
+
+        const data = (await response.json()) as HomeNotice[];
+        const safeData = Array.isArray(data) ? data : [];
+
+        if (!active) {
+          return;
+        }
+
+        setNotices(safeData);
+        setSelectedId(safeData[0]?._id || "");
+        setIsOpen(safeData.length > 0);
+      } catch {
+        if (!active) {
+          return;
+        }
+
+        setNotices([]);
+        setSelectedId("");
+        setIsOpen(false);
+      }
+    };
+
+    void fetchNotices();
+
+    return () => {
+      active = false;
+    };
+  }, []);
 
   const selectedNotice =
-    notices.find((notice) => notice.id === selectedId) ?? notices[0];
+    notices.find((notice) => notice._id === selectedId) ?? notices[0];
+
+  const selectedTitle = useMemo(() => {
+    if (!selectedNotice) {
+      return "Notice";
+    }
+
+    return selectedNotice.title?.trim() || "Notice";
+  }, [selectedNotice]);
 
   if (!notices.length) {
     return null;
@@ -54,13 +110,15 @@ export function ActiveNoticePopup() {
             <div className="grid grid-cols-1 gap-0 md:grid-cols-[1fr_1.4fr]">
               <div className="max-h-[420px] overflow-y-auto border-b border-[#e8eff3] bg-[#fbfdff] p-3 md:max-h-[500px] md:border-b-0 md:border-r">
                 {notices.map((notice) => {
-                  const isSelected = notice.id === selectedNotice?.id;
+                  const isSelected = notice._id === selectedNotice?._id;
+                  const listTitle = notice.title?.trim() || "Notice";
+                  const listDate = notice.updatedAt || notice.createdAt;
 
                   return (
                     <button
-                      key={notice.id}
+                      key={notice._id || listTitle}
                       type="button"
-                      onClick={() => setSelectedId(notice.id)}
+                      onClick={() => setSelectedId(notice._id || "")}
                       className={`mb-2 w-full rounded-xl border px-3 py-3 text-left transition ${
                         isSelected
                           ? "border-[#0d837f]/40 bg-[#e8f7f4]"
@@ -68,15 +126,17 @@ export function ActiveNoticePopup() {
                       }`}
                     >
                       <p className="line-clamp-2 text-sm font-semibold text-[#123451]">
-                        {notice.title}
+                        {listTitle}
                       </p>
-                      <p className="mt-1 text-xs text-slate-500">
-                        {new Date(notice.publishedAt).toLocaleDateString("en-NP", {
-                          year: "numeric",
-                          month: "short",
-                          day: "numeric",
-                        })}
-                      </p>
+                      {listDate ? (
+                        <p className="mt-1 text-xs text-slate-500">
+                          {new Date(listDate).toLocaleDateString("en-NP", {
+                            year: "numeric",
+                            month: "short",
+                            day: "numeric",
+                          })}
+                        </p>
+                      ) : null}
                     </button>
                   );
                 })}
@@ -84,26 +144,38 @@ export function ActiveNoticePopup() {
 
               <article className="p-5 sm:p-6">
                 <h4 className="text-lg font-semibold text-[#123451] sm:text-xl">
-                  {selectedNotice.title}
+                  {selectedTitle}
                 </h4>
-                <p className="mt-2 text-sm font-medium text-[#0d837f]">
-                  Published on {new Date(selectedNotice.publishedAt).toLocaleDateString("en-NP", {
-                    year: "numeric",
-                    month: "long",
-                    day: "numeric",
-                  })}
-                </p>
-                <p className="mt-4 text-sm leading-7 text-slate-700 sm:text-base">
-                  {selectedNotice.details}
-                </p>
+                {selectedNotice.updatedAt || selectedNotice.createdAt ? (
+                  <p className="mt-2 text-sm font-medium text-[#0d837f]">
+                    Updated on {new Date(selectedNotice.updatedAt || selectedNotice.createdAt || "").toLocaleDateString("en-NP", {
+                      year: "numeric",
+                      month: "long",
+                      day: "numeric",
+                    })}
+                  </p>
+                ) : null}
+
+                {selectedNotice.imageUrl ? (
+                  <div className="relative mt-4 h-52 w-full overflow-hidden rounded-xl border border-[#e4edf1] bg-[#f8fbfd] sm:h-64">
+                    <Image
+                      src={selectedNotice.imageUrl}
+                      alt={selectedTitle}
+                      fill
+                      sizes="(max-width: 768px) 100vw, 640px"
+                      className="object-cover"
+                    />
+                  </div>
+                ) : null}
+
+                {hasRichTextContent(selectedNotice.text) ? (
+                  <div
+                    className="rich-text-content mt-4 text-sm leading-7 text-slate-700 sm:text-base"
+                    dangerouslySetInnerHTML={{ __html: selectedNotice.text }}
+                  />
+                ) : null}
 
                 <div className="mt-6 flex flex-wrap gap-3">
-                  <Link
-                    href="/notices"
-                    className="inline-flex items-center rounded-full bg-[#0d837f] px-5 py-2.5 text-sm font-semibold text-white transition hover:brightness-110"
-                  >
-                    View All Notices
-                  </Link>
                   <button
                     type="button"
                     onClick={() => setIsOpen(false)}

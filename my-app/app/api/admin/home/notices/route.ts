@@ -2,21 +2,25 @@ import { NextRequest, NextResponse } from "next/server";
 import { getAdminSessionFromRequestCookies } from "@/lib/admin-auth";
 import { deleteCloudinaryImage } from "@/lib/cloudinary";
 import {
-  createMessageFromCeo,
-  deleteMessageFromCeo,
-  getAllMessagesFromCeo,
-  updateMessageFromCeo,
-  type MessageFromCeo,
-} from "@/services/message-from-ceo-service";
+  createHomeNotice,
+  deleteHomeNotice,
+  getAllHomeNotices,
+  getHomeNoticeById,
+  type HomeNotice,
+  updateHomeNotice,
+} from "@/services/home-notice-service";
 import { hasRichTextContent } from "@/lib/rich-text";
 
-function hasRequiredFields(data: Partial<MessageFromCeo>) {
-  return Boolean(
-    data.heading?.trim() &&
-      hasRichTextContent(data.description) &&
-      data.imageUrl?.trim() &&
-      data.imagePublicId?.trim(),
-  );
+function hasImage(data: Partial<HomeNotice>) {
+  return Boolean(data.imageUrl?.trim() && data.imagePublicId?.trim());
+}
+
+function hasText(data: Partial<HomeNotice>) {
+  return hasRichTextContent(data.text);
+}
+
+function hasRequiredFields(data: Partial<HomeNotice>) {
+  return hasImage(data) || hasText(data);
 }
 
 export async function GET(request: NextRequest) {
@@ -30,18 +34,16 @@ export async function GET(request: NextRequest) {
     const id = url.searchParams.get("id");
 
     if (id) {
-      const messages = await getAllMessagesFromCeo();
-      const message = messages.find((item) => item._id?.toString() === id);
-
-      return NextResponse.json(message || null);
+      const notice = await getHomeNoticeById(id);
+      return NextResponse.json(notice || null);
     }
 
-    const messages = await getAllMessagesFromCeo();
-    return NextResponse.json(messages);
+    const notices = await getAllHomeNotices();
+    return NextResponse.json(notices);
   } catch (error) {
-    console.error("Error fetching message from CEO:", error);
+    console.error("Error fetching home notices:", error);
     return NextResponse.json(
-      { error: "Failed to fetch message from CEO" },
+      { error: "Failed to fetch home notices" },
       { status: 500 },
     );
   }
@@ -54,27 +56,27 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const data = (await request.json()) as Partial<Omit<MessageFromCeo, "_id">>;
+    const data = (await request.json()) as Partial<Omit<HomeNotice, "_id">>;
 
     if (!hasRequiredFields(data)) {
       return NextResponse.json(
-        { error: "Heading, description, and image are required" },
+        { error: "Add text, an image, or both." },
         { status: 400 },
       );
     }
 
-    const message = await createMessageFromCeo({
-      heading: data.heading?.trim() || "",
-      description: data.description?.trim() || "",
+    const notice = await createHomeNotice({
+      title: data.title?.trim() || "",
+      text: data.text?.trim() || "",
       imageUrl: data.imageUrl?.trim() || "",
       imagePublicId: data.imagePublicId?.trim() || "",
     });
 
-    return NextResponse.json(message, { status: 201 });
+    return NextResponse.json(notice, { status: 201 });
   } catch (error) {
-    console.error("Error creating message from CEO:", error);
+    console.error("Error creating home notice:", error);
     return NextResponse.json(
-      { error: "Failed to create message from CEO" },
+      { error: "Failed to create home notice" },
       { status: 500 },
     );
   }
@@ -94,44 +96,44 @@ export async function PUT(request: NextRequest) {
       return NextResponse.json({ error: "ID parameter required" }, { status: 400 });
     }
 
-    const body = (await request.json()) as Partial<MessageFromCeo> & {
+    const data = (await request.json()) as Partial<HomeNotice> & {
       removedImagePublicId?: string;
     };
 
-    if (!hasRequiredFields(body)) {
+    if (!hasRequiredFields(data)) {
       return NextResponse.json(
-        { error: "Heading, description, and image are required" },
+        { error: "Add text, an image, or both." },
         { status: 400 },
       );
     }
 
-    if (body.removedImagePublicId) {
+    if (data.removedImagePublicId) {
       try {
-        await deleteCloudinaryImage(body.removedImagePublicId);
+        await deleteCloudinaryImage(data.removedImagePublicId);
       } catch (error) {
-        console.error("Failed to delete removed CEO image:", error);
+        console.error("Failed to delete replaced home notice image:", error);
       }
     }
 
-    const message = await updateMessageFromCeo(id, {
-      heading: body.heading?.trim(),
-      description: body.description?.trim(),
-      imageUrl: body.imageUrl?.trim(),
-      imagePublicId: body.imagePublicId?.trim(),
+    const notice = await updateHomeNotice(id, {
+      title: data.title?.trim() || "",
+      text: data.text?.trim() || "",
+      imageUrl: data.imageUrl?.trim() || "",
+      imagePublicId: data.imagePublicId?.trim() || "",
     });
 
-    if (!message) {
+    if (!notice) {
       return NextResponse.json(
-        { error: "Message from CEO not found" },
+        { error: "Home notice not found" },
         { status: 404 },
       );
     }
 
-    return NextResponse.json(message);
+    return NextResponse.json(notice);
   } catch (error) {
-    console.error("Error updating message from CEO:", error);
+    console.error("Error updating home notice:", error);
     return NextResponse.json(
-      { error: "Failed to update message from CEO" },
+      { error: "Failed to update home notice" },
       { status: 500 },
     );
   }
@@ -151,38 +153,35 @@ export async function DELETE(request: NextRequest) {
       return NextResponse.json({ error: "ID parameter required" }, { status: 400 });
     }
 
-    const messages = await getAllMessagesFromCeo();
-    const message = messages.find((item) => item._id?.toString() === id);
-
-    if (!message) {
+    const existing = await getHomeNoticeById(id);
+    if (!existing) {
       return NextResponse.json(
-        { error: "Message from CEO not found" },
+        { error: "Home notice not found" },
         { status: 404 },
       );
     }
 
-    if (message.imagePublicId) {
+    if (existing.imagePublicId) {
       try {
-        await deleteCloudinaryImage(message.imagePublicId);
+        await deleteCloudinaryImage(existing.imagePublicId);
       } catch (error) {
-        console.error("Failed to delete CEO image:", error);
+        console.error("Failed to delete home notice image:", error);
       }
     }
 
-    const deleted = await deleteMessageFromCeo(id);
-
+    const deleted = await deleteHomeNotice(id);
     if (!deleted) {
       return NextResponse.json(
-        { error: "Failed to delete message from CEO" },
+        { error: "Failed to delete home notice" },
         { status: 500 },
       );
     }
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error("Error deleting message from CEO:", error);
+    console.error("Error deleting home notice:", error);
     return NextResponse.json(
-      { error: "Failed to delete message from CEO" },
+      { error: "Failed to delete home notice" },
       { status: 500 },
     );
   }

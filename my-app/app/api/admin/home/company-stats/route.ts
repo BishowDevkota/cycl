@@ -6,7 +6,7 @@ import {
   getAllCompanyStats,
   updateCompanyStats,
   type CompanyStats,
-} from "@/lib/company-stats-service";
+} from "@/services/company-stats-service";
 
 function normalizeField(value: unknown) {
   return typeof value === "string" ? value.trim() : "";

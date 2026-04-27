@@ -1,12 +1,17 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
-import type { AboutCompanyInfo } from "@/lib/about-company-info-service";
+import { useCallback, useEffect, useState, type ChangeEvent } from "react";
+import Image from "next/image";
+import type { AboutCompanyInfo } from "@/services/about-company-info-service";
+import { RichTextEditor } from "@/components/admin/RichTextEditor";
+import { hasRichTextContent } from "@/lib/rich-text";
 
 function createEmptyForm(): Omit<AboutCompanyInfo, "_id" | "createdAt" | "updatedAt"> {
   return {
     heading: "",
     description: "",
+    imageUrl: "",
+    imagePublicId: "",
   };
 }
 
@@ -15,6 +20,7 @@ export default function AboutCompanyInfoManagement() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [editingId, setEditingId] = useState<string | null>(null);
+  const [uploading, setUploading] = useState(false);
   const [formData, setFormData] = useState(createEmptyForm());
 
   const fetchItems = useCallback(async () => {
@@ -33,6 +39,41 @@ export default function AboutCompanyInfoManagement() {
     }
   }, []);
 
+  const handleImageUpload = async (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setUploading(true);
+    try {
+      const uploadFormData = new FormData();
+      uploadFormData.append("file", file);
+
+      if (formData.imagePublicId) {
+        uploadFormData.append("oldPublicId", formData.imagePublicId);
+      }
+
+      const response = await fetch("/api/admin/upload", {
+        method: "POST",
+        body: uploadFormData,
+      });
+
+      if (!response.ok) {
+        throw new Error("Upload failed");
+      }
+
+      const result = await response.json();
+      setFormData((prev) => ({
+        ...prev,
+        imageUrl: result.secure_url,
+        imagePublicId: result.public_id,
+      }));
+    } catch {
+      setError("Failed to upload image");
+    } finally {
+      setUploading(false);
+    }
+  };
+
   useEffect(() => {
     const timerId = window.setTimeout(() => {
       void fetchItems();
@@ -44,8 +85,13 @@ export default function AboutCompanyInfoManagement() {
   }, [fetchItems]);
 
   const handleSave = async () => {
-    if (!formData.heading.trim() || !formData.description.trim()) {
-      setError("Heading and description are required");
+    if (
+      !formData.heading.trim() ||
+      !hasRichTextContent(formData.description) ||
+      !formData.imageUrl.trim() ||
+      !formData.imagePublicId.trim()
+    ) {
+      setError("Heading, description, and image are required");
       return;
     }
 
@@ -80,6 +126,8 @@ export default function AboutCompanyInfoManagement() {
     setFormData({
       heading: item.heading,
       description: item.description,
+      imageUrl: item.imageUrl,
+      imagePublicId: item.imagePublicId,
     });
   };
 
@@ -145,16 +193,38 @@ export default function AboutCompanyInfoManagement() {
             </div>
 
             <div>
-              <label className="mb-1 block text-sm font-medium">Description</label>
-              <textarea
+              <RichTextEditor
+                label="Description"
                 value={formData.description}
                 onChange={(e) =>
-                  setFormData((prev) => ({ ...prev, description: e.target.value }))
+                  setFormData((prev) => ({ ...prev, description: e }))
                 }
-                rows={8}
-                className="w-full rounded-lg border border-gray-300 px-3 py-2"
                 placeholder="Write the about-company description here"
+                helperText="Use bold, italic, lists, quotes, and links to format the content."
               />
+            </div>
+
+            <div>
+              <label className="mb-1 block text-sm font-medium">Image</label>
+              {formData.imageUrl ? (
+                <div className="mb-3 overflow-hidden rounded-lg border border-gray-200">
+                  <Image
+                    src={formData.imageUrl}
+                    alt="About company preview"
+                    width={1200}
+                    height={800}
+                    className="h-56 w-full object-cover"
+                  />
+                </div>
+              ) : null}
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleImageUpload}
+                disabled={uploading}
+                className="w-full rounded-lg border border-gray-300 px-3 py-2"
+              />
+              {uploading && <p className="mt-2 text-sm text-blue-600">Uploading...</p>}
             </div>
 
             <div className="flex gap-2 pt-2">
@@ -187,10 +257,20 @@ export default function AboutCompanyInfoManagement() {
             <div className="space-y-4">
               {items.map((item) => (
                 <div key={item._id?.toString()} className="rounded-lg border border-gray-200 p-4">
+                  {item.imageUrl ? (
+                    <Image
+                      src={item.imageUrl}
+                      alt={item.heading}
+                      width={800}
+                      height={450}
+                      className="mb-3 h-40 w-full rounded-lg object-cover"
+                    />
+                  ) : null}
                   <h3 className="text-lg font-semibold text-gray-900">{item.heading}</h3>
-                  <p className="mt-2 whitespace-pre-line text-sm text-gray-600">
-                    {item.description}
-                  </p>
+                  <div
+                    className="rich-text-content mt-2 max-h-32 overflow-hidden text-sm text-gray-600"
+                    dangerouslySetInnerHTML={{ __html: item.description }}
+                  />
                   <div className="mt-4 flex gap-2">
                     <button
                       type="button"

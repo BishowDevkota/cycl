@@ -6,7 +6,7 @@ import {
   updateHeroSection,
   deleteHeroSection,
   type HeroSection,
-} from "@/lib/hero-service";
+} from "@/services/hero-service";
 import { deleteCloudinaryImage } from "@/lib/cloudinary";
 
 export async function GET(request: NextRequest) {

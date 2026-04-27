@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import type { ContactDetails } from "@/lib/contact-service";
+import type { ContactDetails } from "@/services/contact-service";
 
 type ContactField = keyof Omit<ContactDetails, "_id" | "isActive" | "createdAt" | "updatedAt">;
 type ContactProperty = "text" | "link";

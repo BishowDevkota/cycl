@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import type { HeroSlide } from "@/lib/hero-service";
+import type { HeroSlide } from "@/services/hero-service";
 
 type HeroCarouselProps = {
   slides: HeroSlide[];

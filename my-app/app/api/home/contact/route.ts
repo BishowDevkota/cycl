@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getContactDetails, type ContactDetails } from "@/lib/contact-service";
+import { getContactDetails, type ContactDetails } from "@/services/contact-service";
 
 type ContactItemLike =
   | ContactDetails["phone"]

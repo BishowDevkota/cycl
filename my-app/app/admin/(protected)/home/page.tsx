@@ -75,6 +75,19 @@ export default function AdminHomePage() {
             Manage company stats
           </span>
         </Link>
+
+        <Link
+          href="/admin/home/notices"
+          className="group rounded-xl border border-zinc-200 p-5 transition hover:border-zinc-300 hover:shadow-md"
+        >
+          <p className="text-lg font-semibold text-zinc-900">Home Notices</p>
+          <p className="mt-2 text-sm text-zinc-600">
+            Manage homepage popup notices with text, image, or both.
+          </p>
+          <span className="mt-4 inline-flex text-sm font-medium text-zinc-900">
+            Manage notices
+          </span>
+        </Link>
       </div>
     </main>
   );

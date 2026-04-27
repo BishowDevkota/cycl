@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getAboutCompanyInfo, getAllAboutCompanyInfos } from "@/lib/about-company-info-service";
+import { getAboutCompanyInfo, getAllAboutCompanyInfos } from "@/services/about-company-info-service";
 
 export async function GET(request: NextRequest) {
   try {

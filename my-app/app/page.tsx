@@ -3,19 +3,25 @@ import { WelcomeSection } from '@/components/WelcomeSection';
 import { CompanyStatsSection } from '@/components/CompanyStatsSection';
 import { Footer } from '@/components/Footer';
 import { ActiveNoticePopup } from '@/components/home/ActiveNoticePopup';
+import { RichTextContent } from '@/components/public/RichTextContent';
 import Image from 'next/image';
 import Link from 'next/link';
 import { getMessageFromCeo } from '@/lib/message-from-ceo-service';
 import ServicesSection from '@/components/ServicesSection';
+import { getAboutCompanyInfo } from '@/services/about-company-info-service';
+
+
+
 
 export default async function Home() {
+  const aboutCompanyInfo = await getAboutCompanyInfo();
   const messageFromCeo = await getMessageFromCeo();
 
   return (
     <div className="flex flex-col min-h-screen">
       <ActiveNoticePopup />
       <HeroSection />
-      <WelcomeSection />
+      <WelcomeSection aboutCompanyInfo={aboutCompanyInfo} />
 
       <main className="relative flex-1 w-full overflow-hidden bg-[linear-gradient(180deg,#f7fafc_0%,#ffffff_45%,#f6f8fb_100%)] py-12 sm:py-16 lg:py-20">
         <div className="pointer-events-none absolute -top-14 left-1/2 h-56 w-[65vw] -translate-x-1/2 rounded-full bg-[#8ec5b9]/20 blur-3xl" />
@@ -34,9 +40,13 @@ export default async function Home() {
                 <span className="pointer-events-none absolute -left-2 -top-5 text-[64px] leading-none text-[#e0bb8f]" aria-hidden="true">
                   &ldquo;
                 </span>
-                <p className="relative whitespace-pre-line text-base leading-8 text-slate-700 sm:text-[17px]">
-                  {messageFromCeo?.description || 'First, I would like to extend my warm regards and heartfelt welcome to all stakeholders associated with this financial institution.'}
-                </p>
+                <RichTextContent
+                  html={
+                    messageFromCeo?.description ||
+                    'First, I would like to extend my warm regards and heartfelt welcome to all stakeholders associated with this financial institution.'
+                  }
+                  className="rich-text-content relative text-base leading-8 text-slate-700 sm:text-[17px]"
+                />
               </div>
 
               <div className="relative mx-auto w-full max-w-[220px] sm:max-w-[230px]">
@@ -84,7 +94,7 @@ export default async function Home() {
         </div>
 
         <CompanyStatsSection />
-        <ServicesSection />
+        <ServicesSection/>
       </main>
 
       <Footer />

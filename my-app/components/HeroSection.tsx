@@ -1,4 +1,4 @@
-import { getHeroSection } from "@/lib/hero-service";
+import { getHeroSection } from "@/services/hero-service";
 import HeroCarousel from "@/components/HeroCarousel";
 
 export async function HeroSection() {
