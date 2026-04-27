@@ -6,6 +6,7 @@ import { ActiveNoticePopup } from '@/components/home/ActiveNoticePopup';
 import Image from 'next/image';
 import Link from 'next/link';
 import { getMessageFromCeo } from '@/lib/message-from-ceo-service';
+import ServicesSection from '@/components/ServicesSection';
 
 export default async function Home() {
   const messageFromCeo = await getMessageFromCeo();
@@ -83,6 +84,7 @@ export default async function Home() {
         </div>
 
         <CompanyStatsSection />
+        <ServicesSection />
       </main>
 
       <Footer />
