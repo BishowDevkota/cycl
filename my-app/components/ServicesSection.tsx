@@ -114,20 +114,21 @@ export default function ServicesSection(): React.JSX.Element {
         }
 
         .eyebrow-text {
-          font-size: 13px;
-          font-weight: 600;
+          font-size: 16px;
+          font-weight: ;
           letter-spacing: 0.15em;
           text-transform: uppercase;
           color: var(--teal-mid);
         }
 
         .services-heading {
-          font-family: 'DM Serif Display', serif;
-          font-size: clamp(2.2rem, 5vw, 3.5rem);
+          font-family: sans-serif;
+          font-size: 40px;
           color: var(--teal-deep);
           text-align: center;
           margin: 0 0 16px 0;
           line-height: 1.15;
+          font-weight: 700;
         }
 
         .services-subtext {
