@@ -84,7 +84,7 @@ const newsData: NewsItem[] = [
   },
 ];
 
-export default function NewsEvents() {
+export default function NewsAndNotices() {
   const [activeFilter, setActiveFilter] = useState<"all" | "news" | "notice">(
     "all"
   );
