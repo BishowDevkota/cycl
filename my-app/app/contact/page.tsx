@@ -25,8 +25,8 @@ export default function ContactPage() {
           description="Reach us through phone, email, social channels, or by visiting the head office location shown on the map."
         />
 
-        <div className="grid gap-6 lg:grid-cols-2">
-          <article className="overflow-hidden rounded-b-3xl rounded-t-2xl border border-[#d7e6ee] bg-[#f9fcfe] shadow-[0_18px_36px_rgba(16,53,74,0.08)]">
+        <div className="grid gap-6 lg:grid-cols-[1.45fr_0.95fr] xl:grid-cols-[1.55fr_0.9fr]">
+          <article className="w-full overflow-hidden rounded-b-3xl rounded-t-2xl border border-[#d7e6ee] bg-[#f9fcfe] shadow-[0_18px_36px_rgba(16,53,74,0.08)]">
             <iframe
               title="CYC Nepal Head Office Map"
               src={contactDirectory.mapEmbedUrl}
@@ -40,7 +40,7 @@ export default function ContactPage() {
             </div>
           </article>
 
-          <article className="rounded-2xl border border-[#d7e6ee] bg-[#f9fcfe] p-5">
+          <article className="w-full rounded-2xl border border-[#d7e6ee] bg-[#f9fcfe] p-5">
             <h3 className="text-lg font-semibold text-[#123451]">Contact Details</h3>
             <div className="mt-4 space-y-3 text-sm text-slate-700">
               <p>
@@ -81,7 +81,7 @@ export default function ContactPage() {
         </div>
       </section>
 
-      <section className="mt-8 grid gap-8 lg:grid-cols-[1.1fr_1fr]">
+      <section className="mt-8 grid gap-8 lg:grid-cols-[1.2fr_0.95fr] xl:grid-cols-[1.25fr_0.9fr]">
         <ContactForm />
 
         <article className="rounded-2xl border border-[#d5e4ec] bg-white p-5 shadow-[0_18px_36px_rgba(16,53,74,0.08)] sm:p-6">
