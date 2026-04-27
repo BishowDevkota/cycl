@@ -6,7 +6,7 @@ import { ActiveNoticePopup } from '@/components/home/ActiveNoticePopup';
 import { RichTextContent } from '@/components/public/RichTextContent';
 import Image from 'next/image';
 import Link from 'next/link';
-import { getMessageFromCeo } from '@/lib/message-from-ceo-service';
+import { getMessageFromCeo } from '@/services/message-from-ceo-service';
 import ServicesSection from '@/components/ServicesSection';
 import { getAboutCompanyInfo } from '@/services/about-company-info-service';
 
