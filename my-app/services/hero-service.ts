@@ -2,17 +2,14 @@ import { getDb } from "@/lib/mongodb";
 import { ObjectId } from "mongodb";
 
 export interface HeroSlide {
-  title: string;
-  subtitle?: string;
   imageUrl: string;
   imagePublicId: string;
-  ctaText?: string;
-  ctaLink?: string;
 }
 
 export interface HeroSection {
   _id?: ObjectId;
   title: string;
+  subtitle?: string;
   slides: HeroSlide[];
   isActive: boolean;
   createdAt?: Date;

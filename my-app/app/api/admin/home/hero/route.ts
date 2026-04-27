@@ -53,7 +53,7 @@ export async function POST(request: NextRequest) {
     }
 
     const invalidSlide = data.slides.find(
-      (slide) => !slide.title || !slide.imageUrl || !slide.imagePublicId,
+      (slide) => !slide.imageUrl || !slide.imagePublicId,
     );
 
     if (invalidSlide) {

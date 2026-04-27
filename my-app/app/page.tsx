@@ -9,11 +9,41 @@ import NewsAndNotices from '@/components/NewsAndNotices';
 import ContactHome from '@/components/ContactHome';
 import { MessageFromCeoSection } from '@/components/public/MessageFromCeoSection';
 
+import { getContactDetails } from '@/services/contact-service';
+
+
 
 
 export default async function Home() {
   const aboutCompanyInfo = await getAboutCompanyInfo();
   const messageFromCeo = await getMessageFromCeo();
+  const rawContactDetails = await getContactDetails();
+
+  const contactDetails = rawContactDetails
+    ? {
+        phone: {
+          text: rawContactDetails.phone?.text ?? "",
+          link: rawContactDetails.phone?.link ?? "",
+        },
+        email: {
+          text: rawContactDetails.email?.text ?? "",
+          link: rawContactDetails.email?.link ?? "",
+        },
+        facebook: {
+          text: rawContactDetails.facebook?.text ?? "",
+          link: rawContactDetails.facebook?.link ?? "",
+        },
+        whatsapp: {
+          text: rawContactDetails.whatsapp?.text ?? "",
+          link: rawContactDetails.whatsapp?.link ?? "",
+        },
+        location: {
+          text: rawContactDetails.location?.text ?? "",
+          link: rawContactDetails.location?.link ?? "",
+        },
+        isActive: rawContactDetails.isActive ?? false,
+      }
+    : null;
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -31,9 +61,9 @@ export default async function Home() {
         />
 
         <CompanyStatsSection />
-        <ServicesSection/>
+        <ServicesSection />
         <NewsAndNotices />
-        <ContactHome />
+        <ContactHome contactDetails={contactDetails} />
       </main>
 
       <Footer />
