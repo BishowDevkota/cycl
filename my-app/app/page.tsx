@@ -2,7 +2,6 @@ import { HeroSection } from '@/components/HeroSection';
 import { WelcomeSection } from '@/components/WelcomeSection';
 import { CompanyStatsSection } from '@/components/CompanyStatsSection';
 import { Footer } from '@/components/Footer';
-import { ActiveNoticePopup } from '@/components/home/ActiveNoticePopup';
 import { getMessageFromCeo } from '@/services/message-from-ceo-service';
 import ServicesSection from '@/components/ServicesSection';
 import { getAboutCompanyInfo } from '@/services/about-company-info-service';
@@ -18,7 +17,6 @@ export default async function Home() {
 
   return (
     <div className="flex flex-col min-h-screen">
-      <ActiveNoticePopup />
       <HeroSection />
       <WelcomeSection aboutCompanyInfo={aboutCompanyInfo} />
 
