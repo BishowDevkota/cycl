@@ -8,11 +8,12 @@ import {
   updateMessageFromCeo,
   type MessageFromCeo,
 } from "@/lib/message-from-ceo-service";
+import { hasRichTextContent } from "@/lib/rich-text";
 
 function hasRequiredFields(data: Partial<MessageFromCeo>) {
   return Boolean(
     data.heading?.trim() &&
-      data.description?.trim() &&
+      hasRichTextContent(data.description) &&
       data.imageUrl?.trim() &&
       data.imagePublicId?.trim(),
   );

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getAdminSessionFromRequestCookies } from "@/lib/admin-auth";
+import { deleteCloudinaryImage } from "@/lib/cloudinary";
 import {
   createAboutCompanyInfo,
   deleteAboutCompanyInfo,
@@ -7,9 +8,15 @@ import {
   updateAboutCompanyInfo,
   type AboutCompanyInfo,
 } from "@/lib/about-company-info-service";
+import { hasRichTextContent } from "@/lib/rich-text";
 
 function hasRequiredFields(data: Partial<AboutCompanyInfo>) {
-  return Boolean(data.heading?.trim() && data.description?.trim());
+  return Boolean(
+    data.heading?.trim() &&
+      hasRichTextContent(data.description) &&
+      data.imageUrl?.trim() &&
+      data.imagePublicId?.trim(),
+  );
 }
 
 export async function GET(request: NextRequest) {
@@ -61,6 +68,8 @@ export async function POST(request: NextRequest) {
     const aboutCompanyInfo = await createAboutCompanyInfo({
       heading: data.heading?.trim() || "",
       description: data.description?.trim() || "",
+      imageUrl: data.imageUrl?.trim() || "",
+      imagePublicId: data.imagePublicId?.trim() || "",
     });
 
     return NextResponse.json(aboutCompanyInfo, { status: 201 });
@@ -91,14 +100,25 @@ export async function PUT(request: NextRequest) {
 
     if (!hasRequiredFields(data)) {
       return NextResponse.json(
-        { error: "Heading and description are required" },
+        { error: "Heading, description, and image are required" },
         { status: 400 },
       );
+    }
+
+    const removedImagePublicId = (data as { removedImagePublicId?: string }).removedImagePublicId;
+    if (removedImagePublicId) {
+      try {
+        await deleteCloudinaryImage(removedImagePublicId);
+      } catch (error) {
+        console.error("Failed to delete removed about company image:", error);
+      }
     }
 
     const aboutCompanyInfo = await updateAboutCompanyInfo(id, {
       heading: data.heading?.trim(),
       description: data.description?.trim(),
+      imageUrl: data.imageUrl?.trim(),
+      imagePublicId: data.imagePublicId?.trim(),
     });
 
     if (!aboutCompanyInfo) {

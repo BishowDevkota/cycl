@@ -1,5 +1,8 @@
+import Image from "next/image";
 import { PublicPageShell } from "@/components/public/PublicPageShell";
 import { SectionHeading } from "@/components/public/SectionHeading";
+import { RichTextContent } from "@/components/public/RichTextContent";
+import { getAboutCompanyInfo } from "@/lib/about-company-info-service";
 import {
   aboutCompanyProfile,
   boardOfDirectors,
@@ -7,7 +10,9 @@ import {
   managementTeam,
 } from "@/lib/public-content";
 
-export default function AboutUsPage() {
+export default async function AboutUsPage() {
+  const aboutCompanyInfo = await getAboutCompanyInfo();
+
   return (
     <PublicPageShell
       eyebrow="About Us"
@@ -19,61 +24,82 @@ export default function AboutUsPage() {
       ]}
     >
       <section id="profile" className="rounded-3xl border border-[#d9e8ef] bg-white p-6 shadow-[0_20px_40px_rgba(13,44,62,0.08)] sm:p-8">
-        <SectionHeading
-          eyebrow="Company Profile"
-          title={aboutCompanyProfile.heading}
-          description={aboutCompanyProfile.overview}
-        />
+        <div className={`grid gap-8 ${aboutCompanyInfo?.imageUrl ? "lg:grid-cols-[1.08fr_0.92fr] lg:items-start" : ""}`}>
+          <div>
+            <SectionHeading
+              eyebrow="Company Profile"
+              title={aboutCompanyInfo?.heading || aboutCompanyProfile.heading}
+              description="Managed from the admin dashboard with rich text formatting, including bold, italic, lists, and links."
+            />
 
-        <div className="grid gap-4 md:grid-cols-2">
-          <article className="rounded-2xl border border-[#dce9ef] bg-[#f7fbfd] p-5">
-            <h3 className="text-lg font-semibold text-[#123451]">Vision</h3>
-            <p className="mt-3 text-sm leading-7 text-slate-700 sm:text-base">
-              {aboutCompanyProfile.vision}
-            </p>
-          </article>
+            <RichTextContent
+              html={aboutCompanyInfo?.description || aboutCompanyProfile.overview}
+              className="rich-text-content rounded-2xl border border-[#dce9ef] bg-[#f7fbfd] p-5 text-sm leading-7 text-slate-700 sm:text-base"
+            />
 
-          <article className="rounded-2xl border border-[#dce9ef] bg-[#f7fbfd] p-5">
-            <h3 className="text-lg font-semibold text-[#123451]">Mission</h3>
-            <p className="mt-3 text-sm leading-7 text-slate-700 sm:text-base">
-              {aboutCompanyProfile.mission}
-            </p>
-          </article>
-        </div>
+            <div className="mt-6 grid gap-4 md:grid-cols-2">
+              <article className="rounded-2xl border border-[#dce9ef] bg-[#f7fbfd] p-5">
+                <h3 className="text-lg font-semibold text-[#123451]">Vision</h3>
+                <p className="mt-3 text-sm leading-7 text-slate-700 sm:text-base">
+                  {aboutCompanyProfile.vision}
+                </p>
+              </article>
 
-        <div className="mt-6 grid gap-4 lg:grid-cols-2">
-          <article className="rounded-2xl border border-[#dce9ef] bg-white p-5">
-            <h3 className="text-lg font-semibold text-[#123451]">Goals</h3>
-            <ul className="mt-3 space-y-2">
-              {aboutCompanyProfile.goals.map((goal) => (
-                <li key={goal} className="flex gap-3 text-sm leading-7 text-slate-700 sm:text-base">
-                  <span
-                    className="mt-2 inline-flex h-2.5 w-2.5 shrink-0 rounded-full bg-[#0d837f]"
-                    aria-hidden="true"
-                  />
-                  <span>{goal}</span>
-                </li>
-              ))}
-            </ul>
-          </article>
+              <article className="rounded-2xl border border-[#dce9ef] bg-[#f7fbfd] p-5">
+                <h3 className="text-lg font-semibold text-[#123451]">Mission</h3>
+                <p className="mt-3 text-sm leading-7 text-slate-700 sm:text-base">
+                  {aboutCompanyProfile.mission}
+                </p>
+              </article>
+            </div>
 
-          <article className="rounded-2xl border border-[#dce9ef] bg-white p-5">
-            <h3 className="text-lg font-semibold text-[#123451]">Objectives</h3>
-            <ul className="mt-3 space-y-2">
-              {aboutCompanyProfile.objectives.map((objective) => (
-                <li
-                  key={objective}
-                  className="flex gap-3 text-sm leading-7 text-slate-700 sm:text-base"
-                >
-                  <span
-                    className="mt-2 inline-flex h-2.5 w-2.5 shrink-0 rounded-full bg-[#f6921e]"
-                    aria-hidden="true"
-                  />
-                  <span>{objective}</span>
-                </li>
-              ))}
-            </ul>
-          </article>
+            <div className="mt-6 grid gap-4 lg:grid-cols-2">
+              <article className="rounded-2xl border border-[#dce9ef] bg-white p-5">
+                <h3 className="text-lg font-semibold text-[#123451]">Goals</h3>
+                <ul className="mt-3 space-y-2">
+                  {aboutCompanyProfile.goals.map((goal) => (
+                    <li key={goal} className="flex gap-3 text-sm leading-7 text-slate-700 sm:text-base">
+                      <span
+                        className="mt-2 inline-flex h-2.5 w-2.5 shrink-0 rounded-full bg-[#0d837f]"
+                        aria-hidden="true"
+                      />
+                      <span>{goal}</span>
+                    </li>
+                  ))}
+                </ul>
+              </article>
+
+              <article className="rounded-2xl border border-[#dce9ef] bg-white p-5">
+                <h3 className="text-lg font-semibold text-[#123451]">Objectives</h3>
+                <ul className="mt-3 space-y-2">
+                  {aboutCompanyProfile.objectives.map((objective) => (
+                    <li
+                      key={objective}
+                      className="flex gap-3 text-sm leading-7 text-slate-700 sm:text-base"
+                    >
+                      <span
+                        className="mt-2 inline-flex h-2.5 w-2.5 shrink-0 rounded-full bg-[#f6921e]"
+                        aria-hidden="true"
+                      />
+                      <span>{objective}</span>
+                    </li>
+                  ))}
+                </ul>
+              </article>
+            </div>
+          </div>
+
+          {aboutCompanyInfo?.imageUrl ? (
+            <div className="relative overflow-hidden rounded-3xl border border-[#dce9ef] bg-[#f7fbfd] shadow-[0_18px_36px_rgba(13,44,62,0.08)]">
+              <Image
+                src={aboutCompanyInfo.imageUrl}
+                alt={aboutCompanyInfo.heading || "About company image"}
+                width={1200}
+                height={900}
+                className="h-full w-full object-cover"
+              />
+            </div>
+          ) : null}
         </div>
       </section>
 

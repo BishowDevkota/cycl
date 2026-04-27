@@ -3,6 +3,7 @@ import { WelcomeSection } from '@/components/WelcomeSection';
 import { CompanyStatsSection } from '@/components/CompanyStatsSection';
 import { Footer } from '@/components/Footer';
 import { ActiveNoticePopup } from '@/components/home/ActiveNoticePopup';
+import { RichTextContent } from '@/components/public/RichTextContent';
 import Image from 'next/image';
 import Link from 'next/link';
 import { getMessageFromCeo } from '@/lib/message-from-ceo-service';
@@ -33,9 +34,13 @@ export default async function Home() {
                 <span className="pointer-events-none absolute -left-2 -top-5 text-[64px] leading-none text-[#e0bb8f]" aria-hidden="true">
                   &ldquo;
                 </span>
-                <p className="relative whitespace-pre-line text-base leading-8 text-slate-700 sm:text-[17px]">
-                  {messageFromCeo?.description || 'First, I would like to extend my warm regards and heartfelt welcome to all stakeholders associated with this financial institution.'}
-                </p>
+                <RichTextContent
+                  html={
+                    messageFromCeo?.description ||
+                    'First, I would like to extend my warm regards and heartfelt welcome to all stakeholders associated with this financial institution.'
+                  }
+                  className="rich-text-content relative text-base leading-8 text-slate-700 sm:text-[17px]"
+                />
               </div>
 
               <div className="relative mx-auto w-full max-w-[220px] sm:max-w-[230px]">

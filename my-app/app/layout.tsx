@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { TopContactBar } from "@/components/TopContactBar";
+import "react-quill/dist/quill.snow.css";
 import "./globals.css";
 
 const geistSans = Geist({

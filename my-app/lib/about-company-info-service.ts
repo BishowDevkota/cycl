@@ -5,6 +5,8 @@ export interface AboutCompanyInfo {
   _id?: ObjectId;
   heading: string;
   description: string;
+  imageUrl: string;
+  imagePublicId: string;
   createdAt?: Date;
   updatedAt?: Date;
 }

@@ -2,6 +2,8 @@
 
 import { useCallback, useEffect, useState } from "react";
 import type { MessageFromCeo } from "@/lib/message-from-ceo-service";
+import { RichTextEditor } from "@/components/admin/RichTextEditor";
+import { hasRichTextContent } from "@/lib/rich-text";
 
 function createEmptyForm(): Omit<MessageFromCeo, "_id" | "createdAt" | "updatedAt"> {
   return {
@@ -84,7 +86,7 @@ export default function MessageFromCeoManagement() {
   const handleSave = async () => {
     if (
       !formData.heading.trim() ||
-      !formData.description.trim() ||
+      !hasRichTextContent(formData.description) ||
       !formData.imageUrl.trim() ||
       !formData.imagePublicId.trim()
     ) {
@@ -190,15 +192,14 @@ export default function MessageFromCeoManagement() {
             </div>
 
             <div>
-              <label className="mb-1 block text-sm font-medium">Description</label>
-              <textarea
+              <RichTextEditor
+                label="Description"
                 value={formData.description}
                 onChange={(e) =>
-                  setFormData((prev) => ({ ...prev, description: e.target.value }))
+                  setFormData((prev) => ({ ...prev, description: e }))
                 }
-                rows={8}
-                className="w-full rounded-lg border border-gray-300 px-3 py-2"
                 placeholder="Write the CEO message here"
+                helperText="Use bold, italic, lists, quotes, and links to format the message."
               />
             </div>
 
@@ -257,9 +258,10 @@ export default function MessageFromCeoManagement() {
                     className="mb-3 h-40 w-full rounded-lg object-cover"
                   />
                   <h3 className="text-lg font-semibold text-gray-900">{item.heading}</h3>
-                  <p className="mt-2 whitespace-pre-line text-sm text-gray-600">
-                    {item.description}
-                  </p>
+                  <div
+                    className="rich-text-content mt-2 max-h-28 overflow-hidden text-sm text-gray-600"
+                    dangerouslySetInnerHTML={{ __html: item.description }}
+                  />
                   <div className="mt-4 flex gap-2">
                     <button
                       type="button"
