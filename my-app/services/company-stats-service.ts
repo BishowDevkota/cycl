@@ -3,12 +3,12 @@ import { getDb } from "@/lib/mongodb";
 
 export interface CompanyStats {
   _id?: ObjectId;
-  numberOfBranchOffice: string;
-  loanOutstandingNpr: string;
-  numberOfCenters: string;
-  savingDepositNpr: string;
-  totalStaffIncludingTrainee: string;
-  activeClients: string;
+  heading: string;
+  value: string;
+  imageUrl: string;
+  imagePublicId: string;
+  displayOrder: number;
+  isActive: boolean;
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -19,14 +19,18 @@ export async function getCompanyStats(): Promise<CompanyStats | null> {
   const db = await getDb();
   const stats = await db
     .collection<CompanyStats>(COLLECTION_NAME)
-    .findOne({}, { sort: { createdAt: -1, _id: -1 } });
+    .findOne({ isActive: true }, { sort: { displayOrder: 1, createdAt: -1, _id: -1 } });
 
   return stats || null;
 }
 
 export async function getAllCompanyStats(): Promise<CompanyStats[]> {
   const db = await getDb();
-  return db.collection<CompanyStats>(COLLECTION_NAME).find({}).toArray();
+  return db
+    .collection<CompanyStats>(COLLECTION_NAME)
+    .find({})
+    .sort({ displayOrder: 1, createdAt: -1, _id: -1 })
+    .toArray();
 }
 
 export async function createCompanyStats(

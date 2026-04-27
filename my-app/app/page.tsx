@@ -9,10 +9,6 @@ import Link from 'next/link';
 import { getMessageFromCeo } from '@/services/message-from-ceo-service';
 import ServicesSection from '@/components/ServicesSection';
 import { getAboutCompanyInfo } from '@/services/about-company-info-service';
-import {
-  getActiveHomeServices,
-  getHomeServicesSectionMeta,
-} from '@/services/home-services-service';
 import NewsAndNotices from '@/components/NewsAndNotices';
 
 
@@ -21,20 +17,6 @@ import NewsAndNotices from '@/components/NewsAndNotices';
 export default async function Home() {
   const aboutCompanyInfo = await getAboutCompanyInfo();
   const messageFromCeo = await getMessageFromCeo();
-  const homeServices = await getActiveHomeServices();
-  const homeServicesMeta = await getHomeServicesSectionMeta();
-  const servicesSectionItems = homeServices.map((item, index) => ({
-    id: item._id?.toString() || `home-service-${index}`,
-    title: item.title,
-    description: item.description,
-    image:
-      item.imageUrl ||
-      (item.route.toLowerCase().includes('/savings')
-        ? '/images/services/saving.avif'
-        : '/images/services/loans.avif'),
-    stat: item.stat,
-    route: item.route,
-  }));
 
   return (
     <div className="flex flex-col min-h-screen">

@@ -1,58 +1,115 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import Image from "next/image";
-import type { CompanyStats } from "@/services/company-stats-service";
 
-const STATS_FIELDS: Array<{
-  key: keyof Omit<CompanyStats, "_id" | "createdAt" | "updatedAt">;
-  label: string;
-  image: string;
-}> = [
+export interface CompanyStatCard {
+  _id?: string;
+  heading: string;
+  value: string;
+  imageUrl: string;
+  displayOrder: number;
+  isActive: boolean;
+}
+
+const fallbackStats: CompanyStatCard[] = [
   {
-    key: "numberOfBranchOffice",
-    label: "Branch Offices",
-    image: "/company highlights/office branch.png",
+    _id: "fallback-1",
+    heading: "Branch Offices",
+    value: "3321",
+    imageUrl: "/company highlights/office branch.png",
+    displayOrder: 0,
+    isActive: true,
   },
   {
-    key: "loanOutstandingNpr",
-    label: "Loan Outstanding",
-    image: "/company highlights/loan_outstanding.png",
+    _id: "fallback-2",
+    heading: "Loan Outstanding",
+    value: "514,651 NPR",
+    imageUrl: "/company highlights/loan_outstanding.png",
+    displayOrder: 1,
+    isActive: true,
   },
   {
-    key: "numberOfCenters",
-    label: "Number of Centers",
-    image: "/company highlights/centers.webp",
+    _id: "fallback-3",
+    heading: "Number of Centers",
+    value: "274",
+    imageUrl: "/company highlights/centers.webp",
+    displayOrder: 2,
+    isActive: true,
   },
   {
-    key: "savingDepositNpr",
-    label: "Savings & Deposits",
-    image: "/company highlights/saving_deposit.png",
+    _id: "fallback-4",
+    heading: "Savings & Deposits",
+    value: "1,150,000 NPR",
+    imageUrl: "/company highlights/saving_deposit.png",
+    displayOrder: 3,
+    isActive: true,
   },
   {
-    key: "totalStaffIncludingTrainee",
-    label: "Total Staff",
-    image: "/company highlights/staff_icon.webp",
+    _id: "fallback-5",
+    heading: "Total Staff",
+    value: "65",
+    imageUrl: "/company highlights/staff_icon.webp",
+    displayOrder: 4,
+    isActive: true,
   },
   {
-    key: "activeClients",
-    label: "Active Clients",
-    image: "/company highlights/client.jpg",
+    _id: "fallback-6",
+    heading: "Active Clients",
+    value: "62,263",
+    imageUrl: "/company highlights/client.jpg",
+    displayOrder: 5,
+    isActive: true,
   },
 ];
 
 export function CompanyStatsSection() {
   const [visible, setVisible] = useState(false);
+  const [stats, setStats] = useState<CompanyStatCard[]>([]);
   const sectionRef = useRef<HTMLElement | null>(null);
 
-  const stats: CompanyStats = {
-    numberOfBranchOffice: "3321",
-    loanOutstandingNpr: "3321",
-    numberOfCenters: "32321",
-    savingDepositNpr: "514651",
-    totalStaffIncludingTrainee: "65",
-    activeClients: "62263",
-  };
+  useEffect(() => {
+    let active = true;
+
+    const fetchStats = async () => {
+      try {
+        const response = await fetch("/api/home/company-stats", {
+          cache: "no-store",
+        });
+
+        if (!response.ok) {
+          throw new Error("Failed to load company stats");
+        }
+
+        const data = (await response.json()) as unknown;
+        const statItems = Array.isArray(data) ? data : [];
+
+        if (!active) return;
+
+        setStats(
+          statItems
+            .filter(
+              (item): item is CompanyStatCard =>
+                typeof item === "object" &&
+                item !== null &&
+                typeof item.heading === "string" &&
+                typeof item.value === "string" &&
+                typeof item.imageUrl === "string",
+            )
+            .sort((a, b) => a.displayOrder - b.displayOrder),
+        );
+      } catch (error) {
+        console.error("Error fetching public company stats:", error);
+      }
+    };
+
+    void fetchStats();
+
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  const renderedStats = stats.length > 0 ? stats : fallbackStats;
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -274,23 +331,21 @@ export function CompanyStatsSection() {
           </div>
 
           <div className="highlights-grid">
-            {STATS_FIELDS.map((field) => (
+            {renderedStats.map((item, index) => (
               <div
-                key={field.key}
+                key={item._id || `${item.heading}-${index}`}
                 className={`highlight-card ${visible ? "visible" : ""}`}
               >
                 <div className="icon-wrapper">
-                  <Image
-                    src={field.image}
-                    alt={field.label}
-                    width={72}
-                    height={72}
+                  <img
+                    src={item.imageUrl || "/company highlights/office branch.png"}
+                    alt={item.heading}
                     className="service-icon-image"
                   />
                 </div>
-                <p className="stat-label">{field.label}</p>
+                <p className="stat-label">{item.heading}</p>
                 <div className="card-divider" />
-                <p className="stat-value">{stats[field.key] || "-"}</p>
+                <p className="stat-value">{item.value || "-"}</p>
               </div>
             ))}
           </div>

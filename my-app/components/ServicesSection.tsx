@@ -40,21 +40,96 @@ interface ServicesSectionProps {
   description?: string;
 }
 
+interface ServicesSectionApiMeta {
+  heading?: string;
+  description?: string;
+}
+
 export default function ServicesSection({
   services,
   heading,
   description,
 }: ServicesSectionProps): React.JSX.Element {
   const [visible, setVisible] = useState<boolean>(false);
+  const [apiServices, setApiServices] = useState<ServicesSectionItem[]>([]);
+  const [apiHeading, setApiHeading] = useState<string>("");
+  const [apiDescription, setApiDescription] = useState<string>("");
   const sectionRef = useRef<HTMLElement | null>(null);
 
-  const resolvedServices = services && services.length > 0 ? services : fallbackServices;
+  useEffect(() => {
+    let active = true;
+
+    const fetchServices = async () => {
+      try {
+        const [servicesResponse, metaResponse] = await Promise.all([
+          fetch("/api/home/services", { cache: "no-store" }),
+          fetch("/api/home/services?scope=meta", { cache: "no-store" }),
+        ]);
+
+        const serviceJson = servicesResponse.ok ? await servicesResponse.json() : [];
+        const metaJson = metaResponse.ok ? await metaResponse.json() : null;
+
+        const serviceItems = Array.isArray(serviceJson)
+          ? (serviceJson as Array<{
+              _id?: string;
+              title?: string;
+              description?: string;
+              imageUrl?: string;
+              stat?: string;
+              route?: string;
+            }>)
+          : [];
+
+        const meta = metaJson ? (metaJson as ServicesSectionApiMeta) : null;
+
+        if (!active) {
+          return;
+        }
+
+        const mappedServices = serviceItems
+          .filter((item) => item?.title && item?.description && item?.route)
+          .map((item, index) => ({
+            id: item._id?.toString?.() || `${item.route}-${index}`,
+            title: item.title || "",
+            description: item.description || "",
+            stat: item.stat || "",
+            route: item.route || "",
+            image:
+              item.imageUrl ||
+              (item.route?.toLowerCase().includes("/savings")
+                ? "/images/services/saving.avif"
+                : "/images/services/loans.avif"),
+          }));
+
+        setApiServices(mappedServices);
+        setApiHeading(meta?.heading || "");
+        setApiDescription(meta?.description || "");
+      } catch (error) {
+        console.error("Error fetching public services data:", error);
+      }
+    };
+
+    void fetchServices();
+
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  const resolvedServices =
+    services && services.length > 0
+      ? services
+      : apiServices && apiServices.length > 0
+      ? apiServices
+      : fallbackServices;
   const totalServices = resolvedServices.length;
   const resolvedHeading =
     heading?.trim() ||
+    apiHeading?.trim() ||
     `${totalServices} Service${totalServices === 1 ? "" : "s"} We Offer`;
   const resolvedDescription =
     description?.trim() ||
+    apiDescription?.trim() ||
     `Explore ${totalServices} service${totalServices === 1 ? "" : "s"} crafted for your financial needs.`;
 
   useEffect(() => {
