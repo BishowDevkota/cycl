@@ -15,5 +15,11 @@ export async function HeroSection() {
     );
   }
 
-  return <HeroCarousel slides={hero.slides} />;
+  return (
+    <HeroCarousel
+      title={hero.title}
+      subtitle={hero.subtitle}
+      slides={hero.slides}
+    />
+  );
 }

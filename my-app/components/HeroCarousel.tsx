@@ -2,11 +2,12 @@
 
 import { useEffect, useState } from "react";
 import Image from "next/image";
-import Link from "next/link";
 import type { HeroSlide } from "@/services/hero-service";
 
 type HeroCarouselProps = {
   slides: HeroSlide[];
+  title: string;
+  subtitle?: string;
   intervalMs?: number;
 };
 
@@ -25,6 +26,8 @@ const timeFormatter = new Intl.DateTimeFormat("en-US", {
 
 export default function HeroCarousel({
   slides,
+  title,
+  subtitle,
   intervalMs = 6000,
 }: HeroCarouselProps) {
   const [activeIndex, setActiveIndex] = useState(0);
@@ -71,7 +74,7 @@ export default function HeroCarousel({
           >
             <Image
               src={slide.imageUrl}
-              alt={slide.title}
+              alt={title}
               fill
               sizes="100vw"
               className="object-cover"
@@ -81,24 +84,15 @@ export default function HeroCarousel({
 
             <div className="absolute inset-0 bg-black/40"></div>
 
-            <div className="absolute inset-0 flex flex-col items-center justify-center text-white px-4 sm:px-6 lg:px-8">
+            <div className="absolute inset-0 flex flex-col items-center justify-end text-white px-4 pb-14 pt-6 sm:px-6 sm:pb-16 lg:px-8 lg:pb-20">
               <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4 text-center leading-tight">
-                {slide.title}
+                {title}
               </h1>
 
-              {slide.subtitle && (
+              {subtitle && (
                 <p className="text-base sm:text-lg text-gray-100 mb-8 text-center max-w-3xl">
-                  {slide.subtitle}
+                  {subtitle}
                 </p>
-              )}
-
-              {slide.ctaText && slide.ctaLink && (
-                <Link
-                  href={slide.ctaLink}
-                  className="inline-block px-8 py-3 bg-white text-black font-semibold rounded-lg hover:bg-gray-100 transition-colors"
-                >
-                  {slide.ctaText}
-                </Link>
               )}
             </div>
           </div>

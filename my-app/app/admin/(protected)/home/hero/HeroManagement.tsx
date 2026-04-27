@@ -10,18 +10,15 @@ const DEFAULT_SECTION_TITLE = "Homepage Hero";
 function createEmptySlide(): HeroSlideInput {
   return {
     clientId: crypto.randomUUID(),
-    title: "",
-    subtitle: "",
     imageUrl: "",
     imagePublicId: "",
-    ctaText: "",
-    ctaLink: "",
   };
 }
 
 function createEmptyForm() {
   return {
     title: DEFAULT_SECTION_TITLE,
+    subtitle: "",
     slides: [createEmptySlide()],
     isActive: false,
   };
@@ -163,6 +160,7 @@ export default function HeroManagement() {
     setRemovedImagePublicIds([]);
     setFormData({
       title: hero.title || DEFAULT_SECTION_TITLE,
+      subtitle: hero.subtitle || "",
       isActive: hero.isActive,
       slides:
         slides.length > 0
@@ -181,11 +179,11 @@ export default function HeroManagement() {
     }
 
     const missingSlide = formData.slides.find(
-      (slide) => !slide.title.trim() || !slide.imageUrl || !slide.imagePublicId,
+      (slide) => !slide.imageUrl || !slide.imagePublicId,
     );
 
     if (missingSlide) {
-      setError("Each slide needs a title and image");
+      setError("Each slide needs a background image");
       return;
     }
 
@@ -197,15 +195,12 @@ export default function HeroManagement() {
 
       const payload = {
         title: formData.title || DEFAULT_SECTION_TITLE,
+        subtitle: formData.subtitle,
         isActive: formData.isActive,
-          slides: formData.slides.map((slide) => ({
-            title: slide.title,
-            subtitle: slide.subtitle,
-            imageUrl: slide.imageUrl,
-            imagePublicId: slide.imagePublicId,
-            ctaText: slide.ctaText,
-            ctaLink: slide.ctaLink,
-          })),
+        slides: formData.slides.map((slide) => ({
+          imageUrl: slide.imageUrl,
+          imagePublicId: slide.imagePublicId,
+        })),
         ...(editingId ? { removedImagePublicIds } : {}),
       };
 
@@ -271,11 +266,44 @@ export default function HeroManagement() {
             {editingId ? "Edit Hero Section" : "Create New Hero Section"}
           </h2>
           <p className="text-sm text-zinc-500 mt-1">
-            Control the hero carousel shown at the top of the homepage.
+            Control the hero carousel shown at the top of the homepage, including the universal title and description.
           </p>
         </div>
 
         <div className="space-y-6">
+          <div className="grid gap-6 sm:grid-cols-2">
+            <div>
+              <label className="block text-sm font-medium mb-2">Hero Title *</label>
+              <input
+                type="text"
+                value={formData.title}
+                onChange={(e) =>
+                  setFormData({ ...formData, title: e.target.value })
+                }
+                placeholder="Universal hero title"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+              <p className="mt-2 text-xs text-gray-500">
+                This title appears on every hero slide.
+              </p>
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-2">Hero Description</label>
+              <textarea
+                value={formData.subtitle}
+                onChange={(e) =>
+                  setFormData({ ...formData, subtitle: e.target.value })
+                }
+                placeholder="Universal hero description"
+                rows={3}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+              <p className="mt-2 text-xs text-gray-500">
+                This description appears below the title across all hero slides.
+              </p>
+            </div>
+          </div>
+
           <div className="space-y-6">
             <div className="flex items-center justify-between">
               <h3 className="text-xl font-semibold">Slides</h3>
@@ -304,33 +332,6 @@ export default function HeroManagement() {
                   </button>
                 </div>
 
-                <div>
-                  <label className="block text-sm font-medium mb-2">
-                    Slide Title *
-                  </label>
-                  <input
-                    type="text"
-                    value={slide.title}
-                    onChange={(e) =>
-                      handleSlideChange(slide.clientId, "title", e.target.value)
-                    }
-                    placeholder="Slide title"
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium mb-2">Subtitle</label>
-                  <textarea
-                    value={slide.subtitle}
-                    onChange={(e) =>
-                      handleSlideChange(slide.clientId, "subtitle", e.target.value)
-                    }
-                    placeholder="Slide subtitle"
-                    rows={2}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                </div>
 
                 <div>
                   <label className="block text-sm font-medium mb-2">
@@ -357,44 +358,6 @@ export default function HeroManagement() {
                   )}
                 </div>
 
-                <div className="grid gap-4 sm:grid-cols-2">
-                  <div>
-                    <label className="block text-sm font-medium mb-2">
-                      CTA Button Text
-                    </label>
-                    <input
-                      type="text"
-                      value={slide.ctaText}
-                      onChange={(e) =>
-                        handleSlideChange(
-                          slide.clientId,
-                          "ctaText",
-                          e.target.value,
-                        )
-                      }
-                      placeholder="e.g., Get Started"
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium mb-2">
-                      CTA Link
-                    </label>
-                    <input
-                      type="text"
-                      value={slide.ctaLink}
-                      onChange={(e) =>
-                        handleSlideChange(
-                          slide.clientId,
-                          "ctaLink",
-                          e.target.value,
-                        )
-                      }
-                      placeholder="e.g., /contact"
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                  </div>
-                </div>
               </div>
             ))}
           </div>
@@ -459,6 +422,10 @@ export default function HeroManagement() {
                   <div className="flex items-start justify-between">
                     <div>
                       <h3 className="text-xl font-semibold">Hero Section</h3>
+                      <p className="text-gray-600 mt-2">{hero.title || "No title set"}</p>
+                      {hero.subtitle ? (
+                        <p className="text-sm text-gray-500 mt-1">{hero.subtitle}</p>
+                      ) : null}
                       <p className="text-gray-600 mt-2">
                         {(hero.slides?.length || 0)} slide
                         {hero.slides?.length === 1 ? "" : "s"}

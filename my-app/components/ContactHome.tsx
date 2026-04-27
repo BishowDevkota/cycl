@@ -1,16 +1,35 @@
 "use client";
 
 import { useState } from "react";
+import type { ContactDetails } from "@/services/contact-service";
 import { 
   FaPhone, FaEnvelope, FaMapMarkerAlt, 
-  FaWhatsapp, FaViber, FaFacebook, FaCopy, FaCheck 
+  FaWhatsapp, FaFacebook, FaCopy, FaCheck 
 } from "react-icons/fa";
 
-export default function ContactHome() {
+type ContactHomeProps = {
+  contactDetails?: ContactDetails | null;
+};
+
+const DEFAULT_CONTACT: ContactDetails = {
+  phone: { text: "061-590894 • 061-590895", link: "tel:+977061590894" },
+  email: { text: "info@cycnlbsl.org.np", link: "mailto:info@cycnlbsl.org.np" },
+  facebook: { text: "Facebook", link: "https://www.facebook.com/cycnlbsl" },
+  whatsapp: { text: "+977 98576 46225 (Pratima Acharya - Grievance Handling Officer)", link: "https://wa.me/9779857646225" },
+  location: {
+    text: "Sabhagriha Chowk, Pokhara Metropolitan City-8, Pokhara, Nepal",
+    link: "https://maps.app.goo.gl/v2A4G8jf5w8wQ1Vai",
+  },
+  isActive: true,
+};
+
+export default function ContactHome({ contactDetails }: ContactHomeProps) {
+  const contact = contactDetails ?? DEFAULT_CONTACT;
   const [copied, setCopied] = useState(false);
 
   const copyEmail = () => {
-    navigator.clipboard.writeText("info@cycnlbsl.org.np");
+    const emailValue = contact.email.text || contact.email.link.replace(/^mailto:/, "");
+    navigator.clipboard.writeText(emailValue);
     setCopied(true);
     setTimeout(() => setCopied(false), 2500);
   };
@@ -280,7 +299,17 @@ export default function ContactHome() {
                 </div>
                 <div className="info-content">
                   <h3>Head Office</h3>
-                  <p>Sabhagriha Chowk, Pokhara Metropolitan City-8, Pokhara, Nepal</p>
+                  {contact.location.link ? (
+                    <a
+                      href={contact.location.link}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      {contact.location.text}
+                    </a>
+                  ) : (
+                    <p>{contact.location.text}</p>
+                  )}
                 </div>
               </div>
 
@@ -289,10 +318,13 @@ export default function ContactHome() {
                   <FaPhone />
                 </div>
                 <div className="info-content">
-                  <h3>Phone Numbers</h3>
+                  <h3>Phone Number</h3>
                   <p>
-                    <a href="tel:+977061590894">061-590894</a> • 
-                    <a href="tel:+977061590895"> 061-590895</a>
+                    {contact.phone.link ? (
+                      <a href={contact.phone.link}>{contact.phone.text}</a>
+                    ) : (
+                      contact.phone.text
+                    )}
                   </p>
                 </div>
               </div>
@@ -304,10 +336,14 @@ export default function ContactHome() {
                 <div className="info-content">
                   <h3>Email Address</h3>
                   <div className="copy-wrapper">
-                    <a href="mailto:info@cycnlbsl.org.np">info@cycnlbsl.org.np</a>
-                    <button 
-                      className="copy-btn" 
-                      onClick={copyEmail} 
+                    {contact.email.link ? (
+                      <a href={contact.email.link}>{contact.email.text}</a>
+                    ) : (
+                      <span>{contact.email.text}</span>
+                    )}
+                    <button
+                      className="copy-btn"
+                      onClick={copyEmail}
                       title="Copy email address"
                       aria-label="Copy email address"
                     >
@@ -330,32 +366,53 @@ export default function ContactHome() {
                   <FaWhatsapp />
                 </div>
                 <div className="info-content">
-                  <h3>WhatsApp / Viber</h3>
+                  <h3>WhatsApp</h3>
                   <p>
-                    <a href="https://wa.me/9779857646225" target="_blank" rel="noopener noreferrer">
-                      +977 98576 46225 (Pratima Acharya - Grievance Handling Officer)
-                    </a>
+                    {contact.whatsapp.link ? (
+                      <a
+                        href={contact.whatsapp.link}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        {contact.whatsapp.text}
+                      </a>
+                    ) : (
+                      contact.whatsapp.text
+                    )}
                   </p>
                 </div>
               </div>
 
               <div className="social-links">
-                <a href="https://wa.me/9779857646225" target="_blank" rel="noopener noreferrer" className="social-btn" title="WhatsApp">
-                  <FaWhatsapp />
-                </a>
-                <a href="viber://chat?number=%2B9779857646225" className="social-btn" title="Viber">
-                  <FaViber />
-                </a>
-                <a href="https://www.facebook.com/cycnlbsl" target="_blank" rel="noopener noreferrer" className="social-btn" title="Facebook">
-                  <FaFacebook />
-                </a>
+                {contact.whatsapp.link && (
+                  <a
+                    href={contact.whatsapp.link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="social-btn"
+                    title="WhatsApp"
+                  >
+                    <FaWhatsapp />
+                  </a>
+                )}
+                {contact.facebook.link && (
+                  <a
+                    href={contact.facebook.link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="social-btn"
+                    title="Facebook"
+                  >
+                    <FaFacebook />
+                  </a>
+                )}
               </div>
             </div>
 
             {/* Google Map - Exact match to your image with proper pin */}
             <div className="map-container">
               <iframe
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3532.85!2d83.9682!3d28.2108!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x39965f8b0b0b0b0b%3A0x0!2sCyc%20Nepal%20Laghubitta%20Bittiya%20Sanstha%20Ltd!5e0!3m2!1sen!2snp!4v1745750000000"
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d28127.18013052863!2d83.9456963743164!3d28.210426100000003!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x39960936f19c126d%3A0xdb76cf9b181d026e!2sCyc%20Nepal%20Laghubitta%20Bittiya%20Sanstha%20Ltd.!5e0!3m2!1sen!2snp!4v1777308756052!5m2!1sen!2snp"
                 allowFullScreen
                 loading="lazy"
                 referrerPolicy="no-referrer-when-downgrade"
