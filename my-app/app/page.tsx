@@ -6,6 +6,8 @@ import { getMessageFromCeo } from '@/services/message-from-ceo-service';
 import ServicesSection from '@/components/ServicesSection';
 import { getAboutCompanyInfo } from '@/services/about-company-info-service';
 import NewsAndNotices from '@/components/NewsAndNotices';
+import ContactHome from '@/components/ContactHome';
+import { MessageFromCeoSection } from '@/components/public/MessageFromCeoSection';
 
 
 
