@@ -31,7 +31,7 @@ export default function ContactPage() {
               title="CYC Nepal Head Office Map"
               src={contactDirectory.mapEmbedUrl}
               loading="lazy"
-              className="h-96 w-full border-0 lg:h-136"
+              className="h-80 w-full border-0 lg:h-136"
               referrerPolicy="no-referrer-when-downgrade"
             />
             <div className="border-t border-[#d7e6ee] p-4">
