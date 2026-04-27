@@ -4,6 +4,7 @@ import type { MessageFromCeo } from "@/services/message-from-ceo-service";
 
 type MessageFromCeoSectionProps = {
   messageFromCeo: MessageFromCeo | null;
+  // Optional button URL for future use
 };
 
 export function MessageFromCeoSection({
@@ -12,6 +13,7 @@ export function MessageFromCeoSection({
   // Hardcoded values to ensure the UI looks correct regardless of API gaps
   const ceoName = "Dolendra Prasad Sharma";
   const ceoDesignation = "Chief Executive Officer";
+  
 
   return (
     <section className="relative overflow-hidden bg-[#f8fafc] px-4 py-16 md:px-6 lg:py-24">
