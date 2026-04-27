@@ -37,7 +37,7 @@ export function ContactSection() {
   const locationText = typeof contact.location === 'object' ? contact.location.text : contact.location;
 
   return (
-    <section className="w-full bg-gradient-to-r from-blue-50 to-indigo-50 py-12 md:py-16">
+    <section className="w-full bg-linear-to-r from-blue-50 to-indigo-50 py-12 md:py-16">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
           <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-3">

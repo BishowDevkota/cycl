@@ -25,13 +25,13 @@ export default function ContactPage() {
           description="Reach us through phone, email, social channels, or by visiting the head office location shown on the map."
         />
 
-        <div className="grid gap-6 lg:grid-cols-[1.1fr_1fr]">
-          <article className="overflow-hidden rounded-2xl border border-[#d7e6ee] bg-[#f9fcfe]">
+        <div className="grid gap-6 lg:grid-cols-2">
+          <article className="overflow-hidden rounded-b-3xl rounded-t-2xl border border-[#d7e6ee] bg-[#f9fcfe] shadow-[0_18px_36px_rgba(16,53,74,0.08)]">
             <iframe
               title="CYC Nepal Head Office Map"
               src={contactDirectory.mapEmbedUrl}
               loading="lazy"
-              className="h-[320px] w-full border-0"
+              className="h-96 w-full border-0 lg:h-136"
               referrerPolicy="no-referrer-when-downgrade"
             />
             <div className="border-t border-[#d7e6ee] p-4">
