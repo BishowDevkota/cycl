@@ -4,17 +4,18 @@ import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 
-interface Service {
-  id: number;
+export interface ServicesSectionItem {
+  id: string;
   title: string;
   description: string;
   image: string;
   stat: string;
   route: string;
 }
-const services: Service[] = [
+
+const fallbackServices: ServicesSectionItem[] = [
   {
-    id: 1,
+    id: "fallback-loan",
     title: "Loan",
     description:
       "Cycnlbsl has wide range of loan products both non-collateral and collateral.",
@@ -23,7 +24,7 @@ const services: Service[] = [
     route: "/loans",
   },
   {
-    id: 2,
+    id: "fallback-saving",
     title: "Saving",
     description:
       "Cycnlbsl has several saving products to encourage members to save money for the future.",
@@ -33,9 +34,28 @@ const services: Service[] = [
   },
 ];
 
-export default function ServicesSection(): React.JSX.Element {
+interface ServicesSectionProps {
+  services?: ServicesSectionItem[];
+  heading?: string;
+  description?: string;
+}
+
+export default function ServicesSection({
+  services,
+  heading,
+  description,
+}: ServicesSectionProps): React.JSX.Element {
   const [visible, setVisible] = useState<boolean>(false);
   const sectionRef = useRef<HTMLElement | null>(null);
+
+  const resolvedServices = services && services.length > 0 ? services : fallbackServices;
+  const totalServices = resolvedServices.length;
+  const resolvedHeading =
+    heading?.trim() ||
+    `${totalServices} Service${totalServices === 1 ? "" : "s"} We Offer`;
+  const resolvedDescription =
+    description?.trim() ||
+    `Explore ${totalServices} service${totalServices === 1 ? "" : "s"} crafted for your financial needs.`;
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -143,8 +163,14 @@ export default function ServicesSection(): React.JSX.Element {
 
         .services-grid {
           display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+          grid-template-columns: 1fr;
           gap: 28px;
+        }
+
+        @media (min-width: 768px) {
+          .services-grid {
+            grid-template-columns: repeat(2, minmax(260px, 1fr));
+          }
         }
 
         .service-card {
@@ -166,11 +192,6 @@ export default function ServicesSection(): React.JSX.Element {
           animation: cardIn 0.65s cubic-bezier(.22,.68,0,1.2) forwards;
         }
 
-        .service-card:nth-child(1) { animation-delay: 0.05s; }
-        .service-card:nth-child(2) { animation-delay: 0.15s; }
-        .service-card:nth-child(3) { animation-delay: 0.25s; }
-        .service-card:nth-child(4) { animation-delay: 0.35s; }
-
         @keyframes cardIn {
           to { opacity: 1; transform: translateY(0); }
         }
@@ -178,7 +199,6 @@ export default function ServicesSection(): React.JSX.Element {
         .service-card:hover {
           transform: translateY(-8px);
           box-shadow: 0 20px 60px rgba(0,91,92,0.13);
-        //   border-color: var(--mint);
         }
 
         .service-card::before {
@@ -194,30 +214,20 @@ export default function ServicesSection(): React.JSX.Element {
 
         .service-card:hover::before { opacity: 0.65; }
 
-        .icon-wrapper {         
+        .icon-wrapper {
           height: 100px;
           margin-bottom: 28px;
           position: relative;
-        display: flex;
+          display: flex;
           align-items: center;
-
         }
 
         .icon-wrapper img {
-            transition: transform 0.4s ease;
+          transition: transform 0.4s ease;
         }
 
         .service-card:hover .icon-wrapper img {
-        transform: scale(1.25);   /* ← 25% zoom on card hover */
-        }
-
-        service-card:hover .image-zoom {
-        transform: scale(1.25) !important;
-        }
-
-
-        .service-card:hover .image-zoom {
-        transform: scale(1.25) translateY(-10px) !important;
+          transform: scale(1.25);
         }
 
         .service-icon-svg {
@@ -255,7 +265,6 @@ export default function ServicesSection(): React.JSX.Element {
           color: var(--teal-deep);
           margin: 0 0 16px 0;
           line-height: 1.2;
-
         }
 
         .service-description {
@@ -271,7 +280,6 @@ export default function ServicesSection(): React.JSX.Element {
           height: 2px;
           background: var(--mint);
           border-radius: 2px;
-    
           margin-bottom: 20px;
           transition: width 0.3s ease;
         }
@@ -318,71 +326,8 @@ export default function ServicesSection(): React.JSX.Element {
 
         .service-link:hover .link-arrow svg path { stroke: #fff; }
 
-        .services-cta-strip {
-          margin-top: 64px;
-          background: linear-gradient(135deg, var(--teal-deep) 0%, var(--teal-mid) 100%);
-          border-radius: 20px;
-          padding: 40px 48px;
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          gap: 24px;
-          flex-wrap: wrap;
-          position: relative;
-          overflow: hidden;
-        }
-
-        .services-cta-strip::after {
-          content: '';
-          position: absolute;
-          right: -40px; top: -40px;
-          width: 220px; height: 220px;
-          background: radial-gradient(circle, var(--mint) 0%, transparent 65%);
-          opacity: 0.18;
-          border-radius: 50%;
-          pointer-events: none;
-        }
-
-        .cta-text h3 {
-          font-family: 'DM Serif Display', serif;
-          font-size: 1.6rem;
-          color: #fff;
-          margin: 0 0 6px 0;
-        }
-
-        .cta-text p {
-          font-size: 0.9rem;
-          color: var(--mint);
-          margin: 0;
-          font-weight: 300;
-        }
-
-        .cta-button {
-          background: var(--blush);
-          color: var(--teal-deep);
-          border: none;
-          padding: 14px 32px;
-          border-radius: 50px;
-          font-size: 0.92rem;
-          font-weight: 600;
-          font-family: 'DM Sans', sans-serif;
-          cursor: pointer;
-          letter-spacing: 0.04em;
-          transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
-          white-space: nowrap;
-          position: relative;
-          z-index: 1;
-        }
-
-        .cta-button:hover {
-          background: #fff;
-          transform: scale(1.04);
-          box-shadow: 0 8px 24px rgba(0,0,0,0.15);
-        }
-
         @media (max-width: 768px) {
           .services-section { padding: 72px 16px; }
-          .services-cta-strip { padding: 28px 24px; flex-direction: column; text-align: center; }
           .service-card { padding: 32px 24px 28px; }
         }
       `}</style>
@@ -395,17 +340,15 @@ export default function ServicesSection(): React.JSX.Element {
             <span className="eyebrow-line" />
           </div>
 
-          <h2 className="services-heading">What We Offer</h2>
-          <p className="services-subtext">
-            Empowering members with trusted financial solutions — from savings
-            to seamless transfers — built for every stage of life.
-          </p>
+          <h2 className="services-heading">{resolvedHeading}</h2>
+          <p className="services-subtext">{resolvedDescription}</p>
 
           <div className="services-grid">
-            {services.map((svc: Service, i: number) => (
+            {resolvedServices.map((svc: ServicesSectionItem, i: number) => (
               <div
                 key={svc.id}
                 className={`service-card ${visible ? "visible" : ""}`}
+                style={{ animationDelay: `${0.05 + i * 0.1}s` }}
               >
                 <div className="icon-wrapper ">
                   <Image
@@ -418,7 +361,7 @@ export default function ServicesSection(): React.JSX.Element {
                 </div>
 
                 <span className="service-number"></span>
-                <h3 className="service-title">{i+1}{". " + svc.title}</h3>
+                <h3 className="service-title">{i + 1}{". " + svc.title}</h3>
                 <div className="card-divider" />
                 <p className="service-description">{svc.description}</p>
 
