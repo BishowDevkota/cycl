@@ -12,27 +12,27 @@ const STATS_FIELDS: Array<{
   {
     key: "numberOfBranchOffice",
     label: "Branch Offices",
-    image: "/company highlights/office branch.avif",
+    image: "/company highlights/office branch.png",
   },
   {
     key: "loanOutstandingNpr",
     label: "Loan Outstanding",
-    image: "/company highlights/loan_outstanding.avif",
+    image: "/company highlights/loan_outstanding.png",
   },
   {
     key: "numberOfCenters",
     label: "Number of Centers",
-    image: "/company highlights/centers.avif",
+    image: "/company highlights/centers.webp",
   },
   {
     key: "savingDepositNpr",
     label: "Savings & Deposits",
-    image: "/company highlights/saving_deposit.avif",
+    image: "/company highlights/saving_deposit.png",
   },
   {
     key: "totalStaffIncludingTrainee",
     label: "Total Staff",
-    image: "/company highlights/staff_icon.avif",
+    image: "/company highlights/staff_icon.webp",
   },
   {
     key: "activeClients",
@@ -80,7 +80,7 @@ export function CompanyStatsSection() {
 
         .highlights-section {
           background: var(--off-white);
-          padding: 100px 24px;
+          padding: 72px 24px;
           position: relative;
           overflow: hidden;
           font-family: 'DM Sans', sans-serif;
@@ -117,7 +117,7 @@ export function CompanyStatsSection() {
 
         .highlights-header {
           text-align: center;
-          margin-bottom: 72px;
+          margin-bottom: 48px;
         }
 
         .highlights-heading {
@@ -139,18 +139,24 @@ export function CompanyStatsSection() {
 
         .highlights-grid {
           display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-          gap: 28px;
+          grid-template-columns: repeat(3, minmax(0, 1fr));
+          gap: 24px;
+          align-items: stretch;
         }
 
         .highlight-card {
           background: #fff;
           border-radius: 20px;
-          padding: 40px 32px 36px;
+          padding: 28px 24px;
           position: relative;
           overflow: hidden;
           border: 1px solid rgba(0,91,92,0.08);
           cursor: default;
+          min-height: 250px;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          text-align: center;
           transition: transform 0.35s cubic-bezier(.22,.68,0,1.2),
                       box-shadow 0.35s ease,
                       border-color 0.3s ease;
@@ -192,8 +198,8 @@ export function CompanyStatsSection() {
         .highlight-card:hover::before { opacity: 0.65; }
 
         .icon-wrapper {
-          height: 100px;
-          margin-bottom: 28px;
+          height: 82px;
+          margin-bottom: 18px;
           position: relative;
           display: flex;
           align-items: center;
@@ -216,9 +222,9 @@ export function CompanyStatsSection() {
 
         .stat-label {
           font-family: 'DM Serif Display', serif;
-          font-size: 1.9rem;
+          font-size: 1.6rem;
           color: var(--teal-deep);
-          margin: 0 0 16px 0;
+          margin: 0 0 12px 0;
           line-height: 1.2;
           font-weight: 400;
         }
@@ -226,8 +232,8 @@ export function CompanyStatsSection() {
         .stat-value {
           font-size: 1rem;
           color: #536060;
-          line-height: 1.7;
-          margin: 0 0 26px 0;
+          line-height: 1.6;
+          margin: 0;
           font-weight: 500;
         }
 
@@ -236,19 +242,25 @@ export function CompanyStatsSection() {
           height: 2px;
           background: var(--mint);
           border-radius: 2px;
-          margin-bottom: 20px;
+          margin-bottom: 14px;
           transition: width 0.3s ease;
         }
 
         .highlight-card:hover .card-divider { width: 56px; }
 
+        @media (max-width: 1024px) {
+          .highlights-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        }
+
         @media (max-width: 768px) {
-          .highlights-section { padding: 72px 16px; }
+          .highlights-section { padding: 56px 16px; }
+          .highlights-header { margin-bottom: 32px; }
+          .highlights-grid { grid-template-columns: 1fr; }
           .highlights-grid { gap: 20px; }
-          .highlight-card { padding: 32px 24px 28px; }
-          .icon-wrapper { height: 92px; }
+          .highlight-card { padding: 24px 20px; min-height: 220px; }
+          .icon-wrapper { height: 74px; }
           .service-icon-image { width: 64px; height: 64px; }
-          .stat-label { font-size: 1.7rem; }
+          .stat-label { font-size: 1.4rem; }
         }
       `}</style>
 
