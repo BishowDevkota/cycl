@@ -19,20 +19,81 @@ type PublicContactDetails = {
   isActive: boolean;
 };
 
+type NavChildItem = {
+  label: string;
+  href: string;
+};
+
 type NavItem = {
   label: string;
   href: string;
-  hasDropdown?: boolean;
+  children?: NavChildItem[];
 };
 
 const navItems: NavItem[] = [
   { label: "Home", href: "/" },
-  { label: "About Us", href: "/about-us", hasDropdown: true },
-  { label: "Loans", href: "/loans", hasDropdown: true },
-  { label: "Savings", href: "/savings", hasDropdown: true },
-  { label: "Reports", href: "/reports", hasDropdown: true },
-  { label: "Branches", href: "/branches" },
-  { label: "News & Notices", href: "/news-notices", hasDropdown: true },
+  {
+    label: "About Us",
+    href: "/about-us",
+    children: [
+      { label: "Company Profile", href: "/about-us#profile" },
+      { label: "Chairman Message", href: "/about-us#chairman" },
+      { label: "Board of Directors", href: "/about-us#board" },
+      { label: "Management Team", href: "/about-us#management" },
+    ],
+  },
+  {
+    label: "Loans",
+    href: "/loans",
+    children: [
+      { label: "All Loan Products", href: "/loans" },
+      { label: "Micro Enterprise Loan", href: "/loans/micro-enterprise-loan" },
+      { label: "Agriculture Loan", href: "/loans/agriculture-loan" },
+      { label: "Group Business Loan", href: "/loans/group-business-loan" },
+    ],
+  },
+  {
+    label: "Savings",
+    href: "/savings",
+    children: [
+      { label: "All Savings Products", href: "/savings" },
+      { label: "Regular Savings", href: "/savings/regular-savings" },
+      { label: "Fixed Deposit", href: "/savings/fixed-deposit" },
+      { label: "Recurring Savings", href: "/savings/recurring-savings" },
+    ],
+  },
+  {
+    label: "Financial Highlights",
+    href: "/financial-highlights",
+    children: [
+      { label: "Highlights Overview", href: "/financial-highlights" },
+      { label: "Annual Reports", href: "/financial-highlights/annual-reports" },
+      { label: "Quarterly Reports", href: "/financial-highlights/quarterly-reports" },
+    ],
+  },
+  {
+    label: "Branches",
+    href: "/branches",
+    children: [
+      { label: "All Branches", href: "/branches" },
+      { label: "Koshi Province", href: "/branches#koshi" },
+      { label: "Madhesh Province", href: "/branches#madhesh" },
+      { label: "Bagmati Province", href: "/branches#bagmati" },
+      { label: "Gandaki Province", href: "/branches#gandaki" },
+      { label: "Lumbini Province", href: "/branches#lumbini" },
+      { label: "Karnali Province", href: "/branches#karnali" },
+      { label: "Sudurpashchim Province", href: "/branches#sudurpashchim" },
+    ],
+  },
+  {
+    label: "News & Notices",
+    href: "/news-notices",
+    children: [
+      { label: "Information Center", href: "/news-notices" },
+      { label: "News", href: "/news" },
+      { label: "Notices", href: "/notices" },
+    ],
+  },
   { label: "Contact", href: "/contact" },
 ];
 
@@ -89,7 +150,26 @@ export function TopContactBar() {
   const facebookLink = contact?.facebook.link?.trim() || "#";
   const whatsappText = contact?.whatsapp.text?.trim() || "WhatsApp";
   const whatsappLink = contact?.whatsapp.link?.trim() || "#";
-  const isActiveRoute = (href: string) => pathname === href;
+  const normalizePath = (href: string) => href.split("#")[0];
+
+  const isActiveRoute = (href: string) => {
+    const normalizedHref = normalizePath(href);
+
+    if (normalizedHref === "/") {
+      return pathname === "/";
+    }
+
+    return (
+      pathname === normalizedHref || pathname.startsWith(`${normalizedHref}/`)
+    );
+  };
+
+  const isNavItemActive = (item: NavItem) => {
+    return (
+      isActiveRoute(item.href) ||
+      Boolean(item.children?.some((child) => isActiveRoute(child.href)))
+    );
+  };
 
   return (
     <>
@@ -195,39 +275,65 @@ export function TopContactBar() {
 
           <nav className="hidden flex-1 items-center justify-between px-4 text-[15px] font-semibold text-zinc-800 xl:flex 2xl:px-8 2xl:text-[16px]">
             {navItems.map((item) => {
-              const isActive = isActiveRoute(item.href);
+              const isActive = isNavItemActive(item);
+              const hasDropdown = Boolean(item.children?.length);
 
               return (
-                <Link
-                  key={item.label}
-                  href={item.href}
-                  className={`group relative inline-flex items-center gap-1 py-1 font-semibold transition-colors duration-200 ${
-                    isActive ? "text-[#005d59]" : "text-zinc-800 hover:text-[#005d59]"
-                  }`}
-                  aria-current={isActive ? "page" : undefined}
-                >
-                  <span className="relative inline-block pb-1">
-                    {item.label}
-                    <span
-                      className={`absolute -bottom-1 left-0 h-1 rounded-full bg-[#0d837f] transition-all duration-300 ease-out ${
-                        isActive ? "w-full" : "w-0 group-hover:w-full"
-                      }`}
-                    />
-                  </span>
-                  {item.hasDropdown && (
-                    <svg
-                      className="h-4 w-4"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    >
-                      <path d="m6 9 6 6 6-6" />
-                    </svg>
+                <div key={item.label} className="group relative">
+                  <Link
+                    href={item.href}
+                    className={`relative inline-flex items-center gap-1 py-1 font-semibold transition-colors duration-200 ${
+                      isActive ? "text-[#005d59]" : "text-zinc-800 hover:text-[#005d59]"
+                    }`}
+                    aria-current={isActive ? "page" : undefined}
+                  >
+                    <span className="relative inline-block pb-1">
+                      {item.label}
+                      <span
+                        className={`absolute -bottom-1 left-0 h-1 rounded-full bg-[#0d837f] transition-all duration-300 ease-out ${
+                          isActive ? "w-full" : "w-0 group-hover:w-full"
+                        }`}
+                      />
+                    </span>
+                    {hasDropdown && (
+                      <svg
+                        className="h-4 w-4"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
+                        <path d="m6 9 6 6 6-6" />
+                      </svg>
+                    )}
+                  </Link>
+
+                  {hasDropdown && (
+                    <div className="pointer-events-none absolute left-1/2 top-full z-[90] w-72 -translate-x-1/2 pt-4 opacity-0 transition-all duration-200 group-hover:pointer-events-auto group-hover:opacity-100">
+                      <div className="overflow-hidden rounded-2xl border border-[#d8e6ee] bg-white p-2 shadow-[0_24px_36px_rgba(6,61,73,0.2)]">
+                        {item.children?.map((child) => {
+                          const isChildActive = isActiveRoute(child.href);
+
+                          return (
+                            <Link
+                              key={`${item.label}-${child.href}`}
+                              href={child.href}
+                              className={`block rounded-xl px-3 py-2 text-sm transition ${
+                                isChildActive
+                                  ? "bg-[#e8f7f4] font-semibold text-[#0d837f]"
+                                  : "text-slate-700 hover:bg-[#f5fafc]"
+                              }`}
+                            >
+                              {child.label}
+                            </Link>
+                          );
+                        })}
+                      </div>
+                    </div>
                   )}
-                </Link>
+                </div>
               );
             })}
           </nav>
@@ -301,32 +407,63 @@ export function TopContactBar() {
         {mobileMenuOpen && (
           <div className="border-t border-zinc-200 px-4 py-4 xl:hidden">
             <div className="mx-auto flex w-full max-w-[1420px] flex-col gap-4 text-base font-medium text-zinc-800">
-              {navItems.map((item) => (
-                <Link
-                  key={`mobile-${item.label}`}
-                  href={item.href}
-                  className={`inline-flex items-center justify-between rounded-lg px-2 py-2 hover:bg-zinc-50 ${
-                    isActiveRoute(item.href) ? "text-[#005d59]" : ""
-                  }`}
-                  aria-current={isActiveRoute(item.href) ? "page" : undefined}
-                  onClick={() => setMobileMenuOpen(false)}
-                >
-                  <span>{item.label}</span>
-                  {item.hasDropdown && (
-                    <svg
-                      className="h-4 w-4"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
+              {navItems.map((item) => {
+                const isActive = isNavItemActive(item);
+
+                return (
+                  <div
+                    key={`mobile-${item.label}`}
+                    className="rounded-xl border border-zinc-200/80 bg-white/75 p-2"
+                  >
+                    <Link
+                      href={item.href}
+                      className={`inline-flex w-full items-center justify-between rounded-lg px-2 py-2 ${
+                        isActive ? "text-[#005d59]" : ""
+                      }`}
+                      aria-current={isActive ? "page" : undefined}
+                      onClick={() => setMobileMenuOpen(false)}
                     >
-                      <path d="m6 9 6 6 6-6" />
-                    </svg>
-                  )}
-                </Link>
-              ))}
+                      <span>{item.label}</span>
+                      {item.children?.length ? (
+                        <svg
+                          className="h-4 w-4"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        >
+                          <path d="m6 9 6 6 6-6" />
+                        </svg>
+                      ) : null}
+                    </Link>
+
+                    {item.children?.length ? (
+                      <div className="mt-1 border-t border-zinc-200/80 pt-2">
+                        {item.children.map((child) => {
+                          const isChildActive = isActiveRoute(child.href);
+
+                          return (
+                            <Link
+                              key={`mobile-child-${item.label}-${child.href}`}
+                              href={child.href}
+                              className={`block rounded-lg px-2 py-1.5 text-sm ${
+                                isChildActive
+                                  ? "font-semibold text-[#0d837f]"
+                                  : "text-zinc-700"
+                              }`}
+                              onClick={() => setMobileMenuOpen(false)}
+                            >
+                              {child.label}
+                            </Link>
+                          );
+                        })}
+                      </div>
+                    ) : null}
+                  </div>
+                );
+              })}
 
               <Link
                 href="#"

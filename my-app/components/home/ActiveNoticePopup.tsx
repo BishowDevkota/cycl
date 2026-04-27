@@ -1,0 +1,133 @@
+"use client";
+
+import Link from "next/link";
+import { useMemo, useState } from "react";
+import { getActiveNoticeItems } from "@/lib/public-content";
+
+export function ActiveNoticePopup() {
+  const notices = useMemo(() => getActiveNoticeItems(), []);
+  const [isOpen, setIsOpen] = useState(notices.length > 0);
+  const [selectedId, setSelectedId] = useState(notices[0]?.id ?? "");
+
+  const selectedNotice =
+    notices.find((notice) => notice.id === selectedId) ?? notices[0];
+
+  if (!notices.length) {
+    return null;
+  }
+
+  return (
+    <>
+      {isOpen && (
+        <div className="fixed inset-0 z-[120] grid place-items-center bg-slate-950/45 px-4 py-8">
+          <div className="w-full max-w-4xl overflow-hidden rounded-2xl border border-[#cfe2ea] bg-white shadow-[0_28px_60px_rgba(2,30,45,0.35)]">
+            <div className="flex items-center justify-between border-b border-[#e4edf1] bg-[#f5fafc] px-5 py-4 sm:px-6">
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-[0.22em] text-[#0d837f]">
+                  Active Notices
+                </p>
+                <h3 className="mt-1 text-lg font-semibold text-[#123451] sm:text-xl">
+                  Latest Announcements
+                </h3>
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsOpen(false)}
+                className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-[#d6e5ec] text-[#37526c] transition hover:bg-white"
+                aria-label="Close notice popup"
+              >
+                <svg
+                  className="h-5 w-5"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <path d="M18 6 6 18" />
+                  <path d="m6 6 12 12" />
+                </svg>
+              </button>
+            </div>
+
+            <div className="grid grid-cols-1 gap-0 md:grid-cols-[1fr_1.4fr]">
+              <div className="max-h-[420px] overflow-y-auto border-b border-[#e8eff3] bg-[#fbfdff] p-3 md:max-h-[500px] md:border-b-0 md:border-r">
+                {notices.map((notice) => {
+                  const isSelected = notice.id === selectedNotice?.id;
+
+                  return (
+                    <button
+                      key={notice.id}
+                      type="button"
+                      onClick={() => setSelectedId(notice.id)}
+                      className={`mb-2 w-full rounded-xl border px-3 py-3 text-left transition ${
+                        isSelected
+                          ? "border-[#0d837f]/40 bg-[#e8f7f4]"
+                          : "border-transparent bg-white hover:border-[#cae2ea]"
+                      }`}
+                    >
+                      <p className="line-clamp-2 text-sm font-semibold text-[#123451]">
+                        {notice.title}
+                      </p>
+                      <p className="mt-1 text-xs text-slate-500">
+                        {new Date(notice.publishedAt).toLocaleDateString("en-NP", {
+                          year: "numeric",
+                          month: "short",
+                          day: "numeric",
+                        })}
+                      </p>
+                    </button>
+                  );
+                })}
+              </div>
+
+              <article className="p-5 sm:p-6">
+                <h4 className="text-lg font-semibold text-[#123451] sm:text-xl">
+                  {selectedNotice.title}
+                </h4>
+                <p className="mt-2 text-sm font-medium text-[#0d837f]">
+                  Published on {new Date(selectedNotice.publishedAt).toLocaleDateString("en-NP", {
+                    year: "numeric",
+                    month: "long",
+                    day: "numeric",
+                  })}
+                </p>
+                <p className="mt-4 text-sm leading-7 text-slate-700 sm:text-base">
+                  {selectedNotice.details}
+                </p>
+
+                <div className="mt-6 flex flex-wrap gap-3">
+                  <Link
+                    href="/notices"
+                    className="inline-flex items-center rounded-full bg-[#0d837f] px-5 py-2.5 text-sm font-semibold text-white transition hover:brightness-110"
+                  >
+                    View All Notices
+                  </Link>
+                  <button
+                    type="button"
+                    onClick={() => setIsOpen(false)}
+                    className="inline-flex items-center rounded-full border border-[#cadbe4] px-5 py-2.5 text-sm font-semibold text-[#29455e] transition hover:bg-[#f4f9fc]"
+                  >
+                    Dismiss
+                  </button>
+                </div>
+              </article>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {!isOpen && (
+        <button
+          type="button"
+          onClick={() => setIsOpen(true)}
+          className="fixed bottom-6 right-5 z-[90] inline-flex items-center gap-2 rounded-full bg-[#0d837f] px-4 py-2.5 text-sm font-semibold text-white shadow-[0_14px_30px_rgba(13,131,127,0.35)] transition hover:brightness-110"
+        >
+          <span className="inline-flex h-2.5 w-2.5 rounded-full bg-[#ffd9a4]" aria-hidden="true" />
+          Active Notices
+        </button>
+      )}
+    </>
+  );
+}

@@ -2,6 +2,7 @@ import { HeroSection } from '@/components/HeroSection';
 import { WelcomeSection } from '@/components/WelcomeSection';
 import { CompanyStatsSection } from '@/components/CompanyStatsSection';
 import { Footer } from '@/components/Footer';
+import { ActiveNoticePopup } from '@/components/home/ActiveNoticePopup';
 import Image from 'next/image';
 import Link from 'next/link';
 import { getMessageFromCeo } from '@/lib/message-from-ceo-service';
@@ -11,6 +12,7 @@ export default async function Home() {
 
   return (
     <div className="flex flex-col min-h-screen">
+      <ActiveNoticePopup />
       <HeroSection />
       <WelcomeSection />
 
