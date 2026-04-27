@@ -1,87 +1,95 @@
 import Image from "next/image";
-import Link from "next/link";
 import { RichTextContent } from "@/components/public/RichTextContent";
 import type { MessageFromCeo } from "@/services/message-from-ceo-service";
 
 type MessageFromCeoSectionProps = {
   messageFromCeo: MessageFromCeo | null;
-  buttonLabel: string;
-  buttonHref: string;
 };
 
 export function MessageFromCeoSection({
   messageFromCeo,
-  buttonLabel,
-  buttonHref,
 }: MessageFromCeoSectionProps) {
+  // Hardcoded values to ensure the UI looks correct regardless of API gaps
+  const ceoName = "Dolendra Prasad Sharma";
+  const ceoDesignation = "Chief Executive Officer";
+
   return (
-    <section className="ceo-slide-in-right relative overflow-hidden bg-off-white px-4 py-18 md:px-6 md:py-18">
-      <div className="pointer-events-none absolute -right-20 -top-20 h-80 w-80 rounded-full bg-mint/35 blur-3xl" />
-      <div className="pointer-events-none absolute -bottom-16 -left-16 h-64 w-64 rounded-full bg-blush/70 blur-3xl" />
-
-      <div className="relative z-10 mx-auto max-w-300">
-        <div className="text-center">
-          <p className="text-xs font-semibold uppercase tracking-[0.22em] text-teal-mid">
-            Leadership
-          </p>
-          <h2 className="mt-3 font-serif text-[clamp(2.2rem,5vw,3.5rem)] leading-[1.15] text-teal-deep">
-            {messageFromCeo?.heading || "Message From CEO"}
-          </h2>
-          <p className="mx-auto mt-4 max-w-3xl text-base leading-7 text-slate-600 sm:text-lg">
-            A message from our leadership highlighting our vision, commitment, and the path ahead for our members.
-          </p>
-        </div>
-
-        <div className="mt-12 overflow-hidden rounded-[20px] border border-[rgba(0,91,92,0.08)] bg-white">
-          <div className="grid gap-0 lg:grid-cols-2">
-            <div className="group relative min-h-80 overflow-hidden sm:min-h-90 lg:min-h-105">
-              {messageFromCeo?.imageUrl ? (
-                <img
-                  src={messageFromCeo.imageUrl}
-                  alt={messageFromCeo.heading || "CEO portrait"}
-                  className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.04]"
-                />
-              ) : (
-                <Image
-                  src="/ceo-placeholder.svg"
-                  alt="CEO portrait"
-                  fill
-                  sizes="(max-width: 768px) 100vw, 50vw"
-                  className="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.04]"
-                />
-              )}
+    <section className="relative overflow-hidden bg-[#f8fafc] px-4 py-16 md:px-6 lg:py-24">
+      {/* Subtle background decoration */}
+      <div className="pointer-events-none absolute -right-24 -top-24 h-96 w-96 rounded-full bg-emerald-500/5 blur-3xl" />
+      
+      <div className="relative z-10 mx-auto max-w-6xl">
+        <div className="overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-2xl">
+          <div className="grid lg:grid-cols-5">
+            
+            {/* Left Column: Image & Dark Blue Label */}
+            <div className="relative lg:col-span-2">
+              <div className="aspect-4/5 w-full overflow-hidden bg-slate-100 lg:h-full">
+                {messageFromCeo?.imageUrl ? (
+                  <img
+                    src={messageFromCeo.imageUrl}
+                    alt={ceoName}
+                    className="h-full w-full object-cover"
+                  />
+                ) : (
+                  <div className="flex h-full items-center justify-center bg-slate-200 text-slate-400">
+                    Portrait Placeholder
+                  </div>
+                )}
+              </div>
+              
+              {/* CEO Name Label (The Dark Blue Bar) */}
+              <div className="absolute bottom-0 w-full bg-[#0a2d52] py-7 text-center text-white">
+                <h3 className="font-serif text-2xl font-bold tracking-tight">
+                  {ceoName}
+                </h3>
+                <p className="mt-1 text-xs font-semibold uppercase tracking-widest opacity-80">
+                  {ceoDesignation}
+                </p>
+              </div>
             </div>
 
-            <article className="flex min-h-80 flex-col p-6 sm:min-h-90 lg:min-h-105 lg:p-8">
-              <div className="text-center">
-                <p className="text-[1rem] font-black uppercase tracking-[0.14em] text-teal-mid sm:text-[1.05rem]">
-                  Leadership Note
-                </p>
-
-                <div className="mx-auto mt-4 h-0.75 w-20 bg-mint" />
-              </div>
-
-              <div className="mt-6 flex flex-1 items-center justify-center">
-                <div className="w-full rounded-2xl border border-[#dce8ef] bg-[#f7fbfd] px-4 py-4 md:px-5 md:py-5">
-                  <RichTextContent
-                    html={
-                      messageFromCeo?.description ||
-                      "First, I would like to extend my warm regards and heartfelt welcome to all stakeholders associated with this financial institution."
-                    }
-                    className="rich-text-content text-[15px] leading-7 text-slate-700 sm:text-base"
-                  />
+            {/* Right Column: Message Content */}
+            <article className="flex flex-col justify-center p-8 md:p-12 lg:col-span-3 lg:p-16">
+              
+              {/* Header with Circular Icon */}
+              <div className="mb-8 flex items-start gap-5">
+                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-[#6ba47d]/15 text-[#4a7c59]">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M14.017 21L14.017 18C14.017 16.8954 14.9124 16 16.017 16H19.017C19.5693 16 20.017 15.5523 20.017 15V9C20.017 8.44772 19.5693 8 19.017 8H15.017C14.4647 8 14.017 8.44772 14.017 9V11C14.017 11.5523 13.5693 12 13.017 12H12.017V21H14.017ZM6.017 21L6.017 18C6.017 16.8954 6.91243 16 8.017 16H11.017C11.5693 16 12.017 15.5523 12.017 15V9C12.017 8.44772 11.5693 8 11.017 8H7.017C6.46472 8 6.017 8.44772 6.017 9V11C6.017 11.5523 5.56929 12 5.017 12H4.017V21H6.017Z" />
+                  </svg>
+                </div>
+                <div>
+                  <p className="text-xs font-black uppercase tracking-[0.2em] text-[#0a2d52]/50">
+                    Message From
+                  </p>
+                  <h2 className="font-serif text-4xl font-black text-[#0a2d52] md:text-5xl">
+                    THE CEO
+                  </h2>
+                  <div className="mt-3 h-1.5 w-14 bg-[#6ba47d]" />
                 </div>
               </div>
 
-              <div className="mt-6 flex justify-end">
-                <Link
-                  href={buttonHref}
-                  className="inline-flex items-center rounded-full border border-[#f6921e]/40 bg-blush px-5 py-2.5 text-sm font-semibold text-teal-deep transition hover:border-[#f6921e] hover:bg-[#f8b866]"
-                >
-                  {buttonLabel}
-                </Link>
+              {/* Rich Text Body */}
+              <div className="rich-text-container">
+                <RichTextContent
+                  html={
+                    messageFromCeo?.description ||
+                    "<p>Thank you for your continued hard work and dedication. We are building something meaningful together.</p>"
+                  }
+                  className="text-[15px] leading-relaxed text-slate-700 md:text-[16.5px]"
+                />
+              </div>
+
+              {/* Signature Area (Hardcoded logic to avoid TS errors) */}
+              <div className="mt-12">
+                <div className="h-px w-32 bg-slate-200" />
+                <p className="mt-4 text-sm font-serif italic text-slate-400">
+                  {ceoName}
+                </p>
               </div>
             </article>
+
           </div>
         </div>
       </div>
