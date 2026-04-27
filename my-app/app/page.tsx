@@ -14,6 +14,7 @@ import {
   getHomeServicesSectionMeta,
 } from '@/services/home-services-service';
 import NewsAndNotices from '@/components/NewsAndNotices';
+import ContactHome from '@/components/ContactHome';
 
 
 
@@ -115,6 +116,7 @@ export default async function Home() {
         <CompanyStatsSection />
         <ServicesSection/>
         <NewsAndNotices />
+        <ContactHome />
       </main>
 
       <Footer />

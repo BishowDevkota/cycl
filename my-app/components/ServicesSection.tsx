@@ -331,7 +331,6 @@ export default function ServicesSection({
           .service-card { padding: 32px 24px 28px; }
         }
       `}</style>
-
       <section className="services-section" ref={sectionRef}>
         <div className="services-container">
           <div className="services-eyebrow">

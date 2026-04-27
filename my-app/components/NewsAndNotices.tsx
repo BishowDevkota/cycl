@@ -85,9 +85,7 @@ const newsData: NewsItem[] = [
 ];
 
 export default function NewsAndNotices() {
-  const [activeFilter, setActiveFilter] = useState<"all" | "news" | "notice">(
-    "all"
-  );
+  const [activeFilter, setActiveFilter] = useState<"all" | "news" | "notice">("all");
   const [currentIndex, setCurrentIndex] = useState(0);
   const [hoveredId, setHoveredId] = useState<number | null>(null);
   const trackRef = useRef<HTMLDivElement>(null);
@@ -97,19 +95,33 @@ export default function NewsAndNotices() {
       ? newsData
       : newsData.filter((n) => n.category === activeFilter);
 
-  const visibleCount = 3;
+  // Responsive visible cards
+  const [visibleCount, setVisibleCount] = useState(3);
+
+  useEffect(() => {
+    const updateVisibleCount = () => {
+      if (window.innerWidth <= 600) setVisibleCount(1);
+      else if (window.innerWidth <= 900) setVisibleCount(2);
+      else setVisibleCount(3);
+    };
+
+    updateVisibleCount();
+    window.addEventListener("resize", updateVisibleCount);
+    return () => window.removeEventListener("resize", updateVisibleCount);
+  }, []);
+
   const maxIndex = Math.max(0, filtered.length - visibleCount);
 
   useEffect(() => {
     setCurrentIndex(0);
-  }, [activeFilter]);
+  }, [activeFilter, visibleCount]);
 
   const prev = () => setCurrentIndex((i) => Math.max(0, i - 1));
   const next = () => setCurrentIndex((i) => Math.min(maxIndex, i + 1));
 
   return (
     <>
-      <style>{`
+      <style jsx global>{`
         @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Noto+Sans+Devanagari:wght@400;500;600&family=DM+Sans:wght@300;400;500&display=swap');
 
         :root {
@@ -132,11 +144,11 @@ export default function NewsAndNotices() {
         }
 
         .ne-section::after {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; right: 0;
-            height: 1px;
-            background: rgba(0, 0, 0, 0.07);
+          content: '';
+          position: absolute;
+          top: 0; left: 0; right: 0;
+          height: 1px;
+          background: rgba(0, 0, 0, 0.07);
         }
 
         .ne-bg-accent {
@@ -165,8 +177,6 @@ export default function NewsAndNotices() {
           gap: 24px;
         }
 
-        .ne-title-block {}
-
         .ne-eyebrow {
           display: flex;
           align-items: center;
@@ -190,12 +200,11 @@ export default function NewsAndNotices() {
 
         .ne-heading {
           font-family: sans-serif;
-          font-size: clamp(2rem, 4vw, 2.75rem);
+          font-size: 40px;
           font-weight: 700;
           color: var(--text-dark);
           line-height: 1.15;
           margin: 0;
-          font-size: 40px;
         }
 
         .ne-heading span {
@@ -237,6 +246,7 @@ export default function NewsAndNotices() {
 
         .ne-slider-wrapper {
           position: relative;
+          padding: 0 60px;
         }
 
         .ne-track-outer {
@@ -393,14 +403,6 @@ export default function NewsAndNotices() {
           transform: translateX(3px);
         }
 
-        .ne-controls {
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          gap: 16px;
-          margin-top: 44px;
-        }
-
         .ne-arrow-btn {
           width: 44px;
           height: 44px;
@@ -414,19 +416,37 @@ export default function NewsAndNotices() {
           cursor: pointer;
           transition: all 0.25s ease;
           font-size: 16px;
+          position: absolute;
+          top: 50%;
+          z-index: 2;
+        }
+
+        .ne-arrow-btn.left {
+          left: 0;
+          transform: translateY(-50%);
+        }
+
+        .ne-arrow-btn.right {
+          right: 0;
+          transform: translateY(-50%);
         }
 
         .ne-arrow-btn:hover:not(:disabled) {
-          background: #A8D8B9;;
           background: var(--beige);
-          color: white;
-          transform: scale(1.08);
+          transform: translateY(-50%) scale(1.08);
         }
-        
 
         .ne-arrow-btn:disabled {
           opacity: 0.3;
           cursor: not-allowed;
+        }
+
+        .ne-controls {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 16px;
+          margin-top: 44px;
         }
 
         .ne-dots {
@@ -495,19 +515,86 @@ export default function NewsAndNotices() {
           color: white;
         }
 
+        /* ===================== RESPONSIVE DESIGN ===================== */
+
         @media (max-width: 900px) {
+          .ne-slider-wrapper {
+            padding: 0 50px;
+          }
           .ne-card {
             flex: 0 0 calc((100% - 28px) / 2);
           }
         }
 
         @media (max-width: 600px) {
+          .ne-section {
+            padding: 60px 0 80px;
+          }
+
+          .ne-container {
+            padding: 0 20px;
+          }
+
+          .ne-slider-wrapper {
+            padding: 0 20px;
+          }
+
           .ne-card {
             flex: 0 0 100%;
           }
+
           .ne-header {
             flex-direction: column;
             align-items: flex-start;
+            gap: 20px;
+          }
+
+          .ne-filters {
+            width: 100%;
+            justify-content: center;
+          }
+
+          /* Hide arrows on mobile phones */
+          .ne-arrow-btn {
+            display: none;
+          }
+
+          .ne-card-img-wrap {
+            height: 200px;
+          }
+
+          .ne-card-title {
+            font-size: 15.5px;
+          }
+
+          .ne-card-excerpt {
+            font-size: 14.5px;
+          }
+
+          .ne-controls {
+            margin-top: 32px;
+          }
+
+          .ne-dot {
+            width: 8px;
+            height: 8px;
+          }
+
+          .ne-dot.active {
+            width: 28px;
+          }
+
+          .ne-view-all {
+            margin-top: 40px;
+            padding: 16px 36px;
+            font-size: 15px;
+          }
+        }
+
+        /* Show arrows on tablets */
+        @media (min-width: 601px) and (max-width: 900px) {
+          .ne-arrow-btn {
+            display: flex;
           }
         }
       `}</style>
@@ -532,9 +619,7 @@ export default function NewsAndNotices() {
               {(["all", "news", "notice"] as const).map((f) => (
                 <button
                   key={f}
-                  className={`ne-filter-btn ${
-                    activeFilter === f ? "active" : ""
-                  }`}
+                  className={`ne-filter-btn ${activeFilter === f ? "active" : ""}`}
                   onClick={() => setActiveFilter(f)}
                 >
                   {f === "all" ? "All" : f === "news" ? "News" : "Notices"}
@@ -545,6 +630,21 @@ export default function NewsAndNotices() {
 
           {/* Slider */}
           <div className="ne-slider-wrapper">
+            <button
+              className="ne-arrow-btn left"
+              onClick={prev}
+              disabled={currentIndex === 0}
+              aria-label="Previous"
+            >
+              <Image
+                src="/images/newsAndNotices/slider-arrow.png"
+                alt="Previous"
+                width={32}
+                height={32}
+                style={{ transform: "rotate(-180deg)" }}
+              />
+            </button>
+
             <div className="ne-track-outer">
               <div
                 ref={trackRef}
@@ -576,9 +676,15 @@ export default function NewsAndNotices() {
                           {item.date}
                         </div>
                         <button className="ne-read-more">
-                          Read More{" "}
-                          {/* <span className="ne-read-more-arrow">→</span> */}
-                          <Image src={`/images/newsAndNotices/arrow.png`} alt="arrow" width={20} height={20} style={{transform: "rotate(-90deg)"}} className="ne-read-more-arrow"/>
+                          Read More
+                          <Image
+                            src="/images/newsAndNotices/arrow.png"
+                            alt="arrow"
+                            width={20}
+                            height={20}
+                            style={{ transform: "rotate(-90deg)" }}
+                            className="ne-read-more-arrow"
+                          />
                         </button>
                       </div>
                     </div>
@@ -587,43 +693,39 @@ export default function NewsAndNotices() {
               </div>
             </div>
 
-            {/* Controls */}
-            <div className="ne-controls">
-              <button
-                className="ne-arrow-btn"
-                onClick={prev}
-                disabled={currentIndex === 0}
-                aria-label="Previous"
-              >
-               <Image src={`/images/newsAndNotices/arrow.png`} alt="arrow" width={32} height={32} style={{transform: "rotate(90deg)"}}/>
-              </button>
+            <button
+              className="ne-arrow-btn right"
+              onClick={next}
+              disabled={currentIndex >= maxIndex}
+              aria-label="Next"
+            >
+              <Image
+                src="/images/newsAndNotices/slider-arrow.png"
+                alt="Next"
+                width={32}
+                height={32}
+              />
+            </button>
+          </div>
 
-              <div className="ne-dots">
-                {Array.from({ length: maxIndex + 1 }).map((_, i) => (
-                  <button
-                    key={i}
-                    className={`ne-dot ${currentIndex === i ? "active" : ""}`}
-                    onClick={() => setCurrentIndex(i)}
-                    aria-label={`Go to slide ${i + 1}`}
-                  />
-                ))}
-              </div>
-
-              <button
-                className="ne-arrow-btn"
-                onClick={next}
-                disabled={currentIndex >= maxIndex}
-                aria-label="Next"
-              >
-                <Image src={`/images/newsAndNotices/arrow.png`} alt="arrow" width={32} height={32} style={{transform: "rotate(-90deg)"}}/>
-              </button>
+          {/* Dots */}
+          <div className="ne-controls">
+            <div className="ne-dots">
+              {Array.from({ length: maxIndex + 1 }).map((_, i) => (
+                <button
+                  key={i}
+                  className={`ne-dot ${currentIndex === i ? "active" : ""}`}
+                  onClick={() => setCurrentIndex(i)}
+                  aria-label={`Go to slide ${i + 1}`}
+                />
+              ))}
             </div>
           </div>
 
-          {/* View All */}
+          {/* View All Button */}
           <button className="ne-view-all">
             <Link href="/news-notices">
-            <span>View All News &amp; Notices</span>
+              <span>View All News &amp; Notices</span>
             </Link>
           </button>
         </div>
