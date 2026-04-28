@@ -43,7 +43,7 @@ export default function BoardOfDirectorsPage() {
         </div>
       </section>
 
-      <AboutUsPageLinks currentPage="board-of-directors" />
+      
     </PublicPageShell>
   );
 }

@@ -27,16 +27,16 @@ export default async function AboutUsPage() {
         { label: "Board of Directors", href: "/about-us/board-of-directors" },
       ]}
     >
-      <section className="min-h-[100svh] rounded-3xl border border-[#d9e8ef] bg-white p-6 shadow-[0_20px_40px_rgba(13,44,62,0.08)] sm:p-8">
-        <div className="grid w-full gap-10 lg:grid-cols-[3fr_2fr] lg:items-center">
-          <div className="flex items-center justify-center lg:justify-start">
+      <section className="min-h-[100svh] py-6 sm:py-8">
+        <div className="grid w-full gap-4 lg:grid-cols-[3fr_2fr] lg:items-center">
+          <div className="flex items-center justify-center lg:justify-end">
             <Image
               src="/images/cyc-logo-introduction.png"
               alt="CYC Nepal Laghubitta Bittiya Sanstha logo"
               width={900}
               height={900}
-              sizes="(min-width: 1024px) 60vw, 80vw"
-              className="h-auto w-full max-w-[520px] object-contain lg:max-w-none"
+              sizes="(min-width: 1024px) 45vw, 80vw"
+              className="h-auto w-full max-w-[420px] object-contain lg:max-w-[460px]"
               priority
             />
           </div>
@@ -57,7 +57,6 @@ export default async function AboutUsPage() {
         vision={aboutCompanyProfile.vision}
         mission={aboutCompanyProfile.mission}
         goals={aboutCompanyProfile.goals}
-        objectives={aboutCompanyProfile.objectives}
       />
 
       

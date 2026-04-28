@@ -2,7 +2,6 @@ type AboutUsPillarsProps = {
   vision: string;
   mission: string;
   goals: string[];
-  objectives: string[];
 };
 
 type PillarCard = {
@@ -15,18 +14,16 @@ export function AboutUsPillars({
   vision,
   mission,
   goals,
-  objectives,
 }: AboutUsPillarsProps) {
   const cards: PillarCard[] = [
     { title: "Vision", content: vision },
     { title: "Mission", content: mission },
     { title: "Goals", items: goals },
-    { title: "Objectives", items: objectives },
   ];
 
   return (
     <section className="mt-10">
-      <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-4">
+      <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
         {cards.map((card) => (
           <article
             key={card.title}

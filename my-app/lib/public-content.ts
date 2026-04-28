@@ -110,14 +110,14 @@ export const aboutCompanyProfile = {
   overview:
     "CYC Nepal Laghubitta Bittiya Sanstha Ltd. partners with underserved communities through responsible microfinance, financial literacy, and enterprise support programs.",
   vision:
-    "To become Nepal's most trusted microfinance partner for inclusive and sustainable local prosperity.",
+    "To be a social financial institution that contributes to poverty reduction in Nepal by helping people become socially aware, increase entrepreneurship, and become financially self-reliant.",
   mission:
-    "To deliver reliable financial products, strengthen entrepreneurship, and uplift household resilience through responsible lending and savings services.",
+    "To provide financial services, financial awareness, and social awareness to the people in financially unserved areas of Nepal in an easy and sustainable manner.",
   goals: [
-    "Expand quality microfinance coverage in underserved municipalities.",
-    "Digitize customer service touchpoints for faster and transparent access.",
-    "Improve portfolio quality through data-driven risk monitoring.",
-    "Strengthen women-led and youth-led enterprise financing.",
+    "Provide financial services to people by expanding services to remote areas of Nepal.",
+    "Transform financial awareness, entrepreneurship, and livelihood skills for people in rural areas.",
+    "Develop a well-managed, sustainable, and technically capable institution with highly motivated and skillful human resources.",
+    "Help poor families increase their income by involving women in income-generating activities.",
   ],
   objectives: [
     "Deliver compliant, customer-friendly lending and savings products.",
