@@ -157,7 +157,12 @@ export default function ServicesSection({
         }
 
         .services-section {
-          background: var(--teal-mid);
+          background-color: transparent;
+          background-image: url("/images/services/our-services-bg.jpeg");
+          background-position: center;
+          background-repeat: no-repeat;
+          background-size: cover;
+          background-attachment: fixed;
           padding: 100px 24px;
           position: relative;
           overflow: hidden;
@@ -381,6 +386,7 @@ export default function ServicesSection({
 
         @media (max-width: 768px) {
           .services-section { padding: 72px 16px; }
+          .services-section { background-attachment: scroll; }
           .service-card { padding: 32px 24px 28px; }
         }
       `}</style>
@@ -407,6 +413,7 @@ export default function ServicesSection({
                     src={svc.image}
                     alt={svc.title}
                     fill
+                    sizes="(max-width: 768px) 72px, 88px"
                     style={{ objectFit: "contain" }}
                   />
                   <span className="stat-badge">{svc.stat}</span>
