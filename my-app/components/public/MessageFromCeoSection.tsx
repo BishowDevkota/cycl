@@ -21,7 +21,7 @@ export function MessageFromCeoSection({
       <div className="pointer-events-none absolute -right-24 -top-24 h-96 w-96 rounded-full b " />
       
       <div className="relative z-10 mx-auto max-w-6xl">
-        <div className="overflow-hidden rounded-2xl border bg-white shadow-2xl">
+        <div className="overflow-hidden rounded-2xl border-0 bg-white shadow-2xl">
           <div className="grid lg:grid-cols-5">
             
             {/* Left Column: Image & Dark Blue Label */}

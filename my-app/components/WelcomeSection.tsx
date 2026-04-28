@@ -19,9 +19,12 @@ export function WelcomeSection({ aboutCompanyInfo }: WelcomeSectionProps) {
           </div>
 
           <div className="relative z-10 px-6 pt-6 sm:px-10 sm:pt-8 lg:px-12 lg:pt-10">
-            <h2 className="max-w-[13.6ch] text-[1.72rem] font-semibold leading-[1.14] tracking-[0.01em] text-white sm:text-[2.1rem] lg:text-[2.95rem]">
-              {aboutCompanyInfo?.heading || "Welcome To CYC Nepal Laghubitta Bittiya Sanstha Ltd."}
+            <div className="flex">
+
+            <h2 className="max-w-[20ch] text-[1.2rem] font-semibold leading-[1.14] tracking-[0.01em] text-white sm:text-[2rem] lg:text-[2.2rem]">
+              <p className="">{aboutCompanyInfo?.heading || "Welcome To CYC Nepal Laghubitta Bittiya Sanstha Ltd."}</p>
             </h2>
+            </div>
 
             <div
               className="relative mt-5 h-[240px] w-full max-w-[520px] overflow-hidden border-[5px] border-[#d6ab33] bg-white/8 shadow-[0_10px_30px_rgba(0,0,0,0.12)] sm:mt-6 sm:h-[320px] lg:mt-7 lg:h-[395px]"
@@ -82,7 +85,7 @@ export function WelcomeSection({ aboutCompanyInfo }: WelcomeSectionProps) {
           ) : (
             <>
               <p className="text-[17px] leading-[1.7] text-[#32455e] sm:text-[18px]">
-                <span className="font-semibold text-[#32455e]">
+                <span className="font-semibold text-[#32455e] text-justify">
                   The CYC Nepal Laghubitta Bittiya Sanstha Ltd. is a leading Microfinance in Nepal.
                 </span>{" "}
                 It was registered on 11 February 2019 as a public company as a class &apos;D&apos; financial institution with the Nepal Rastra Bank under Act, 2063 and started formal microfinance operation from 15 March, 2019. CYC Nepal Laghubitta Bittiya Sanstha previously known as CYC (Chartare Youth Club) which is located in Samikshalaya Road Baglung.
