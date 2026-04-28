@@ -1,87 +1,55 @@
-import { NextRequest, NextResponse } from "next/server";
-import { z } from "zod";
+import { NextResponse } from "next/server";
+import { getContactDetails, type ContactDetails } from "@/services/contact-service";
 
-const contactMessageSchema = z.object({
-  name: z
-    .string()
-    .trim()
-    .min(2, "Name must be at least 2 characters")
-    .max(80, "Name must be 80 characters or less"),
-  email: z
-    .string()
-    .trim()
-    .email("Please enter a valid email address")
-    .max(120, "Email must be 120 characters or less"),
-  subject: z
-    .string()
-    .trim()
-    .min(3, "Subject must be at least 3 characters")
-    .max(120, "Subject must be 120 characters or less"),
-  message: z
-    .string()
-    .trim()
-    .min(10, "Message must be at least 10 characters")
-    .max(2000, "Message must be 2000 characters or less"),
-});
+type ContactItemLike =
+  | ContactDetails["phone"]
+  | {
+      text?: unknown;
+      link?: unknown;
+    }
+  | string
+  | null
+  | undefined;
 
-type ContactMessage = z.infer<typeof contactMessageSchema>;
-
-function mapValidationErrors(error: z.ZodError<ContactMessage>) {
-  const fieldErrors = error.flatten().fieldErrors;
+function normalizeContactItem(item: ContactItemLike) {
+  if (typeof item === "string") {
+    return { text: item, link: "" };
+  }
 
   return {
-    name: fieldErrors.name?.[0],
-    email: fieldErrors.email?.[0],
-    subject: fieldErrors.subject?.[0],
-    message: fieldErrors.message?.[0],
+    text: typeof item?.text === "string" ? item.text : "",
+    link: typeof item?.link === "string" ? item.link : "",
   };
 }
 
-export async function POST(request: NextRequest) {
-  let payload: unknown;
+function normalizeStoredContact(contact: ContactDetails): ContactDetails {
+  return {
+    ...contact,
+    phone: normalizeContactItem(contact.phone),
+    email: normalizeContactItem(contact.email),
+    facebook: normalizeContactItem(contact.facebook),
+    whatsapp: normalizeContactItem(contact.whatsapp),
+    location: normalizeContactItem(contact.location),
+  };
+}
 
+export async function GET() {
   try {
-    payload = await request.json();
-  } catch {
+    const contact = await getContactDetails();
+
+    if (!contact) {
+      return NextResponse.json(
+        { error: "Contact details not found" },
+        { status: 404 },
+      );
+    }
+
+    return NextResponse.json(normalizeStoredContact(contact), { status: 200 });
+  } catch (error) {
+    console.error("Error fetching public contact details:", error);
     return NextResponse.json(
-      {
-        error: "Invalid JSON payload",
-      },
-      {
-        status: 400,
-      },
+      { error: "Failed to retrieve contact details" },
+      { status: 500 },
     );
   }
-
-  const validationResult = contactMessageSchema.safeParse(payload);
-
-  if (!validationResult.success) {
-    return NextResponse.json(
-      {
-        error: "Validation failed",
-        errors: mapValidationErrors(validationResult.error),
-      },
-      {
-        status: 400,
-      },
-    );
-  }
-
-  // In production, this payload should be persisted or forwarded to a messaging pipeline.
-  const message = validationResult.data;
-  console.info("Contact inquiry received:", {
-    name: message.name,
-    email: message.email,
-    subject: message.subject,
-  });
-
-  return NextResponse.json(
-    {
-      success: true,
-      message: "Thank you for contacting us. Our team will reach out shortly.",
-    },
-    {
-      status: 201,
-    },
-  );
 }
