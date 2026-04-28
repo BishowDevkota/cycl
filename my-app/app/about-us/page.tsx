@@ -18,25 +18,25 @@ export default async function AboutUsPage() {
   const overviewHtml = aboutCompanyInfo?.description || introductionHtml;
 
   return (
-    <PublicPageShell
-      eyebrow="About Us"
-      title="Introduction"
+    <PublicPageShell 
+    imageUrl= "/banner/banner2.jpg"    
+      title="About us"
       description="Learn about CYC Nepal Laghubitta Bittiya Sanstha Ltd., our purpose, and our strategic direction for inclusive and responsible finance."
       actions={[
         { label: "Chairman Message", href: "/about-us/chairman-message" },
         { label: "Board of Directors", href: "/about-us/board-of-directors" },
       ]}
     >
-      <section className="min-h-[100svh] py-6 sm:py-8">
-        <div className="grid w-full gap-4 lg:grid-cols-[3fr_2fr] lg:items-center">
-          <div className="flex items-center justify-center lg:justify-end">
+      <section className="min-h-[100svh] py-6 sm:py-8 flex justify-between">
+        <div className="grid w-[90%] gap-4 lg:grid-cols-[3fr_2fr] lg:items-center">
+          <div className="flex items-center justify-center">
             <Image
               src="/images/cyc-logo-introduction.png"
               alt="CYC Nepal Laghubitta Bittiya Sanstha logo"
               width={900}
               height={900}
               sizes="(min-width: 1024px) 45vw, 80vw"
-              className="h-auto w-full max-w-[420px] object-contain lg:max-w-[460px]"
+              className="h-auto w-full max-w-[420px] object-contain lg:max-w-[460px] "
               priority
             />
           </div>
@@ -46,7 +46,7 @@ export default async function AboutUsPage() {
 
             <RichTextContent
               html={overviewHtml}
-              className="rich-text-content text-justify text-sm leading-7 text-slate-700 sm:text-base"
+              className="rich-text-content text-sm leading-7 text-slate-700 sm:text-base"
             />
           </div>
 

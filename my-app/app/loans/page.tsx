@@ -6,8 +6,8 @@ import { SectionHeading } from "@/components/public/SectionHeading";
 export default function LoansPage() {
   return (
     <PublicPageShell
-      eyebrow="Loans"
-      title="Loan Details"
+      imageUrl="/banner/banner2.jpg"
+      title="Loans"
       description="Explore loan category details and move to dedicated calculators for EMI and total interest estimation."
       actions={[
         { label: "Loan Categories", href: "/loans/loan-categories" },

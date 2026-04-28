@@ -11,7 +11,7 @@ export function SectionHeading({
 }: SectionHeadingProps) {
   return (
     <div className="mb-7 sm:mb-8">
-      <p className="text-xs font-semibold uppercase tracking-[0.22em] text-[#0d837f]">
+      <p className="text-sm font-semibold uppercase tracking-[0.22em] text-[#0d837f]">
         {eyebrow}
       </p>
       <h2 className="mt-3 text-2xl font-semibold leading-tight text-[#123451] sm:text-3xl">
