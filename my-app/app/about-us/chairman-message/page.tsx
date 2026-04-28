@@ -1,14 +1,8 @@
-import { AboutUsPageLinks } from "@/components/public/AboutUsPageLinks";
+import Image from "next/image";
 import { PublicPageShell } from "@/components/public/PublicPageShell";
-import { SectionHeading } from "@/components/public/SectionHeading";
 import { chairmanMessage } from "@/lib/public-content";
-
-const leadershipCommitments = [
-  "Strengthen transparent governance at every operational level.",
-  "Expand quality financial services to underserved communities.",
-  "Advance digital service delivery for faster, safer client access.",
-  "Maintain responsible lending standards and social impact focus.",
-];
+const chairmanPhoto = "/images/padhmanath-Sharma-cyc-chairmain.jpg";
+const messageParagraphs = chairmanMessage.message.split("\n\n").filter(Boolean);
 
 export default function ChairmanMessagePage() {
   return (
@@ -21,31 +15,51 @@ export default function ChairmanMessagePage() {
         { label: "Board of Directors", href: "/about-us/board-of-directors" },
       ]}
     >
-      <section className="rounded-3xl border border-[#d9e8ef] bg-[linear-gradient(165deg,#fef9f2_0%,#ffffff_62%,#f8f3ea_100%)] p-6 shadow-[0_18px_38px_rgba(108,77,25,0.08)] sm:p-8">
-        <SectionHeading
-          eyebrow="Chairman Message"
-          title={chairmanMessage.name}
-          description={chairmanMessage.title}
-        />
+      <section className="rounded-3xl border border-[#d9e8ef] bg-white p-6 shadow-[0_20px_40px_rgba(13,44,62,0.08)] sm:p-8">
+        <div className="grid gap-8 lg:grid-cols-[2fr_3fr] lg:items-start">
+          <div className="overflow-hidden rounded-2xl border border-[#e0e7ee] bg-white shadow-[0_14px_30px_rgba(15,23,42,0.12)]">
+            <div className="relative aspect-[4/5] w-full">
+              <Image
+                src={chairmanPhoto}
+                alt={`${chairmanMessage.name}, ${chairmanMessage.title}`}
+                fill
+                sizes="(min-width: 1024px) 40vw, 100vw"
+                className="object-cover"
+                priority
+              />
+            </div>
+          </div>
 
-        <blockquote className="rounded-2xl border border-[#f0dfc6] bg-white/85 p-5 text-sm leading-7 text-slate-700 sm:text-base">
-          {chairmanMessage.message}
-        </blockquote>
+          <article className="flex flex-col justify-center">
+            <header className="mb-6">
+              <p className="text-xs font-semibold uppercase tracking-[0.26em] text-[#0d837f]">
+                Message From
+              </p>
+              <h2 className="mt-2 text-2xl font-semibold text-[#123451] sm:text-3xl">
+                Chairman
+              </h2>
+              <div className="mt-3 h-1 w-12 rounded-full bg-[#0d837f]" />
+            </header>
 
-        <article className="mt-6 rounded-2xl border border-[#f0dfc6] bg-white p-5">
-          <h3 className="text-lg font-semibold text-[#123451]">Leadership Commitments</h3>
-          <ul className="mt-3 space-y-2">
-            {leadershipCommitments.map((item) => (
-              <li key={item} className="flex gap-3 text-sm leading-7 text-slate-700 sm:text-base">
-                <span className="mt-2 inline-flex h-2.5 w-2.5 shrink-0 rounded-full bg-[#f6921e]" aria-hidden="true" />
-                <span>{item}</span>
-              </li>
-            ))}
-          </ul>
-        </article>
+            <div className="space-y-4 text-sm leading-7 text-slate-700 sm:text-base">
+              {messageParagraphs.map((paragraph, index) => (
+                <p key={`${index}-${paragraph.slice(0, 12)}`}>{paragraph}</p>
+              ))}
+            </div>
+
+            <div className="mt-6 border-t border-slate-200 pt-4">
+              <p className="text-base font-semibold text-[#123451]">
+                {chairmanMessage.name}
+              </p>
+              <p className="text-xs font-semibold uppercase tracking-[0.22em] text-slate-500">
+                {chairmanMessage.title}
+              </p>
+            </div>
+          </article>
+        </div>
       </section>
 
-      <AboutUsPageLinks currentPage="chairman-message" />
+      
     </PublicPageShell>
   );
 }

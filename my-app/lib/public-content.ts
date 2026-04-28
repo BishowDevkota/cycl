@@ -128,10 +128,10 @@ export const aboutCompanyProfile = {
 };
 
 export const chairmanMessage = {
-  name: "Ramesh Prasad Gautam",
+  name: "Padhmanath Sharma",
   title: "Chairman",
   message:
-    "At CYC Nepal, we measure growth by the progress of the families and entrepreneurs we serve. Our focus remains on ethical finance, transparent governance, and practical support that transforms local economic potential into sustainable outcomes.",
+    "It gives me great pleasure to share a few words on behalf of CYC Nepal Laghubitta Bittiya Sanstha Ltd.\n\nSince our establishment in 2019, we have remained committed to empowering low-income households and underserved communities across the hilly and mountainous regions of Nepal. Our journey began with a clear vision to provide accessible financial services that create real opportunities for those who need them most. Today, with our expanding network of branches and dedicated team, we are proud to support thousands of families in improving their livelihoods.\n\nAt CYC Nepal Laghubitta, we believe that financial inclusion is not just about providing loans and savings facilities. It is about building confidence, encouraging entrepreneurship, and creating sustainable income-generating opportunities. Alongside our financial services, we continue to promote social awareness, education, skill development, and cultural values within the communities we serve.\n\nOur progress would not have been possible without the trust of our clients, the dedication of our staff, and the continuous support of our stakeholders. We remain committed to strengthening this trust by maintaining transparency, accountability, and responsible banking practices.\n\nAs we move forward, we will continue to expand our outreach, enhance service quality, and contribute meaningfully to the economic and social development of Nepal.\n\nThank you for your continued trust and support.",
 };
 
 export const boardOfDirectors: LeaderProfile[] = [
