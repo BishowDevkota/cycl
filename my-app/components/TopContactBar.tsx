@@ -109,7 +109,7 @@ export function TopContactBar() {
     <>
       {/* Top Utility Bar — scrolls away with the page */}
       <div className="w-full bg-[#005d59] text-white">
-        <div className="mx-auto flex h-12 w-full max-w-350 items-center justify-between px-8 md:px-16">
+        <div className="mx-auto flex h-12 w-full max-w-350 items-center justify-between px-4 md:px-6">
           <div className="flex min-w-0 items-center gap-6 text-sm font-medium sm:text-base">
             <Link href={phoneLink} className="inline-flex min-w-0 items-center gap-2 hover:text-zinc-200">
               <span>{phoneText}</span>
@@ -131,7 +131,7 @@ export function TopContactBar() {
 
       {/* Main Navbar — sticky to viewport top at all times */}
       <div className="sticky top-0 z-50 w-full border-b border-zinc-200/80 bg-white shadow-[0_8px_22px_rgba(7,100,110,0.12)]">
-        <div className="mx-auto flex min-h-20 w-full max-w-350 items-center justify-between px-8 md:px-16">
+        <div className="mx-auto flex min-h-20 w-full max-w-350 items-center justify-between px-4 md:px-6">
 
           {/* Logo */}
           <Link href="/" className="flex shrink-0 items-center">
@@ -145,48 +145,59 @@ export function TopContactBar() {
             />
           </Link>
 
-          {/* Navigation Links */}
-          <nav className="hidden items-center justify-end gap-x-6 text-base font-semibold text-zinc-800 xl:flex whitespace-nowrap 2xl:gap-x-8">
-            {navItems.map((item) => {
-              const isActive = isNavItemActive(item);
-              const hasDropdown = Boolean(item.children?.length);
-              return (
-                <div key={item.label} className="group relative">
-                  <Link
-                    href={item.href}
-                    className={`relative inline-flex items-center gap-1 py-2 font-semibold transition-colors duration-200 ${isActive ? "text-[#005d59]" : "text-zinc-800 hover:text-[#005d59]"}`}
-                  >
-                    <span className="relative inline-block pb-1">
-                      {item.label}
-                      <span className={`absolute -bottom-1 left-0 h-1 rounded-full bg-[#0d837f] transition-all duration-300 ease-out ${isActive ? "w-full" : "w-0 group-hover:w-full"}`} />
-                    </span>
-                    {hasDropdown && (
-                      <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="m6 9 6 6 6-6" />
-                      </svg>
-                    )}
-                  </Link>
+          {/* Navigation Links + Career Button — explicit left margin separates from logo */}
+          <div className="hidden items-center gap-x-8 xl:flex 2xl:gap-x-10 ml-14 2xl:ml-20">
+            <nav className="flex items-center gap-x-8 whitespace-nowrap text-base font-semibold text-zinc-800 2xl:gap-x-10">
+              {navItems.map((item) => {
+                const isActive = isNavItemActive(item);
+                const hasDropdown = Boolean(item.children?.length);
+                return (
+                  <div key={item.label} className="group relative">
+                    <Link
+                      href={item.href}
+                      className={`relative inline-flex items-center gap-1 py-2 font-semibold transition-colors duration-200 ${isActive ? "text-[#005d59]" : "text-zinc-800 hover:text-[#005d59]"}`}
+                    >
+                      <span className="relative inline-block pb-1">
+                        {item.label}
+                        <span className={`absolute -bottom-1 left-0 h-1 rounded-full bg-[#0d837f] transition-all duration-300 ease-out ${isActive ? "w-full" : "w-0 group-hover:w-full"}`} />
+                      </span>
+                      {hasDropdown && (
+                        <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="m6 9 6 6 6-6" />
+                        </svg>
+                      )}
+                    </Link>
 
-                  {/* Dropdown Menu */}
-                  {hasDropdown && (
-                    <div className="pointer-events-none absolute left-1/2 top-full z-90 w-72 -translate-x-1/2 pt-4 opacity-0 transition-all duration-200 group-hover:pointer-events-auto group-hover:opacity-100">
-                      <div className="overflow-hidden rounded-2xl border border-[#d8e6ee] bg-white p-2 shadow-[0_24px_36px_rgba(6,61,73,0.2)]">
-                        {item.children?.map((child) => (
-                          <Link
-                            key={child.href}
-                            href={child.href}
-                            className={`block rounded-xl px-4 py-3 text-base transition ${isActiveRoute(child.href) ? "bg-[#e8f7f4] font-semibold text-[#0d837f]" : "text-slate-700 hover:bg-[#f5fafc]"}`}
-                          >
-                            {child.label}
-                          </Link>
-                        ))}
+                    {/* Dropdown Menu */}
+                    {hasDropdown && (
+                      <div className="pointer-events-none absolute left-1/2 top-full z-90 w-72 -translate-x-1/2 pt-4 opacity-0 transition-all duration-200 group-hover:pointer-events-auto group-hover:opacity-100">
+                        <div className="overflow-hidden rounded-2xl border border-[#d8e6ee] bg-white p-2 shadow-[0_24px_36px_rgba(6,61,73,0.2)]">
+                          {item.children?.map((child) => (
+                            <Link
+                              key={child.href}
+                              href={child.href}
+                              className={`block rounded-xl px-4 py-3 text-base transition ${isActiveRoute(child.href) ? "bg-[#e8f7f4] font-semibold text-[#0d837f]" : "text-slate-700 hover:bg-[#f5fafc]"}`}
+                            >
+                              {child.label}
+                            </Link>
+                          ))}
+                        </div>
                       </div>
-                    </div>
-                  )}
-                </div>
-              );
-            })}
-          </nav>
+                    )}
+                  </div>
+                );
+              })}
+            </nav>
+
+            {/* Career Button */}
+            <Link
+              href="/career"
+              className="shrink-0 rounded-lg px-5 py-2.5 text-base font-semibold text-white transition-opacity duration-200 hover:opacity-90"
+              style={{ backgroundColor: "#005b5c" }}
+            >
+              Career
+            </Link>
+          </div>
 
           {/* Mobile Menu Toggle */}
           <div className="flex items-center xl:hidden">
@@ -202,7 +213,7 @@ export function TopContactBar() {
 
         {/* Mobile Menu Dropdown */}
         {mobileMenuOpen && (
-          <div className="border-t border-zinc-200 px-8 py-4 xl:hidden md:px-16">
+          <div className="border-t border-zinc-200 px-4 py-4 xl:hidden md:px-6">
             <div className="mx-auto flex w-full max-w-350 flex-col gap-4 text-lg font-medium text-zinc-800">
               {navItems.map((item) => (
                 <div key={item.label} className="rounded-xl border border-zinc-200/80 bg-white/75 p-3">
@@ -215,6 +226,16 @@ export function TopContactBar() {
                   </Link>
                 </div>
               ))}
+
+              {/* Career Button — Mobile */}
+              <Link
+                href="/career"
+                className="rounded-xl px-4 py-3 text-base font-semibold text-white text-center transition-opacity hover:opacity-90"
+                style={{ backgroundColor: "#005b5c" }}
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Career
+              </Link>
             </div>
           </div>
         )}
