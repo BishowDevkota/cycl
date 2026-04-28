@@ -90,6 +90,8 @@ export default function HeroCarousel({
 
           <div className="absolute inset-0 bg-black/15"></div>
 
+
+
 <div className="absolute inset-0 flex flex-col items-center justify-end text-white px-4 pb-6 pt-6 sm:px-6 sm:pb-8 lg:px-8 lg:pb-10">
               <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4 text-center leading-tight">
                 {title}
