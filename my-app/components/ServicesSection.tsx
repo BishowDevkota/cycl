@@ -158,7 +158,8 @@ export default function ServicesSection({
 
         .services-section {
           background-color: transparent;
-          background-image: url("/images/services/our-services-bg.jpeg");
+          background-image: linear-gradient(rgba(0, 0, 0, 0.55), rgba(0, 0, 0, 0.55)),
+            url("/images/services/our-services-bg.jpeg");
           background-position: center;
           background-repeat: no-repeat;
           background-size: cover;
