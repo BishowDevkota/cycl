@@ -1,0 +1,61 @@
+type AboutUsPillarsProps = {
+  vision: string;
+  mission: string;
+  goals: string[];
+  objectives: string[];
+};
+
+type PillarCard = {
+  title: string;
+  content?: string;
+  items?: string[];
+};
+
+export function AboutUsPillars({
+  vision,
+  mission,
+  goals,
+  objectives,
+}: AboutUsPillarsProps) {
+  const cards: PillarCard[] = [
+    { title: "Vision", content: vision },
+    { title: "Mission", content: mission },
+    { title: "Goals", items: goals },
+    { title: "Objectives", items: objectives },
+  ];
+
+  return (
+    <section className="mt-10">
+      <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-4">
+        {cards.map((card) => (
+          <article
+            key={card.title}
+            className="flex h-full flex-col rounded-2xl bg-[#007A8E] p-5 text-white shadow-[0_12px_28px_rgba(0,0,0,0.12)]"
+          >
+            <h3 className="text-base font-semibold uppercase tracking-[0.12em]">
+              {card.title}
+            </h3>
+
+            {card.content ? (
+              <p className="mt-4 text-sm leading-6 text-white/90">
+                {card.content}
+              </p>
+            ) : (
+              <ul className="mt-4 space-y-2 text-sm leading-6 text-white/90">
+                {card.items?.map((item) => (
+                  <li key={item} className="flex gap-3">
+                    <span
+                      className="mt-2 inline-flex h-2 w-2 shrink-0 rounded-full bg-white/80"
+                      aria-hidden="true"
+                    />
+                    <span>{item}</span>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </article>
+        ))}
+      </div>
+    </section>
+  );
+}

@@ -79,9 +79,7 @@ export default function HeroCarousel({
             alt={title}
             fill
             sizes="100vw"
-            className={`object-cover transition-transform duration-6000 ease-out ${
-              isActive ? "scale-110" : "scale-100"
-            }`}
+            className="object-cover"
             priority={index === 0}
             unoptimized
           />
