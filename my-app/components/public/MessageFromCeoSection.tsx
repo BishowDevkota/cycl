@@ -1,13 +1,18 @@
 import Image from "next/image";
+import Link from "next/link";
 import { RichTextContent } from "@/components/public/RichTextContent";
 import type { MessageFromCeo } from "@/services/message-from-ceo-service";
 
 type MessageFromCeoSectionProps = {
   messageFromCeo: MessageFromCeo | null;
+  buttonLabel: string;
+  buttonHref: string;
 };
 
 export function MessageFromCeoSection({
   messageFromCeo,
+  buttonLabel,
+  buttonHref,
 }: MessageFromCeoSectionProps) {
   // Hardcoded values to ensure the UI looks correct regardless of API gaps
   const ceoName = "Dolendra Prasad Sharma";
@@ -88,6 +93,16 @@ export function MessageFromCeoSection({
                 <p className="mt-4 text-sm font-serif italic text-slate-400">
                   {ceoName}
                 </p>
+                
+                {/* Button */}
+                <div className="mt-8">
+                  <Link
+                    href={buttonHref}
+                    className="inline-block rounded-lg bg-[#6ba47d] px-6 py-3 font-semibold text-white transition hover:bg-[#5a9469]"
+                  >
+                    {buttonLabel}
+                  </Link>
+                </div>
               </div>
             </article>
 
