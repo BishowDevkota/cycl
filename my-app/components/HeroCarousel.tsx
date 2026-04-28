@@ -61,26 +61,28 @@ export default function HeroCarousel({
   const currentTime = now ? timeFormatter.format(now) : "--:--:-- --";
 
   return (
-    <section className="relative w-full h-[calc(100svh-136px)] max-h-[calc(100dvh-136px)] min-h-75 sm:h-[calc(100svh-142px)] sm:max-h-[calc(100dvh-142px)] overflow-hidden">
+    <section className="relative w-full h-[calc(100svh-128px)] max-h-[calc(100dvh-128px)] min-h-75 overflow-hidden">
       {slides.map((slide, index) => {
         const isActive = index === activeIndex;
 
         return (
-          <div
-            key={slide.imagePublicId}
-            className={`absolute inset-0 transition-opacity duration-700 ${
-              isActive ? "opacity-100" : "opacity-0"
+        <div
+          key={slide.imagePublicId}
+          className={`absolute inset-0 transition-opacity duration-700 ${
+            isActive ? "opacity-100" : "opacity-0"
+          }`}
+>
+          <Image
+            src={slide.imageUrl}
+            alt={title}
+            fill
+            sizes="100vw"
+            className={`object-cover transition-transform duration-[6000ms] ease-out ${
+              isActive ? "scale-110" : "scale-100"
             }`}
-          >
-            <Image
-              src={slide.imageUrl}
-              alt={title}
-              fill
-              sizes="100vw"
-              className="object-cover"
-              priority={index === 0}
-              unoptimized
-            />
+            priority={index === 0}
+            unoptimized
+          />
 
             <div className="absolute inset-0 bg-black/40"></div>
 
