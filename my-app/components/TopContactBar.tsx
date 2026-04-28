@@ -106,10 +106,10 @@ export function TopContactBar() {
     isActiveRoute(item.href) || Boolean(item.children?.some((child) => isActiveRoute(child.href)));
 
   return (
-    <div className="relative w-full pt-12">
-      {/* Top Utility Bar */}
-      <div className="absolute inset-x-0 top-0 z-20 w-full bg-[#005d59] text-white">
-        <div className="mx-auto flex h-14 w-full max-w-350 items-center justify-between px-4 md:px-6">
+    <>
+      {/* Top Utility Bar — scrolls away with the page */}
+      <div className="w-full bg-[#005d59] text-white">
+        <div className="mx-auto flex h-12 w-full max-w-350 items-center justify-between px-8 md:px-16">
           <div className="flex min-w-0 items-center gap-6 text-sm font-medium sm:text-base">
             <Link href={phoneLink} className="inline-flex min-w-0 items-center gap-2 hover:text-zinc-200">
               <span>{phoneText}</span>
@@ -129,9 +129,9 @@ export function TopContactBar() {
         </div>
       </div>
 
-      {/* Main Navbar */}
-      <div className="sticky top-0 z-70 w-full border-b border-zinc-200/80 bg-white shadow-[0_8px_22px_rgba(7,100,110,0.12)]">
-        <div className="mx-auto flex min-h-32 w-full max-w-350 items-center justify-center gap-14 px-4 md:px-6">
+      {/* Main Navbar — sticky to viewport top at all times */}
+      <div className="sticky top-0 z-50 w-full border-b border-zinc-200/80 bg-white shadow-[0_8px_22px_rgba(7,100,110,0.12)]">
+        <div className="mx-auto flex min-h-20 w-full max-w-350 items-center justify-between px-8 md:px-16">
 
           {/* Logo */}
           <Link href="/" className="flex shrink-0 items-center">
@@ -141,12 +141,12 @@ export function TopContactBar() {
               width={400}
               height={150}
               priority
-              className="h-16 w-auto lg:h-20"
+              className="h-10 w-auto lg:h-14"
             />
           </Link>
 
           {/* Navigation Links */}
-          <nav className="hidden items-center justify-start gap-x-8 text-lg font-semibold text-zinc-800 xl:flex whitespace-nowrap 2xl:gap-x-10">
+          <nav className="hidden items-center justify-end gap-x-6 text-base font-semibold text-zinc-800 xl:flex whitespace-nowrap 2xl:gap-x-8">
             {navItems.map((item) => {
               const isActive = isNavItemActive(item);
               const hasDropdown = Boolean(item.children?.length);
@@ -161,7 +161,7 @@ export function TopContactBar() {
                       <span className={`absolute -bottom-1 left-0 h-1 rounded-full bg-[#0d837f] transition-all duration-300 ease-out ${isActive ? "w-full" : "w-0 group-hover:w-full"}`} />
                     </span>
                     {hasDropdown && (
-                      <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                         <path d="m6 9 6 6 6-6" />
                       </svg>
                     )}
@@ -189,11 +189,11 @@ export function TopContactBar() {
           </nav>
 
           {/* Mobile Menu Toggle */}
-          <div className="ml-auto flex items-center xl:hidden">
+          <div className="flex items-center xl:hidden">
             <button
               type="button"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="grid h-12 w-12 place-items-center rounded-lg border border-zinc-300 text-zinc-700"
+              className="grid h-10 w-10 place-items-center rounded-lg border border-zinc-300 text-zinc-700"
             >
               {mobileMenuOpen ? "✕" : "☰"}
             </button>
@@ -202,7 +202,7 @@ export function TopContactBar() {
 
         {/* Mobile Menu Dropdown */}
         {mobileMenuOpen && (
-          <div className="border-t border-zinc-200 px-4 py-4 xl:hidden">
+          <div className="border-t border-zinc-200 px-8 py-4 xl:hidden md:px-16">
             <div className="mx-auto flex w-full max-w-350 flex-col gap-4 text-lg font-medium text-zinc-800">
               {navItems.map((item) => (
                 <div key={item.label} className="rounded-xl border border-zinc-200/80 bg-white/75 p-3">
@@ -219,6 +219,6 @@ export function TopContactBar() {
           </div>
         )}
       </div>
-    </div>
+    </>
   );
 }
