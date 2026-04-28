@@ -8,7 +8,7 @@ type ActionLink = {
 };
 
 type PublicPageShellProps = {
-  eyebrow: string;
+  imageUrl: string;
   title: string;
   description: string;
   children: ReactNode;
@@ -16,7 +16,7 @@ type PublicPageShellProps = {
 };
 
 export function PublicPageShell({
-  eyebrow,
+  imageUrl = "/banner/banner.jpg",
   title,
   description,
   actions = [],
@@ -26,7 +26,7 @@ export function PublicPageShell({
     <div className="flex min-h-screen flex-col bg-[linear-gradient(180deg,#f8fcff_0%,#ffffff_34%,#f4f7fb_100%)]">
      <header 
   className="relative overflow-hidden border-b border-[#d6e6ed] text-black bg-cover bg-center bg-no-repeat  " 
-  style={{ backgroundImage: `url('/banner/banner.jpg')` }}
+  style={{ backgroundImage: `url(${imageUrl})`}}
 >
   {/* 1. Background Overlay: This ensures text is readable over the image icons */}
   <div className="absolute inset-0 bg-[#123451]/60 backdrop-blur-[1px]" aria-hidden="true" />
@@ -43,9 +43,7 @@ export function PublicPageShell({
 
   {/* Content Container: Added 'relative z-10' to stay above the background/overlay */}
   <div className="relative  z-10 mx-auto max-w-screen-2xl px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
-    <p className="text-sm font-semibold uppercase tracking-[0.24em] text-[#ffe6c2]">
-      {eyebrow}
-    </p>
+ 
     <h1 className="mt-4 max-w-4xl text-3xl font-semibold leading-tight text-white sm:text-5xl lg:text-[3rem]">
       {title}
     </h1>
