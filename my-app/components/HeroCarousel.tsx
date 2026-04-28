@@ -72,6 +72,8 @@ export default function HeroCarousel({
             isActive ? "opacity-100" : "opacity-0"
           }`}
         >
+          
+          
           <Image
             src={slide.imageUrl}
             alt={title}
