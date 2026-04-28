@@ -3,9 +3,7 @@ import { RichTextContent } from "@/components/public/RichTextContent";
 import type { MessageFromCeo } from "@/services/message-from-ceo-service";
 
 type MessageFromCeoSectionProps = {
-  messageFromCeo: MessageFromCeo | null;  
-  buttonLabel: string;
-  buttonHref: string;
+  messageFromCeo: MessageFromCeo | null;
 };
 
 export function MessageFromCeoSection({
@@ -14,6 +12,7 @@ export function MessageFromCeoSection({
   // Hardcoded values to ensure the UI looks correct regardless of API gaps
   const ceoName = "Dolendra Prasad Sharma";
   const ceoDesignation = "Chief Executive Officer";
+  
 
   return (
     <section className="relative overflow-hidden px-4 py-16 md:px-6 lg:py-24">
