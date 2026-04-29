@@ -112,7 +112,7 @@ export default function ContactHome({ contactDetails }: ContactHomeProps) {
         .contact-info {
           background: white;
           padding: 48px;
-          border-radius: 24px;
+        
           box-shadow: 0 12px 50px rgba(0, 91, 92, 0.09);
           display: flex;
           flex-direction: column;
@@ -122,7 +122,7 @@ export default function ContactHome({ contactDetails }: ContactHomeProps) {
           display: flex;
           align-items: flex-start;
           gap: 20px;
-          padding-bottom: 28px;
+          padding-bottom: 10px;
           margin-bottom: 28px;
           border-bottom: 1px solid #f0f0f0;
         }
@@ -223,7 +223,7 @@ export default function ContactHome({ contactDetails }: ContactHomeProps) {
         }
 
         .map-container {
-          border-radius: 24px;
+          
           overflow: hidden;
           box-shadow: 0 12px 50px rgba(0, 91, 92, 0.1);
           min-height: 520px;

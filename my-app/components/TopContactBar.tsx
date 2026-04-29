@@ -164,7 +164,7 @@ export function TopContactBar() {
                     >
                       <span className="relative inline-block pb-1">
                         {item.label}
-                        <span className={`absolute -bottom-1 left-0 h-1 rounded-full bg-[#0d837f] transition-all duration-300 ease-out ${
+                        <span className={`absolute -bottom-1 left-0 h-1  bg-[#0d837f] transition-all duration-300 ease-out ${
                           isActive ? "w-full" : "w-0 group-hover:w-full"
                         }`} />
                       </span>
@@ -178,12 +178,12 @@ export function TopContactBar() {
                     {/* Dropdown */}
                     {hasDropdown && (
                       <div className="pointer-events-none absolute left-1/2 top-full z-90 w-72 -translate-x-1/2 pt-4 opacity-0 transition-all duration-200 group-hover:pointer-events-auto group-hover:opacity-100">
-                        <div className="overflow-hidden rounded-2xl border border-[#d8e6ee] bg-white p-2 shadow-[0_24px_36px_rgba(6,61,73,0.2)]">
+                        <div className="overflow-hidden border border-[#d8e6ee] bg-white p-2 shadow-[0_24px_36px_rgba(6,61,73,0.2)]">
                           {item.children?.map((child) => (
                             <Link
                               key={child.href}
                               href={child.href}
-                              className={`block rounded-xl px-4 py-3 text-base transition ${
+                              className={`block px-4 py-3 text-base transition ${
                                 isActiveRoute(child.href)
                                   ? "bg-[#e8f7f4] font-semibold text-[#0d837f]"
                                   : "text-slate-700 hover:bg-[#f5fafc]"

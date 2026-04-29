@@ -193,7 +193,7 @@ export default function NewsAndNotices() {
 
         .ne-heading {
           font-family: sans-serif;
-          font-size: 40px;
+          font-size: 32px;
           font-weight: 700;
           color: var(--text-dark);
           line-height: 1.15;
@@ -209,7 +209,7 @@ export default function NewsAndNotices() {
           gap: 8px;
           background: white;
           padding: 8px 10px;
-          border-radius: 50px;
+          
           box-shadow: 0 2px 12px rgba(0,91,92,0.08);
         }
 
@@ -244,7 +244,7 @@ export default function NewsAndNotices() {
 
         .ne-track-outer {
           overflow: hidden;
-          border-radius: 2px;
+    
         }
 
         .ne-track {
@@ -256,7 +256,7 @@ export default function NewsAndNotices() {
         .ne-card {
           flex: 0 0 calc((100% - 56px) / 3);
           background: white;
-          border-radius: 16px;
+          
           overflow: hidden;
           box-shadow: 0 4px 20px rgba(0,91,92,0.06);
           transition: transform 0.35s ease, box-shadow 0.35s ease;

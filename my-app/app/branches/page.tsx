@@ -5,6 +5,7 @@ import { branchDirectoryByProvince } from "@/lib/public-content";
 export default function BranchesPage() {
   return (
     <PublicPageShell
+    imageUrl="/banner/banner.jpg"
       eyebrow="Branch Details"
       title="Province-Wise Branch Directory"
       description="Branch listings are organized by all seven provinces, with each branch card containing contact details and map pin links."
@@ -23,14 +24,14 @@ export default function BranchesPage() {
         <div className="space-y-8">
           {branchDirectoryByProvince.map((provinceGroup) => (
             <article key={provinceGroup.id} id={provinceGroup.id.replace("province-", "")}>
-              <div className="bg-teal-deep px-5 py-3 rounded-t-lg">
+              <div className="bg-teal-deep px-5 py-3 ">
                 <h3 className="text-lg font-semibold text-white">{provinceGroup.province}</h3>
               </div>
-              <div className="grid gap-4 md:grid-cols-2 bg-[#f0f8f8] px-5 py-6 rounded-b-lg">
+              <div className="grid gap-4 md:grid-cols-2 bg-[#f0f8f8] px-5 py-6 ">
                 {provinceGroup.branches.map((branch) => (
                   <div
                     key={branch.id}
-                    className="rounded-xl border border-[#bcd7e2] bg-white p-5 shadow-sm hover:shadow-md transition"
+                    className=" border border-[#bcd7e2] bg-white p-5 shadow-sm hover:shadow-md transition"
                   >
                     <h4 className="text-base font-semibold text-teal-deep">{branch.branchName}</h4>
                     <p className="mt-2 text-sm text-slate-700">{branch.address}</p>

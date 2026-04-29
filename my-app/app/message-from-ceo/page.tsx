@@ -7,6 +7,7 @@ export default async function MessageFromCeoPage() {
 
   return (
     <PublicPageShell
+    imageUrl="/banner/banner.jpg"
       eyebrow="Leadership"
       title={messageFromCeo?.heading || "Message From CEO"}
       description="A complete note from the CEO highlighting our institutional vision, service commitment, and direction for sustainable financial inclusion."

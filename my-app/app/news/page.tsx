@@ -7,6 +7,7 @@ export default function NewsPage() {
 
   return (
     <PublicPageShell
+    imageUrl="/banner/banner.jpg"
       eyebrow="News"
       title="Latest News and Updates"
       description="News entries are sorted by publish date and structured for CMS-managed scheduling and publishing workflows."

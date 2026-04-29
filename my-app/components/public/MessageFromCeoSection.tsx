@@ -22,15 +22,20 @@ export function MessageFromCeoSection({
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        setVisible(entry.isIntersecting);
-      },
-      { threshold: 0.15 }
-    );
-    if (sectionRef.current) observer.observe(sectionRef.current);
-    return () => observer.disconnect();
-  }, []);
+  const observer = new IntersectionObserver(
+    ([entry]) => {
+      if (entry.isIntersecting) {
+        setVisible(true);
+        observer.unobserve(entry.target); // stop after first trigger
+      }
+    },
+    { threshold: 0.15 }
+  );
+
+  if (sectionRef.current) observer.observe(sectionRef.current);
+
+  return () => observer.disconnect();
+}, []);
 
   return (
     <section className="overflow-hidden bg-transparent px-4 pb-6 pt-2 md:px-6 md:pb-8 md:pt-2">
@@ -41,7 +46,7 @@ export function MessageFromCeoSection({
           <div
             style={{
               transition: "transform 2.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 2.4s cubic-bezier(0.16, 1, 0.3, 1)",
-              transform: visible ? "translateX(0)" : "translateX(-100vw)",
+              transform: visible ? "translateX(0)" : "translateX(-10vw)",
               opacity: visible ? 1 : 0,
             }}
             className="relative lg:w-2/5 border border-slate-200 rounded-t-xl lg:rounded-l-xl lg:rounded-tr-none overflow-hidden bg-white"
@@ -74,10 +79,10 @@ export function MessageFromCeoSection({
           <article
             style={{
               transition: "transform 2.4s cubic-bezier(0.16, 1, 0.3, 1) 0.3s, opacity 2.4s cubic-bezier(0.16, 1, 0.3, 1) 0.3s",
-              transform: visible ? "translateX(0)" : "translateX(100vw)",
+              transform: visible ? "translateX(0)" : "translateX(10vw)",
               opacity: visible ? 1 : 0,
             }}
-            className="flex flex-col justify-center lg:w-3/5 border border-slate-200 border-t-0 lg:border-t lg:border-l-0 rounded-b-xl lg:rounded-r-xl lg:rounded-bl-none bg-white p-6 md:p-8 lg:p-10"
+            className="flex flex-col justify-center lg:w-3/5 bg-white p-6 md:p-8 lg:p-10"
           >
             {/* Header */}
             <div className="mb-6">
@@ -97,7 +102,7 @@ export function MessageFromCeoSection({
                   messageFromCeo?.description ||
                   "<p>Thank you for your continued hard work and dedication. We are building something meaningful together.</p>"
                 }
-                className="text-justify font-sans text-[15px] font-medium leading-relaxed text-slate-700 md:text-[16.5px]"
+                className="text-start font-sans text-[15px] font-medium leading-relaxed text-slate-700 md:text-[16.5px]"
               />
             </div>
 
