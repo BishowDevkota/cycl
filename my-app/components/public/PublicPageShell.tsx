@@ -8,6 +8,7 @@ type ActionLink = {
 };
 
 type PublicPageShellProps = {
+  eyebrow?: string;
   imageUrl: string;
   title: string;
   description: string;
@@ -67,7 +68,7 @@ export function PublicPageShell({
   </div>
 </header>
 
-      <main className="flex-1 py-10 sm:py-12 lg:py-14">
+      <main className="flex-1 py-6 sm:py-8 lg:py-10">
         <div className="mx-auto w-full max-w-screen-2xl px-4 sm:px-6 lg:px-8">{children}</div>
       </main>
 

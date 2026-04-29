@@ -27,18 +27,18 @@ export function AboutUsPillars({
         {cards.map((card) => (
           <article
             key={card.title}
-            className="flex h-full flex-col rounded-2xl bg-[#007A8E] p-5 text-white shadow-[0_12px_28px_rgba(0,0,0,0.12)]"
+            className="flex h-full flex-col rounded-2xl bg-[#016f81] p-5 text-white shadow-[0_12px_28px_rgba(0,0,0,0.12)]"
           >
-            <h3 className="text-base font-semibold uppercase tracking-[0.12em]">
+            <h3 className="text-lg font-semibold uppercase tracking-[0.12em]">
               {card.title}
             </h3>
 
             {card.content ? (
-              <p className="mt-4 text-sm leading-6 text-white/90">
+              <p className="mt-4 text-base leading-6 text-white/90">
                 {card.content}
               </p>
             ) : (
-              <ul className="mt-4 space-y-2 text-sm leading-6 text-white/90">
+              <ul className="mt-4 space-y-2 text-base leading-6 text-white/90">
                 {card.items?.map((item) => (
                   <li key={item} className="flex gap-3">
                     <span

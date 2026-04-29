@@ -34,7 +34,7 @@ export function Footer() {
             <h3 className="mb-4 border-b border-[#f6921e]/70 pb-3 text-base font-bold tracking-wide text-white">
               About CYC Nepal
             </h3>
-            <p className="text-sm font-medium leading-7 text-justify text-gray-100/95">
+            <p className="text-base font-medium leading-7 text-start text-gray-100/95">
               CYC Nepal Laghubitta Bittiya Sanstha previously known as CYC
               (Chartare Youth Club) is a leading Microfinance in Nepal which is
               located in Sabhagriha Chowk,Pokhara.
@@ -45,7 +45,7 @@ export function Footer() {
             <h3 className="mb-4 border-b border-[#f6921e]/70 pb-3 text-base font-bold tracking-wide text-white">
               Useful Links
             </h3>
-            <ul className="space-y-2 text-sm leading-7">
+            <ul className="space-y-2 text-base leading-7">
               {usefulLinks.map((link) => (
                 <li key={link.label}>
                   <a
@@ -67,7 +67,7 @@ export function Footer() {
             <h3 className="mb-4 border-b border-[#f6921e]/70 pb-3 text-base font-bold tracking-wide text-white">
               About Us
             </h3>
-            <ul className="space-y-2 text-sm leading-7">
+            <ul className="space-y-2 text-base leading-7">
               {aboutUsLinks.map((link) => (
                 <li key={link.label}>
                   <a
@@ -89,7 +89,7 @@ export function Footer() {
             <h3 className="mb-4 border-b border-[#f6921e]/70 pb-3 text-base font-bold tracking-wide text-white">
               Contact Us
             </h3>
-            <div className="space-y-2 text-sm font-semibold leading-7 text-gray-100/95">
+            <div className="space-y-2 text-base font-semibold leading-7 text-gray-100/95">
               <p>
                 <a
                   href="https://maps.google.com/?q=Sabhagriha+Chowk+Pokhara"

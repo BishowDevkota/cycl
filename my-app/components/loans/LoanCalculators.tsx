@@ -98,8 +98,8 @@ export function LoanCalculators({ mode = "both" }: LoanCalculatorsProps) {
     >
       {showEmiCalculator ? (
         <article className="rounded-2xl border border-[#d7e5ec] bg-white p-5 shadow-[0_18px_36px_rgba(16,53,74,0.08)] sm:p-6">
-          <h3 className="text-xl font-semibold text-[#123451]">EMI Calculator</h3>
-          <p className="mt-2 text-sm leading-6 text-slate-600">
+          <h3 className="text-[18px] font-semibold text-[#123451]">EMI Calculator</h3>
+          <p className="mt-2 text-[16px] leading-6 text-slate-600">
             Calculate monthly installment based on principal, annual rate, and tenure.
           </p>
 

@@ -7,6 +7,7 @@ const messageParagraphs = chairmanMessage.message.split("\n\n").filter(Boolean);
 export default function ChairmanMessagePage() {
   return (
     <PublicPageShell
+    imageUrl="/banner/banner2.jpg"
       eyebrow="About Us"
       title="Chairman Message"
       description="A message from the Chairman outlining governance priorities and long-term commitment to inclusive financial growth."
@@ -15,10 +16,10 @@ export default function ChairmanMessagePage() {
         { label: "Board of Directors", href: "/about-us/board-of-directors" },
       ]}
     >
-      <section className="rounded-3xl border border-[#d9e8ef] bg-white p-6 shadow-[0_20px_40px_rgba(13,44,62,0.08)] sm:p-8">
+      <section className="rounded-3xl  bg-white p-6 shadow-[0_20px_40px_rgba(13,44,62,0.08)] sm:p-8">
         <div className="grid gap-8 lg:grid-cols-[2fr_3fr] lg:items-start">
           <div className="overflow-hidden rounded-2xl border border-[#e0e7ee] bg-white shadow-[0_14px_30px_rgba(15,23,42,0.12)]">
-            <div className="relative aspect-[4/5] w-full">
+            <div className="relative aspect-4/5 w-full">
               <Image
                 src={chairmanPhoto}
                 alt={`${chairmanMessage.name}, ${chairmanMessage.title}`}
