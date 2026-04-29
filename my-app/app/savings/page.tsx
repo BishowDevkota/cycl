@@ -5,6 +5,7 @@ import { SectionHeading } from "@/components/public/SectionHeading";
 export default function SavingsPage() {
   return (
     <PublicPageShell
+    imageUrl={"/banner/banner.jpg"}
       eyebrow="Savings"
       title="Saving Details"
       description="Parent-only savings page highlighting the requested saving products and interest rates."
@@ -13,7 +14,7 @@ export default function SavingsPage() {
         { label: "Contact Support", href: "/contact" },
       ]}
     >
-      <section className="rounded-3xl border border-[#d9e8ef] bg-white p-6 shadow-[0_20px_40px_rgba(13,44,62,0.08)] sm:p-8">
+      <section className="rounded-3xl bg-white p-6 shadow-[0_20px_40px_rgba(13,44,62,0.1)] sm:p-8">
         <SectionHeading
           eyebrow="Saving"
           title="Saving Type and Interest Rate Listing"
@@ -22,7 +23,7 @@ export default function SavingsPage() {
 
         <SavingsRatesTable />
 
-        <p className="mt-4 rounded-2xl border border-[#e1ebf2] bg-[#f7fbfd] p-4 text-sm leading-7 text-slate-600">
+        <p className="mt-4 rounded-2x shadow-[0_14px_28px_rgba(12,49,72,0.08)] p-4 text-base bg-[#f7fbfd] leading-7 text-slate-600">
           This savings section remains a single parent page only, with no additional subpages.
         </p>
       </section>

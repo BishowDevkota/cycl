@@ -6,6 +6,7 @@ import { SectionHeading } from "@/components/public/SectionHeading";
 export default function LoanCategoriesPage() {
   return (
     <PublicPageShell
+    imageUrl="/banner/banner.jpg"
       eyebrow="Loans"
       title="Loan Categories"
       description="Detailed listing of loan categories and annual interest rates for public reference."

@@ -58,7 +58,7 @@ export function PublicPageShell({
           <Link
             key={action.href}
             href={action.href}
-            className="inline-flex items-center rounded-full border border-white/45 bg-white/10 px-5 py-2.5 text-lg font-semibold text-white transition hover:-translate-y-0.5 hover:border-white/80 hover:bg-white/20"
+            className="inline-flex items-center rounded-full bg-[#016163] px-5 py-2.5 text-lg font-semibold text-white transition hover:-translate-y-0.5  hover:bg-[#0d837f]"
           >
             {action.label}
           </Link>

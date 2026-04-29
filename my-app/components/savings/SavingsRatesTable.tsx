@@ -13,9 +13,9 @@ const savingsRows = [
 
 export function SavingsRatesTable() {
   return (
-    <div className="overflow-x-auto rounded-2xl border border-[#d7e6ee] bg-white shadow-[0_14px_28px_rgba(12,49,72,0.08)]">
-      <table className="min-w-full text-sm">
-        <thead className="bg-[linear-gradient(90deg,#ecf7fa_0%,#e8f6f4_100%)] text-left text-[#123451]">
+    <div className="overflow-x-auto rounded-2xl bg-white shadow-[0_14px_28px_rgba(12,49,72,0.08)]">
+      <table className="min-w-full text-sm bg-white shadow-[0_14px_28px_rgba(12,49,72,0.08)]">
+        <thead className="bg-teal-deep text-left text-[18px]  text-off-white">
           <tr>
             <th className="px-4 py-3 font-semibold sm:px-5">S.N</th>
             <th className="px-4 py-3 font-semibold sm:px-5">Saving Type</th>
@@ -26,7 +26,7 @@ export function SavingsRatesTable() {
           {savingsRows.map((row) => (
             <tr
               key={`${row.sn}-${row.type}`}
-              className="border-t border-[#e3edf3] text-slate-700 odd:bg-white even:bg-[#f9fcfe]"
+              className="border-t border-[#e3edf3] text-slate-700 odd:bg-white even:bg-[#f9fcfe] text-[16px]"
             >
               <td className="px-4 py-3 font-medium text-[#123451] sm:px-5">{row.sn}</td>
               <td className="px-4 py-3 sm:px-5">{row.type}</td>
