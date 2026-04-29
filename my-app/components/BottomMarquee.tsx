@@ -80,7 +80,7 @@ export default function BottomMarquee() {
   }, []);
 
   return (
-    <div className="fixed bottom-0 left-0 w-full bg-[#016f81] text-white overflow-hidden z-50">
+    <div className="marquee-container fixed bottom-0 left-0 w-full bg-[#016f81] text-white overflow-hidden z-50">
       <div ref={trackRef} className="animate-marquee font-medium">
         <div ref={firstRef} className="whitespace-nowrap inline-block py-2">
           {content}

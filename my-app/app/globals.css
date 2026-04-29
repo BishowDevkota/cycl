@@ -86,4 +86,18 @@
 }
 
 /* pause when hovered or focused for accessibility/interaction */
-/* Note: intentionally not pausing on hover to keep continuous motion like the reference site. */
+/* Pause when hovering the text or the bar (user request). Also pause when hovering any child (the visible text). */
+.animate-marquee:hover,
+.animate-marquee:focus,
+.marquee-container:hover .animate-marquee,
+.animate-marquee > *:hover,
+.animate-marquee > *:focus {
+  animation-play-state: paused !important;
+}
+
+/* ensure children can receive hover events */
+.animate-marquee,
+.animate-marquee > *,
+.marquee-container {
+  pointer-events: auto;
+}
