@@ -45,7 +45,7 @@ const pages: Array<{
 
 export function LoanPageLinks({ currentPage }: LoanPageLinksProps) {
   return (
-    <section className="mt-8 rounded-3xl  bg-white p-6 shadow-[0_20px_40px_rgba(13,44,62,0.08)] sm:p-8">
+    <section className="mt-8 rounded-3xl  bg-white p-6  sm:p-8">
       <SectionHeading
         eyebrow="Loan Pages"
         title="Loan Details and Tools"
@@ -67,7 +67,7 @@ export function LoanPageLinks({ currentPage }: LoanPageLinksProps) {
               key={page.key}
               href={page.href}
               aria-current={isCurrent ? "page" : undefined}
-              className={`rounded-2xl shadow-[0_4px_10px_rgba(12,49,72,0.1)] p-5 transition ${
+              className={` shadow-[0_4px_10px_rgba(12,49,72,0.1)] p-5 transition ${
                 isCurrent
                   ? "border-[#0d837f]/40 bg-[#0d837f]"
                   : "border-[#d7e6ee] bg-[#f9fcfe] hover:-translate-y-1 hover:border-[#0d837f]/40"

@@ -12,13 +12,13 @@ const loanRows = [
 
 export function LoanCategoriesTable() {
   return (
-    <div className="overflow-x-auto rounded-2xl bg-white shadow-[0_4px_10px_rgba(12,49,72,0.1)]">
-      <table className="min-w-full text-sm border border-[#e3edf3]">
+    <div className="overflow-x-auto bg-white ">
+      <table className="min-w-full text-sm">
         <thead className="bg-teal-deep text-left text-[18px]  text-off-white">
           <tr>
-            <th className="px-4 py-3 font-semibold sm:px-5">S.N</th>
-            <th className="px-4 py-3 font-semibold sm:px-5">Loan Type</th>
-            <th className="px-4 py-3 font-semibold sm:px-5">Interest Rate (%)</th>
+            <th className="px-4 py-3 font-semibold sm:px-5 text-xl">S.N</th>
+            <th className="px-4 py-3 font-semibold sm:px-5 text-xl">Loan Type</th>
+            <th className="px-4 py-3 font-semibold sm:px-5 text-xl">Interest Rate (%)</th>
           </tr>
         </thead>
         <tbody>

@@ -13,13 +13,13 @@ const savingsRows = [
 
 export function SavingsRatesTable() {
   return (
-    <div className="overflow-x-auto rounded-2xl bg-white shadow-[0_14px_28px_rgba(12,49,72,0.08)]">
-      <table className="min-w-full text-sm bg-white shadow-[0_14px_28px_rgba(12,49,72,0.08)]">
+    <div className="overflow-x-auto  bg-off-white">
+      <table className="min-w-full text-lg text-bold bg-white">
         <thead className="bg-teal-deep text-left text-[18px]  text-off-white">
-          <tr>
-            <th className="px-4 py-3 font-semibold sm:px-5">S.N</th>
-            <th className="px-4 py-3 font-semibold sm:px-5">Saving Type</th>
-            <th className="px-4 py-3 font-semibold sm:px-5">Interest Rate (%)</th>
+          <tr >
+            <th className="px-4 py-3 font-semibold sm:px-5 h-5 text-xl">S.N</th>
+            <th className="px-4 py-3 font-semibold sm:px-5 h-4 text-xl">Saving Type</th>
+            <th className="px-4 py-3 font-semibold sm:px-5 h-4 text-xl">Interest Rate (%)</th>
           </tr>
         </thead>
         <tbody>

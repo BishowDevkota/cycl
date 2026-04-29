@@ -27,7 +27,7 @@ export default async function AboutUsPage() {
         { label: "Board of Directors", href: "/about-us/board-of-directors" },
       ]}
     >
-      <section className="min-h-svh py-6 sm:py-8 flex justify-between">
+      <section className="min-h-svh py-2 flex justify-between">
         <div className="grid w-[90%] gap-4 lg:grid-cols-[3fr_2fr] lg:items-center">
           <div className="flex items-center justify-center">
             <Image

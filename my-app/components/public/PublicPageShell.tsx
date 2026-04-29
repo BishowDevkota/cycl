@@ -24,7 +24,7 @@ export function PublicPageShell({
   children,
 }: PublicPageShellProps) {
   return (
-    <div className="flex min-h-screen flex-col bg-[linear-gradient(180deg,#f8fcff_0%,#ffffff_34%,#f4f7fb_100%)]">
+    <div className="flex min-h-screen flex-col">
      <header 
   className="relative overflow-hidden border-b border-[#d6e6ed] text-black bg-cover bg-center bg-no-repeat  " 
   style={{ backgroundImage: `url(${imageUrl})`}}
@@ -58,7 +58,7 @@ export function PublicPageShell({
           <Link
             key={action.href}
             href={action.href}
-            className="inline-flex items-center rounded-full bg-[#016163] px-5 py-2.5 text-lg font-semibold text-white transition hover:-translate-y-0.5  hover:bg-[#0d837f]"
+            className="inline-flex items-center bg-[#016163] px-5 py-2.5 text-lg font-semibold rounded-sm text-white transition hover:-translate-y-0.5  hover:bg-[#0d837f]"
           >
             {action.label}
           </Link>

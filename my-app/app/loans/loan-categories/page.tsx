@@ -18,7 +18,7 @@ export default function LoanCategoriesPage() {
         },
       ]}
     >
-      <section className="rounded-3xl border border-[#d9e8ef] bg-white p-6 shadow-[0_20px_40px_rgba(13,44,62,0.08)] sm:p-8">
+      <section className=" bg-white p-6 sm:p-8">
         <SectionHeading
           eyebrow="Loan Categories"
           title="Loan Category Interest Matrix"

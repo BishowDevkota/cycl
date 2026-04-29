@@ -14,7 +14,7 @@ export default function LoansPage() {
         { label: "EMI Calculator", href: "/loans/emi-calculator" },
       ]}
     >
-      <section className="rounded-3xl bg-white p-6 sm:p-8 shadow-[0_14px_50px_rgba(12,49,72,0.1)]">
+      <section className="rounded-3xl bg-white p-6 sm:p-8 ">
         <SectionHeading
           title="Loan Type and Interest Rate Listing"
           description="Professional rate listing based on your requested loan categories and percentages."
@@ -22,7 +22,7 @@ export default function LoansPage() {
 
         <LoanCategoriesTable />
 
-        <p className="mt-4 rounded-2xl  bg-[#f7fbfd] p-4 text-md leading-7 text-slate-600 shadow-[0px_4px_10px_rgba(12,49,72,0.1)] border border-[#e3edf3]">
+        <p className="mt-4 bg-[#f7fbfd] p-4 text-md leading-7 text-slate-600 ">
           Continue to the loan subpages for dedicated EMI and Loan Interest calculators.
         </p>
       </section>

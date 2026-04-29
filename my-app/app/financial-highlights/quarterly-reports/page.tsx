@@ -5,6 +5,7 @@ import { quarterlyReports } from "@/lib/public-content";
 export default function QuarterlyReportsPage() {
   return (
     <PublicPageShell
+    imageUrl="/banner/banner.jpg"
       eyebrow="Financial Highlights"
       title="Quarterly Reports"
       description="Access quarter-wise reports, portfolio summaries, and compliance documents."
@@ -13,7 +14,7 @@ export default function QuarterlyReportsPage() {
         { label: "View Annual Reports", href: "/financial-highlights/annual-reports" },
       ]}
     >
-      <section className="rounded-3xl border border-[#d9e8ef] bg-white p-6 shadow-[0_20px_40px_rgba(13,44,62,0.08)] sm:p-8">
+      <section className="bg-white sm:p-8">
         <SectionHeading
           eyebrow="Attachments"
           title="Quarterly Report Documents"
@@ -24,15 +25,15 @@ export default function QuarterlyReportsPage() {
           {quarterlyReports.map((report) => (
             <article
               key={report.id}
-              className="rounded-2xl border border-[#d7e6ee] bg-[#f9fcfe] p-5"
+              className=" bg-teal-deep p-5 shadow-md rounded-lg text-white transition hover:-translate-y-0.5 hover:shadow-lg"
             >
-              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#0d837f]">
+              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-white">
                 {report.fileType}
               </p>
-              <h3 className="mt-2 text-lg font-semibold text-[#123451]">{report.title}</h3>
-              <p className="mt-1 text-sm text-slate-600">{report.period}</p>
+              <h3 className="mt-2 text-lg font-semibold text-white">{report.title}</h3>
+              <p className="mt-1 text-sm text-white/90">{report.period}</p>
 
-              <dl className="mt-4 space-y-1 text-sm text-slate-700">
+              <dl className="mt-4 space-y-1 text-sm text-white/90">
                 <div className="flex justify-between gap-2">
                   <dt>Published</dt>
                   <dd>
@@ -51,7 +52,7 @@ export default function QuarterlyReportsPage() {
 
               <a
                 href={report.downloadUrl}
-                className="mt-5 inline-flex items-center rounded-full bg-[#0d837f] px-4 py-2 text-sm font-semibold text-white transition hover:brightness-110"
+                className="mt-5 inline-flex items-center rounded-full bg-white px-4 py-2 text-sm font-semibold text-teal-deep transition hover:brightness-110"
               >
                 Download
               </a>
