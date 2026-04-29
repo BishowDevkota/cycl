@@ -215,7 +215,7 @@ export default function NewsAndNotices() {
 
         .ne-filter-btn {
           padding: 8px 22px;
-          border-radius: 50px;
+        
           border: none;
           cursor: pointer;
           font-family: 'DM Sans', sans-serif;
@@ -397,11 +397,10 @@ export default function NewsAndNotices() {
         }
 
         .ne-arrow-btn {
-          width: 44px;
-          height: 44px;
-          border-radius: 50%;
-          border: 1.5px solid var(--teal-mid);
-          background: white;
+          width: 60px;
+          height: 60px;
+       
+          background: transparent;
           color: var(--teal-mid);
           display: flex;
           align-items: center;
@@ -425,7 +424,7 @@ export default function NewsAndNotices() {
         }
 
         .ne-arrow-btn:hover:not(:disabled) {
-          background: var(--beige);
+          
           transform: translateY(-50%) scale(1.08);
         }
 
@@ -632,8 +631,8 @@ export default function NewsAndNotices() {
               <Image
                 src="/images/newsAndNotices/slider-arrow.png"
                 alt="Previous"
-                width={32}
-                height={32}
+                width={36}
+                height={40}
                 style={{ transform: "rotate(-180deg)" }}
               />
             </button>

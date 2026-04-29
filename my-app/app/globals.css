@@ -49,3 +49,41 @@
   --color-blush:     #F0E5D8;   
   --color-off-white: #F9F9F9;   
 }
+
+@keyframes marquee {
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+
+  100% {
+    transform: translate3d(var(--marquee-distance, -50%), 0, 0);
+  }
+}
+
+/*
+  For a seamless loop we duplicate the content inside the track.
+  The track is 200% wide; moving it -50% shows the second copy,
+  then it jumps to start and repeats without visible gap.
+*/
+.animate-marquee {
+  display: flex;
+  /* width will be set precisely in pixels by the component to avoid rounding gaps */
+  animation: marquee var(--marquee-duration, 18s) linear infinite;
+  will-change: transform;
+  align-items: center;
+  backface-visibility: hidden;
+  transform-style: preserve-3d;
+}
+
+/* children are inline blocks placed side-by-side, no extra spacing */
+.animate-marquee > * {
+  display: inline-block;
+}
+
+/* prevent wrapping at track level to avoid sudden vertical shifts */
+.animate-marquee {
+  white-space: nowrap;
+}
+
+/* pause when hovered or focused for accessibility/interaction */
+/* Note: intentionally not pausing on hover to keep continuous motion like the reference site. */

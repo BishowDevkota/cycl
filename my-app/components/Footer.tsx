@@ -121,7 +121,7 @@ export function Footer() {
         </div>
       </div>
 
-      <div className="border-t border-[#f6921e]/50 bg-[#00494a] py-4">
+      <div className="border-t border-[#f6921e]/50 bg-[#00494a] pt-4 pb-15">
         <div className="mx-auto max-w-7xl px-6 text-center sm:px-8 lg:px-10">
           <p className="text-sm font-semibold leading-6 text-gray-100">
             2026 © CYC Nepal Laghubitta Bittiya Sanstha Ltd. All rights
