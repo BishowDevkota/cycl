@@ -39,6 +39,7 @@ const navItems: NavItem[] = [
       { label: "Highlights Overview", href: "/financial-highlights" },
       { label: "Annual Reports", href: "/financial-highlights/annual-reports" },
       { label: "Quarterly Reports", href: "/financial-highlights/quarterly-reports" },
+      { label: "Base Rate", href: "/financial-highlights/base-rate" },
     ],
   },
   {
@@ -179,19 +180,26 @@ export function TopContactBar() {
                     {hasDropdown && (
                       <div className="pointer-events-none absolute left-1/2 top-full z-90 w-72 -translate-x-1/2 pt-4 opacity-0 transition-all duration-200 group-hover:pointer-events-auto group-hover:opacity-100">
                         <div className="overflow-hidden border border-[#d8e6ee] bg-white p-2 shadow-[0_24px_36px_rgba(6,61,73,0.2)]">
-                          {item.children?.map((child) => (
-                            <Link
-                              key={child.href}
-                              href={child.href}
-                              className={`block px-4 py-3 text-base transition ${
-                                isActiveRoute(child.href)
-                                  ? "bg-[#e8f7f4] font-semibold text-[#0d837f]"
-                                  : "text-slate-700 hover:bg-[#f5fafc]"
-                              }`}
-                            >
-                              {child.label}
-                            </Link>
-                          ))}
+                          {item.children?.map((child) => {
+                            const childIsActive =
+                              normalizePath(child.href) === normalizePath(item.href)
+                                ? pathname === normalizePath(child.href)
+                                : isActiveRoute(child.href);
+
+                            return (
+                              <Link
+                                key={child.href}
+                                href={child.href}
+                                className={`block px-4 py-3 text-base transition ${
+                                  childIsActive
+                                    ? "bg-[#e8f7f4] font-semibold text-[#0d837f]"
+                                    : "text-slate-700 hover:bg-[#f5fafc]"
+                                }`}
+                              >
+                                {child.label}
+                              </Link>
+                            );
+                          })}
                         </div>
                       </div>
                     )}
