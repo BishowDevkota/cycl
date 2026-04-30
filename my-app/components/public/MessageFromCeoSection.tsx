@@ -102,7 +102,7 @@ export function MessageFromCeoSection({
                   messageFromCeo?.description ||
                   "<p>Thank you for your continued hard work and dedication. We are building something meaningful together.</p>"
                 }
-                className="text-start font-sans text-[15px] font-medium leading-relaxed text-slate-700 md:text-[16.5px]"
+                className="text-start font-sans text-xl leading-8 text-slate-700 md:text-[16.5px]"
               />
             </div>
 

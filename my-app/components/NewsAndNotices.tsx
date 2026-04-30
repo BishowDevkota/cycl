@@ -137,7 +137,7 @@ export default function NewsAndNotices() {
 
         .ne-section {
           background: var(--off-white);
-          padding: 80px 0 100px;
+          padding: 60px 0; 
           font-family: 'DM Sans', sans-serif;
           overflow: hidden;
           position: relative;
@@ -156,9 +156,12 @@ export default function NewsAndNotices() {
         }
 
         .ne-container {
-          max-width: 1200px;
+          max-width: 1400px;
           margin: 0 auto;
           padding: 0 32px;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
         }
 
         .ne-header {
@@ -168,6 +171,7 @@ export default function NewsAndNotices() {
           margin-bottom: 48px;
           flex-wrap: wrap;
           gap: 24px;
+          width: 96%;
         }
 
         .ne-eyebrow {
@@ -249,12 +253,12 @@ export default function NewsAndNotices() {
 
         .ne-track {
           display: flex;
-          gap: 28px;
+          gap: 40px;
           transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .ne-card {
-          flex: 0 0 calc((100% - 56px) / 3);
+          flex: 0 0 calc((100% - 80px) / 3);
           background: white;
           
           overflow: hidden;
@@ -272,7 +276,7 @@ export default function NewsAndNotices() {
 
         .ne-card-img-wrap {
           position: relative;
-          height: 220px;
+          height: 240px;
           overflow: hidden;
         }
 
@@ -316,7 +320,7 @@ export default function NewsAndNotices() {
 
         .ne-card-title {
           font-family: 'Noto Sans Devanagari', 'DM Sans', sans-serif;
-          font-size: 16px;
+          font-size: 17px;
           font-weight: 600;
           color: var(--text-dark);
           line-height: 1.55;
@@ -328,7 +332,7 @@ export default function NewsAndNotices() {
         }
 
         .ne-card-excerpt {
-          font-size: 15px;
+          font-size: 16px;
           color: var(--text-light);
           line-height: 1.7;
           margin: 0 0 20px;
@@ -511,10 +515,10 @@ export default function NewsAndNotices() {
 
         @media (max-width: 900px) {
           .ne-slider-wrapper {
-            padding: 0 50px;
+            padding: 0 60px;
           }
           .ne-card {
-            flex: 0 0 calc((100% - 28px) / 2);
+            flex: 0 0 calc((100% - 40px) / 2);
           }
         }
 
@@ -552,15 +556,15 @@ export default function NewsAndNotices() {
           }
 
           .ne-card-img-wrap {
-            height: 200px;
+            height: 220px;
           }
 
           .ne-card-title {
-            font-size: 15.5px;
+            font-size: 16px;
           }
 
           .ne-card-excerpt {
-            font-size: 14.5px;
+            font-size: 15px;
           }
 
           .ne-controls {
@@ -594,6 +598,7 @@ export default function NewsAndNotices() {
       <section className="ne-section">
         <div className="ne-bg-accent" />
 
+          
         <div className="ne-container">
           {/* Header */}
           <div className="ne-header">
@@ -642,7 +647,7 @@ export default function NewsAndNotices() {
                 ref={trackRef}
                 className="ne-track"
                 style={{
-                  transform: `translateX(calc(-${currentIndex} * (100% / ${visibleCount} + 28px / ${visibleCount})))`,
+                  transform: `translateX(calc(-${currentIndex} * (100% / ${visibleCount} + 40px / ${visibleCount})))`,
                 }}
               >
                 {filtered.map((item) => (

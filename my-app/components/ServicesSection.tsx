@@ -164,7 +164,7 @@ export default function ServicesSection({
           background-repeat: no-repeat;
           background-size: cover;
           background-attachment: fixed;
-          padding: 100px 24px;
+          padding: 70px 24px;
           position: relative;
           overflow: hidden;
           font-family: 'DM Sans', sans-serif;
@@ -235,7 +235,7 @@ export default function ServicesSection({
         .service-card {
           background: #fff;
           border-radius: 20px;
-          padding: 40px 32px 36px;
+          padding: 30px;
           position: relative;
           overflow: hidden;
           border: 1px solid rgba(0,91,92,0.08);
