@@ -310,7 +310,7 @@ export function ContactSection() {
               Reach <span>Out To Us</span>
             </h2>
             <p className="ct-subheading">
-              Connect with us through any of the channels below — we're always happy to help.
+              Connect with us through any of the channels below — we&apos;re always happy to help.
             </p>
           </div>
 

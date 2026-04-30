@@ -164,7 +164,7 @@ export default function ServicesSection({
           background-repeat: no-repeat;
           background-size: cover;
           background-attachment: fixed;
-          padding: 70px 24px;
+          padding: 80px 24px 120px;
           position: relative;
           overflow: hidden;
           font-family: 'DM Sans', sans-serif;

@@ -1,6 +1,5 @@
 import { HeroSection } from '@/components/HeroSection';
 import { WelcomeSection } from '@/components/WelcomeSection';
-import { CompanyStatsSection } from '@/components/CompanyStatsSection';
 import { Footer } from '@/components/Footer';
 import { getMessageFromCeo } from '@/services/message-from-ceo-service';
 import ServicesSection from '@/components/ServicesSection';
@@ -9,6 +8,7 @@ import NewsAndNotices from '@/components/NewsAndNotices';
 import ContactHome from '@/components/ContactHome';
 import { MessageFromCeoSection } from '@/components/public/MessageFromCeoSection';
 import { getContactDetails } from '@/services/contact-service';
+import { CompanyStatsSection } from '@/components/CompanyStatsSection';
 
 export default async function Home() {
   const aboutCompanyInfo = await getAboutCompanyInfo();

@@ -42,12 +42,14 @@ export default function BottomMarquee() {
       // Wait for fonts to load to avoid measuring before text metrics finalize
       const runAfterFonts = () => {
         try {
-          if (document && (document as any).fonts && (document as any).fonts.ready) {
-            (document as any).fonts.ready.then(applyMeasurements).catch(() => applyMeasurements());
-          } else {
-            applyMeasurements();
-          }
-        } catch (e) {
+          // Use the standard FontFaceSet type where available and avoid `any`
+            const fonts = (document as unknown as { fonts?: FontFaceSet }).fonts;
+            if (fonts && fonts.ready) {
+              fonts.ready.then(applyMeasurements).catch(() => applyMeasurements());
+            } else {
+              applyMeasurements();
+            }
+        } catch {
           applyMeasurements();
         }
       };
@@ -60,7 +62,7 @@ export default function BottomMarquee() {
         ro = new ResizeObserver(() => applyMeasurements());
         try {
           ro.observe(first);
-        } catch (e) {
+        } catch {
           // ignore observe errors
         }
       }
@@ -68,13 +70,12 @@ export default function BottomMarquee() {
       const handleResize = () => applyMeasurements();
       window.addEventListener("resize", handleResize);
 
-      return () => {
+        return () => {
         window.removeEventListener("resize", handleResize);
-        if (ro) try { ro.disconnect(); } catch (e) {}
+        if (ro) try { ro.disconnect(); } catch { }
       };
     } catch (err) {
       // fail silently but log to console to aid debugging
-      // eslint-disable-next-line no-console
       console.error("BottomMarquee measurement error:", err);
     }
   }, []);

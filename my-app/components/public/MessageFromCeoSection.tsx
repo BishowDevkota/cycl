@@ -38,7 +38,7 @@ export function MessageFromCeoSection({
 }, []);
 
   return (
-    <section className="overflow-hidden bg-transparent px-4 pb-6 pt-2 md:px-6 md:pb-8 md:pt-2">
+    <section className="overflow-hidden bg-transparent px-4 pb-6 pt-2 md:px-6 md:pb-8 md:pt-2 lg:pb-20 lg:pt-4">
       <div className="mx-auto max-w-6xl" ref={sectionRef}>
         <div className="flex flex-col lg:flex-row">
 

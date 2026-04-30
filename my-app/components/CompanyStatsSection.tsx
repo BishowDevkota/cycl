@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 export interface CompanyStatCard {
   _id?: string;
@@ -65,7 +65,11 @@ const fallbackStats: CompanyStatCard[] = [
 export function CompanyStatsSection() {
   const [visible, setVisible] = useState(false);
   const [stats, setStats] = useState<CompanyStatCard[]>([]);
+  const [displayValues, setDisplayValues] = useState<Record<string, string>>({});
+  const [animatedMap, setAnimatedMap] = useState<Record<string, boolean>>({});
   const sectionRef = useRef<HTMLElement | null>(null);
+  // track which stat keys have been animated so we don't re-run on reload
+  const animatedKeysRef = useRef<Set<string>>(new Set());
 
   useEffect(() => {
     let active = true;
@@ -111,16 +115,111 @@ export function CompanyStatsSection() {
 
   const renderedStats = stats.length > 0 ? stats : fallbackStats;
 
+  const formatNumber = (n: number, original: string) => {
+    const hasDecimal = original.indexOf(".") !== -1;
+    if (hasDecimal) return n.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    return Math.round(n).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  };
+
   useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]: IntersectionObserverEntry[]) => {
         if (entry.isIntersecting) setVisible(true);
       },
-      { threshold: 0.15 }
+      { threshold: 0.15 },
     );
-    if (sectionRef.current) observer.observe(sectionRef.current);
+
+    if (sectionRef.current) {
+      observer.observe(sectionRef.current);
+
+      try {
+        const rect = sectionRef.current.getBoundingClientRect();
+        const vh = window.innerHeight || document.documentElement.clientHeight;
+        const visibleHeight = Math.min(rect.bottom, vh) - Math.max(rect.top, 0);
+        const ratio = rect.height > 0 ? visibleHeight / rect.height : 0;
+        if (ratio >= 0.15) requestAnimationFrame(() => setVisible(true));
+      } catch {
+        // ignore in non-browser contexts
+      }
+    }
+
     return () => observer.disconnect();
   }, []);
+
+  useEffect(() => {
+    if (!visible) return;
+
+    const toAnimate = renderedStats.filter((item, idx) => {
+      const key = item._id || `${item.heading}-${idx}`;
+      return !animatedKeysRef.current.has(key);
+    });
+    if (toAnimate.length === 0) return;
+
+    const timeouts: number[] = [];
+    setAnimatedMap((s) => ({ ...s }));
+
+    toAnimate.forEach((item) => {
+      const originalIdx = renderedStats.findIndex((r) => (r._id || r.heading) === (item._id || item.heading));
+      const key = item._id || `${item.heading}-${originalIdx}`;
+      const raw = item.value || "";
+
+      const match = raw.match(/[0-9.,]+/);
+      if (!match) {
+        animatedKeysRef.current.add(key);
+        setAnimatedMap((s) => ({ ...s, [key]: true }));
+        setDisplayValues((s) => ({ ...s, [key]: raw }));
+        return;
+      }
+
+      const numericPart = match[0].replace(/,/g, "");
+      const suffix = raw.replace(match[0], "").trim();
+      const target = parseFloat(numericPart);
+      if (Number.isNaN(target)) {
+        animatedKeysRef.current.add(key);
+        setAnimatedMap((s) => ({ ...s, [key]: true }));
+        setDisplayValues((s) => ({ ...s, [key]: raw }));
+        return;
+      }
+
+      // Timing constants (edit these to change animation gaps)
+      const entranceBase = 20; // ms, base delay for first card
+      const entranceStep = 50; // ms, additional delay per card
+      const entranceAnimDuration = 300; // ms, card entrance animation duration
+      const entranceDelay = entranceBase + originalIdx * entranceStep;
+      const statRevealDelay = entranceDelay + entranceAnimDuration;
+      const countStartOffset = 40; // ms after stat reveals to start count-up
+      const countStartDelay = statRevealDelay + countStartOffset;
+      const duration = 1200 + (originalIdx % 3) * 200;
+
+      const revealTimeout = window.setTimeout(() => {
+        animatedKeysRef.current.add(key);
+        setAnimatedMap((s) => ({ ...s, [key]: true }));
+        setDisplayValues((s) => ({ ...s, [key]: `0${suffix ? " " + suffix : ""}` }));
+
+        const start = performance.now();
+
+        const step = (now: number) => {
+          const elapsed = now - start;
+          const t = Math.min(1, elapsed / duration);
+          const eased = 1 - Math.pow(1 - t, 3);
+          const current = target * eased;
+          const formatted = formatNumber(current, match[0]);
+          setDisplayValues((s) => ({ ...s, [key]: `${formatted}${suffix ? " " + suffix : ""}` }));
+          if (t < 1) requestAnimationFrame(step);
+        };
+
+        const countTimeout = window.setTimeout(() => {
+          requestAnimationFrame(step);
+        }, 0);
+
+        timeouts.push(countTimeout);
+      }, countStartDelay);
+
+      timeouts.push(revealTimeout);
+    });
+
+    return () => timeouts.forEach((id) => clearTimeout(id));
+  }, [visible, renderedStats]);
 
   return (
     <>
@@ -137,33 +236,11 @@ export function CompanyStatsSection() {
 
         .highlights-section {
           background: var(--off-white);
-          padding: 72px 24px;
+          padding: 80px 24px 120px;
           position: relative;
           overflow: hidden;
           font-family: 'DM Sans', sans-serif;
         }
-
-        // .highlights-section::before {
-        //   content: '';
-        //   position: absolute;
-        //   top: -80px; right: -80px;
-        //   width: 400px; height: 400px;
-        //   background: radial-gradient(circle, var(--mint) 0%, transparent 70%);
-        //   opacity: 0.35;
-        //   border-radius: 50%;
-        //   pointer-events: none;
-        // }
-
-        // .highlights-section::after {
-        //   content: '';
-        //   position: absolute;
-        //   bottom: -60px; left: -60px;
-        //   width: 320px; height: 320px;
-        //   background: radial-gradient(circle, var(--blush) 0%, transparent 70%);
-        //   opacity: 0.6;
-        //   border-radius: 50%;
-        //   pointer-events: none;
-        // }
 
         .highlights-container {
           max-width: 1200px;
@@ -203,17 +280,17 @@ export function CompanyStatsSection() {
         }
 
         .highlight-card {
-          background: #ff;
+          background: #fff;
           border-radius: 20px;
           padding-top: 44px;
-          padding-bottom: 24px;
+          padding-bottom: 28px;
           padding-left: 28px;
           padding-right: 28px;
           position: relative;
           overflow: hidden;
           border: 1px solid rgba(0,91,92,0.08);
           cursor: default;
-          max-height:100px;
+          max-height:120px;
           display: flex;
           justify-content: space-between;
           gap: 32px;
@@ -224,7 +301,7 @@ export function CompanyStatsSection() {
                       border-color 0.3s ease;
           opacity: 0;
           transform: translateY(36px);
-          box-shadow: 0 4px 12px rgba(0,91,92,0.08);
+          box-shadow: 0 12px 40px rgba(0,91,92,0.06);
         }
 
         .highlight-card.visible {
@@ -243,22 +320,9 @@ export function CompanyStatsSection() {
         }
 
         .highlight-card:hover {
-          transform: translateY(-8px);
-          box-shadow: 0 20px 60px rgba(0,91,92,0.13);
+          transform: translateY(20px);
+          box-shadow: 0 20px 60px rgba(0,91,92,0.5);
         }
-
-        // .highlight-card::before {
-        //   content: '';
-        //   position: absolute;
-        //   top: 0; right: 0;
-        //   width: 80px; height: 80px;
-        //   background: linear-gradient(135deg, var(--mint) 0%, transparent 60%);
-        //   opacity: 0.35;
-        //   border-radius: 0 20px 0 80px;
-        //   transition: opacity 0.3s;
-        // }
-
-        .highlight-card:hover::before { opacity: 0.65; }
 
         .icon-wrapper {
           height: 82px;
@@ -279,41 +343,34 @@ export function CompanyStatsSection() {
           mix-blend-mode: multiply;
         }
 
-        .highlight-card:hover .service-icon-image {
-          // transform: scale(1.18);
-        }
-
         .stat-label {
         font-family: sans-serif;
           font-size: 1.2rem;
           color: var(--teal-deep);
           margin: 0 0 12px 0;
           line-height: 1.2;
-          font-weight: 400;
+          font-weight: 600;
         }
 
         .stat-value {
-          font-size: 1.8rem;
-          color: #536060;
+          font-size: 2.4rem;
+          color: black;
           line-height: 1.6;
           margin: 0;
-          font-weight: 700;
+          font-weight: 900;
+          transform: translateY(6px);
+          opacity: 0;
+          transition: transform 0.6s cubic-bezier(.22,.68,0,1.2), opacity 0.6s ease;
         }
-          .stat-value:hover{
+        .stat-value.animated {
+          transform: translateY(0);
+          opacity: 1;
+        }
+        .stat-value:hover{
           transform: scale(1.05);
           color: var(--teal-mid);
           transition: transform 0.3s ease, color 0.3s ease;
-          
-          }
-
-        // .card-divider {
-        //   width: 36px;
-        //   height: 2px;
-        //   background: var(--mint);
-        //   border-radius: 2px;
-        //   margin-bottom: 14px;
-        //   transition: width 0.3s ease;
-        // }
+        }
 
         .highlight-card:hover .card-divider { width: 56px; }
 
@@ -346,8 +403,7 @@ export function CompanyStatsSection() {
             {renderedStats.map((item, index) => (
               <div
                 key={item._id || `${item.heading}-${index}`}
-                className={`highlight-card ${visible ? "visible" : ""}`}
-              >
+                className={`highlight-card ${visible ? "visible" : ""}`}>
 
                 <div className="icon-wrapper">
                   <img
@@ -358,7 +414,9 @@ export function CompanyStatsSection() {
                 </div>
                 <div>
 
-                <p className="stat-value">{item.value || "-"}</p>
+                <p className={`stat-value ${animatedMap[item._id || `${item.heading}-${index}`] ? 'animated' : ''}`}>
+                  {displayValues[item._id || `${item.heading}-${index}`] ?? item.value ?? '-'}
+                </p>
                 <p className="stat-label">{item.heading}</p>
                 {/* <div className="card-divider" /> */}
                 </div>

@@ -87,7 +87,7 @@ const newsData: NewsItem[] = [
 export default function NewsAndNotices() {
   const [activeFilter, setActiveFilter] = useState<"all" | "news" | "notice">("all");
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [hoveredId, setHoveredId] = useState<number | null>(null);
+  const [_hoveredId, setHoveredId] = useState<number | null>(null);
   const trackRef = useRef<HTMLDivElement>(null);
 
   const filtered =
@@ -113,7 +113,9 @@ export default function NewsAndNotices() {
   const maxIndex = Math.max(0, filtered.length - visibleCount);
 
   useEffect(() => {
-    setCurrentIndex(0);
+    // Defer index reset to avoid synchronous setState inside effect
+    const id = window.setTimeout(() => setCurrentIndex(0), 0);
+    return () => clearTimeout(id);
   }, [activeFilter, visibleCount]);
 
   const prev = () => setCurrentIndex((i) => Math.max(0, i - 1));
@@ -137,7 +139,7 @@ export default function NewsAndNotices() {
 
         .ne-section {
           background: var(--off-white);
-          padding: 60px 0; 
+          padding: 100px 0; 
           font-family: 'DM Sans', sans-serif;
           overflow: hidden;
           position: relative;
