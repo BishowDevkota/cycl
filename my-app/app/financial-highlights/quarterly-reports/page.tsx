@@ -41,11 +41,11 @@ const YEARS: YearGroup[] = [
   },
   {
     year: "2080/81",
-    folder: "2080-81",
+    folder: "2080-81/2080-81", // folder has the year twice as on disk
     reports: [
       { label: "Financial Report 1st Quarter 2080/81", file: "1st quarter 2080-81.pdf", ext: "pdf" },
       { label: "Financial Report 2nd Quarter 2080/81", file: "2nd quarter 2080-81.pdf", ext: "pdf" },
-      { label: "Financial Report 3rd Quarter 2080/81", file: "3rd quarter 2080-82.jpg", ext: "jpg" },
+      { label: "Financial Report 3rd Quarter 2080/81", file: "3rd quarter 2080-81.jpg", ext: "jpg" },
       { label: "Financial Report 4th Quarter 2080/81", file: "4th quarter 2080-81.pdf", ext: "pdf" },
     ],
   },
