@@ -178,8 +178,9 @@ export function CompanyStatsSection() {
         }
 
         .highlights-heading {
-          font-family: 'DM Serif Display', serif;
-          font-size: clamp(2.2rem, 5vw, 3.5rem);
+          font-family: sans-serif;
+          font-weight: 700;
+          font-size: 36px;
           color: var(--teal-deep);
           margin: 0 0 16px 0;
           line-height: 1.15;
@@ -202,16 +203,20 @@ export function CompanyStatsSection() {
         }
 
         .highlight-card {
-          background: #fff;
+          background: #ff;
           border-radius: 20px;
-          padding: 28px 24px;
+          padding-top: 44px;
+          padding-bottom: 24px;
+          padding-left: 28px;
+          padding-right: 28px;
           position: relative;
           overflow: hidden;
           border: 1px solid rgba(0,91,92,0.08);
           cursor: default;
-          min-height: 250px;
+          max-height:100px;
           display: flex;
-          flex-direction: column;
+          justify-content: space-between;
+          gap: 32px;
           align-items: center;
           text-align: center;
           transition: transform 0.35s cubic-bezier(.22,.68,0,1.2),
@@ -219,6 +224,7 @@ export function CompanyStatsSection() {
                       border-color 0.3s ease;
           opacity: 0;
           transform: translateY(36px);
+          box-shadow: 0 4px 12px rgba(0,91,92,0.08);
         }
 
         .highlight-card.visible {
@@ -274,12 +280,12 @@ export function CompanyStatsSection() {
         }
 
         .highlight-card:hover .service-icon-image {
-          transform: scale(1.18);
+          // transform: scale(1.18);
         }
 
         .stat-label {
-          font-family: 'DM Serif Display', serif;
-          font-size: 1.6rem;
+        font-family: sans-serif;
+          font-size: 1.2rem;
           color: var(--teal-deep);
           margin: 0 0 12px 0;
           line-height: 1.2;
@@ -287,21 +293,27 @@ export function CompanyStatsSection() {
         }
 
         .stat-value {
-          font-size: 1rem;
+          font-size: 1.8rem;
           color: #536060;
           line-height: 1.6;
           margin: 0;
-          font-weight: 500;
+          font-weight: 700;
         }
+          .stat-value:hover{
+          transform: scale(1.05);
+          color: var(--teal-mid);
+          transition: transform 0.3s ease, color 0.3s ease;
+          
+          }
 
-        .card-divider {
-          width: 36px;
-          height: 2px;
-          background: var(--mint);
-          border-radius: 2px;
-          margin-bottom: 14px;
-          transition: width 0.3s ease;
-        }
+        // .card-divider {
+        //   width: 36px;
+        //   height: 2px;
+        //   background: var(--mint);
+        //   border-radius: 2px;
+        //   margin-bottom: 14px;
+        //   transition: width 0.3s ease;
+        // }
 
         .highlight-card:hover .card-divider { width: 56px; }
 
@@ -336,6 +348,7 @@ export function CompanyStatsSection() {
                 key={item._id || `${item.heading}-${index}`}
                 className={`highlight-card ${visible ? "visible" : ""}`}
               >
+
                 <div className="icon-wrapper">
                   <img
                     src={item.imageUrl || "/company highlights/office branch.png"}
@@ -343,9 +356,12 @@ export function CompanyStatsSection() {
                     className="service-icon-image"
                   />
                 </div>
-                <p className="stat-label">{item.heading}</p>
-                <div className="card-divider" />
+                <div>
+
                 <p className="stat-value">{item.value || "-"}</p>
+                <p className="stat-label">{item.heading}</p>
+                {/* <div className="card-divider" /> */}
+                </div>
               </div>
             ))}
           </div>

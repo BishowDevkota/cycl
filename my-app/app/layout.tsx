@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import { TopContactBar } from "@/components/TopContactBar";
 import "./globals.css";
 import BottomMarquee from "@/components/BottomMarquee";
+import GoToTopButton from "@/components/GoToTopButton";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -32,6 +33,7 @@ export default function RootLayout({
       <body className="min-h-full flex flex-col">
         <TopContactBar />
         {children}
+        <GoToTopButton />
         <BottomMarquee />
       </body>
     </html>

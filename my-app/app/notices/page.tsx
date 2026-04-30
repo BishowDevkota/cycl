@@ -7,6 +7,7 @@ export default function NoticesPage() {
 
   return (
     <PublicPageShell
+    imageUrl="/banner/banner.jpg"
       eyebrow="Notices"
       title="Official Notices and Announcements"
       description="Notices are sorted by date and can be flagged as active to appear in homepage popup prompts."
@@ -15,7 +16,7 @@ export default function NoticesPage() {
         { label: "News and Notices Hub", href: "/news-notices" },
       ]}
     >
-      <section className="rounded-3xl border border-[#d9e8ef] bg-white p-6 shadow-[0_20px_40px_rgba(13,44,62,0.08)] sm:p-8">
+      <section className=" bg-white p-6 shadow-[0_20px_40px_rgba(13,44,62,0.08)] sm:p-8">
         <SectionHeading
           eyebrow="Notice Listing"
           title="Published Notices"
@@ -24,9 +25,9 @@ export default function NoticesPage() {
 
         <div className="space-y-5">
           {notices.map((item) => (
-            <article key={item.id} className="rounded-2xl border border-[#d7e6ee] bg-[#f9fcfe] p-5">
+            <article key={item.id} className=" bg-teal-deep p-5">
               <div className="flex flex-wrap items-center gap-3 text-xs font-semibold uppercase tracking-[0.18em]">
-                <span className="text-[#0d837f]">
+                <span className="text-white">
                   {new Date(item.publishedAt).toLocaleDateString("en-NP", {
                     year: "numeric",
                     month: "short",
@@ -34,21 +35,21 @@ export default function NoticesPage() {
                   })}
                 </span>
                 <span
-                  className={`rounded-full px-3 py-1 text-[10px] ${
+                  className={`rounded-full px-4 py-2 text-xs ${
                     item.isActive
-                      ? "bg-emerald-100 text-emerald-700"
-                      : "bg-slate-100 text-slate-600"
+                      ? "bg-white text-emerald-700 font-bold"
+                      : "bg-[#f0eaea] text-red-600"
                   }`}
                 >
                   {item.isActive ? "Active" : "Inactive"}
                 </span>
               </div>
 
-              <h2 className="mt-3 text-xl font-semibold text-[#123451]">{item.title}</h2>
-              <p className="mt-2 text-sm leading-7 text-slate-700 sm:text-base">
+              <h2 className="mt-3 text-2xl font-semibold text-white">{item.title}</h2>
+              <p className="mt-2 text-base leading-7 text-white sm:text-base">
                 {item.shortDescription}
               </p>
-              <p className="mt-3 text-sm leading-7 text-slate-600">{item.details}</p>
+              <p className="mt-3 text-sm leading-7 text-white">{item.details}</p>
             </article>
           ))}
         </div>

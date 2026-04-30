@@ -117,9 +117,9 @@ export function MessageFromCeoSection({
               <div className="mt-8">
                 <Link
                   href={buttonHref}
-                  className="inline-block rounded-xl bg-[#6ba47d] px-6 py-3 font-sans font-semibold text-white
+                  className="inline-block rounded-xl bg-teal-deep px-6 py-3 font-sans font-semibold text-white
                     transition-all duration-300 ease-out
-                    hover:bg-[#4a8460] hover:scale-105"
+                    hover:bg-teal-deep/90 hover:scale-105"
                 >
                   {buttonLabel}
                 </Link>

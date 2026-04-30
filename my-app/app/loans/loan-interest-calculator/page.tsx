@@ -15,7 +15,7 @@ export default function LoanInterestCalculatorPage() {
         { label: "EMI Calculator", href: "/loans/emi-calculator" },
       ]}
     >
-      <section className="rounded-3xl bg-white p-6 shadow-[0_20px_40px_rgba(13,44,62,0.08)] sm:p-8">
+      <section className="bg-white p-6 shadow-[0_20px_40px_rgba(13,44,62,0.08)] sm:p-8">
         <SectionHeading
           eyebrow="Loan Interest Calculator"
           title="Simple Interest Estimation"

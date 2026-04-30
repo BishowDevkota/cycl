@@ -18,7 +18,7 @@ export default function EmiCalculatorPage() {
         },
       ]}
     >
-      <section className="rounded-3xl bg-white p-6 shadow-[0_20px_40px_rgba(13,44,62,0.08)] sm:p-8">
+      <section className="bg-white p-6 shadow-[0_20px_40px_rgba(13,44,62,0.08)] sm:p-8">
         <SectionHeading
           eyebrow="EMI Calculator"
           title="Monthly Installment Estimation"

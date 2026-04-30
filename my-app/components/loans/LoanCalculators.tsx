@@ -97,7 +97,7 @@ export function LoanCalculators({ mode = "both" }: LoanCalculatorsProps) {
       }
     >
       {showEmiCalculator ? (
-        <article className="rounded-2xl border border-[#d7e5ec] bg-white p-5 shadow-[0_18px_36px_rgba(16,53,74,0.08)] sm:p-6">
+        <article className=" bg-white p-5 sm:p-6">
           <h3 className="text-[18px] font-semibold text-[#123451]">EMI Calculator</h3>
           <p className="mt-2 text-[16px] leading-6 text-slate-600">
             Calculate monthly installment based on principal, annual rate, and tenure.
@@ -110,7 +110,7 @@ export function LoanCalculators({ mode = "both" }: LoanCalculatorsProps) {
                 type="number"
                 value={principal}
                 onChange={(event) => setPrincipal(event.target.value)}
-                className="w-full rounded-lg border border-[#c9dce5] px-3 py-2.5 text-sm text-slate-800 outline-none transition focus:border-[#0d837f] focus:ring-2 focus:ring-[#0d837f]/20"
+                className="w-full  border border-[#c9dce5] px-3 py-2.5 text-sm text-slate-800 outline-none transition focus:border-[#0d837f] focus:ring-2 focus:ring-[#0d837f]/20"
               />
             </label>
 
@@ -121,7 +121,7 @@ export function LoanCalculators({ mode = "both" }: LoanCalculatorsProps) {
                 step="0.01"
                 value={annualRate}
                 onChange={(event) => setAnnualRate(event.target.value)}
-                className="w-full rounded-lg border border-[#c9dce5] px-3 py-2.5 text-sm text-slate-800 outline-none transition focus:border-[#0d837f] focus:ring-2 focus:ring-[#0d837f]/20"
+                className="w-full border border-[#c9dce5] px-3 py-2.5 text-sm text-slate-800 outline-none transition focus:border-[#0d837f] focus:ring-2 focus:ring-[#0d837f]/20"
               />
             </label>
 
@@ -131,12 +131,12 @@ export function LoanCalculators({ mode = "both" }: LoanCalculatorsProps) {
                 type="number"
                 value={tenureMonths}
                 onChange={(event) => setTenureMonths(event.target.value)}
-                className="w-full rounded-lg border border-[#c9dce5] px-3 py-2.5 text-sm text-slate-800 outline-none transition focus:border-[#0d837f] focus:ring-2 focus:ring-[#0d837f]/20"
+                className="w-full border border-[#c9dce5] px-3 py-2.5 text-sm text-slate-800 outline-none transition focus:border-[#0d837f] focus:ring-2 focus:ring-[#0d837f]/20"
               />
             </label>
           </div>
 
-          <div className="mt-6 rounded-xl border border-[#d9eaf0] bg-[#f6fcfd] p-4">
+          <div className="mt-6 border border-[#d9eaf0] bg-[#f6fcfd] p-4">
             {emiResult ? (
               <div className="space-y-2 text-sm text-slate-700">
                 <p>
@@ -157,7 +157,7 @@ export function LoanCalculators({ mode = "both" }: LoanCalculatorsProps) {
       ) : null}
 
       {showInterestCalculator ? (
-        <article className="rounded-2xl border border-[#d7e5ec] bg-white p-5 shadow-[0_18px_36px_rgba(16,53,74,0.08)] sm:p-6">
+        <article className="p-5 sm:p-6">
           <h3 className="text-xl font-semibold text-[#123451]">Loan Interest Calculator</h3>
           <p className="mt-2 text-sm leading-6 text-slate-600">
             Estimate total interest payable using simple interest for selected tenure.
@@ -170,7 +170,7 @@ export function LoanCalculators({ mode = "both" }: LoanCalculatorsProps) {
                 type="number"
                 value={interestPrincipal}
                 onChange={(event) => setInterestPrincipal(event.target.value)}
-                className="w-full rounded-lg border border-[#c9dce5] px-3 py-2.5 text-sm text-slate-800 outline-none transition focus:border-[#0d837f] focus:ring-2 focus:ring-[#0d837f]/20"
+                className="w-full  border border-[#c9dce5] px-3 py-2.5 text-sm text-slate-800 outline-none transition focus:border-[#0d837f] focus:ring-2 focus:ring-[#0d837f]/20"
               />
             </label>
 
@@ -181,7 +181,7 @@ export function LoanCalculators({ mode = "both" }: LoanCalculatorsProps) {
                 step="0.01"
                 value={interestRate}
                 onChange={(event) => setInterestRate(event.target.value)}
-                className="w-full rounded-lg border border-[#c9dce5] px-3 py-2.5 text-sm text-slate-800 outline-none transition focus:border-[#0d837f] focus:ring-2 focus:ring-[#0d837f]/20"
+                className="w-full border border-[#c9dce5] px-3 py-2.5 text-sm text-slate-800 outline-none transition focus:border-[#0d837f] focus:ring-2 focus:ring-[#0d837f]/20"
               />
             </label>
 
@@ -191,12 +191,12 @@ export function LoanCalculators({ mode = "both" }: LoanCalculatorsProps) {
                 type="number"
                 value={interestTenureMonths}
                 onChange={(event) => setInterestTenureMonths(event.target.value)}
-                className="w-full rounded-lg border border-[#c9dce5] px-3 py-2.5 text-sm text-slate-800 outline-none transition focus:border-[#0d837f] focus:ring-2 focus:ring-[#0d837f]/20"
+                className="w-full border border-[#c9dce5] px-3 py-2.5 text-sm text-slate-800 outline-none transition focus:border-[#0d837f] focus:ring-2 focus:ring-[#0d837f]/20"
               />
             </label>
           </div>
 
-          <div className="mt-6 rounded-xl border border-[#d9eaf0] bg-[#f6fcfd] p-4">
+          <div className="mt-6 border border-[#d9eaf0] bg-[#f6fcfd] p-4">
             {interestResult ? (
               <div className="space-y-2 text-sm text-slate-700">
                 <p>
