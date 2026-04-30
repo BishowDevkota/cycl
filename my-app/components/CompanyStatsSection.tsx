@@ -301,7 +301,7 @@ export function CompanyStatsSection() {
                       border-color 0.3s ease;
           opacity: 0;
           transform: translateY(36px);
-          box-shadow: 0 12px 40px rgba(0,91,92,0.06);
+          box-shadow: 0 12px 20px rgba(0,91,92,0.06);
         }
 
         .highlight-card.visible {
@@ -321,7 +321,7 @@ export function CompanyStatsSection() {
 
         .highlight-card:hover {
           transform: translateY(20px);
-          box-shadow: 0 20px 60px rgba(0,91,92,0.5);
+          box-shadow: 0 20px 20px rgba(0,91,92,0.5);
         }
 
         .icon-wrapper {

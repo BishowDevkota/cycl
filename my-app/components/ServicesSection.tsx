@@ -233,8 +233,7 @@ export default function ServicesSection({
         }
 
         .service-card {
-          background: #fff;
-          border-radius: 20px;
+          background: #fff;        
           padding: 30px;
           position: relative;
           overflow: hidden;
