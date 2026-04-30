@@ -220,7 +220,7 @@ export default function ServicesManagement() {
       <div className="mb-6 rounded-lg border border-gray-200 bg-white p-6">
         <h2 className="mb-4 text-xl font-semibold">Section Heading and Description</h2>
         <p className="mb-4 text-sm text-gray-600">
-          This controls the main title and subtitle shown under the fixed "Our Services" line.
+          This controls the main title and subtitle shown under the fixed &quot;Our Services&quot; line.
         </p>
 
         <div className="grid gap-4 md:grid-cols-2">

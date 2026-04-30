@@ -50,7 +50,7 @@ export default function ContactHome({ contactDetails }: ContactHomeProps) {
 
         .contact-section {
           background: var(--color-off-white-);
-          padding: 40px 0 20px;
+          padding: 100px 0 60px;
           font-family: 'DM Sans', sans-serif;
           position: relative;
           overflow: hidden;
