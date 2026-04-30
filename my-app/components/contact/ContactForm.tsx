@@ -128,7 +128,7 @@ export function ContactForm() {
           <textarea
             value={formState.message}
             onChange={(event) => updateField("message", event.target.value)}
-            className="min-h-37.5 w-full  border border-[#c9dce5] px-3 py-2.5 text-shadow-amber-50 text-slate-800 outline-none transition focus:border-[#eaf1f1] focus:ring-2"
+            className="min-h-37 w-full  border border-[#c9dce5] px-3 py-2.5 text-shadow-amber-50 text-slate-800 outline-none transition focus:border-[#eaf1f1] focus:ring-2"
             placeholder="Write your message"
           />
           {errors.message && (
