@@ -4,6 +4,14 @@ import { MessageFromCeoSection } from "@/components/public/MessageFromCeoSection
 
 export default async function MessageFromCeoPage() {
   const messageFromCeo = await getMessageFromCeo();
+  const messageFromCeoPublic = messageFromCeo
+    ? {
+        heading: messageFromCeo.heading,
+        description: messageFromCeo.description,
+        imageUrl: messageFromCeo.imageUrl,
+        imagePublicId: messageFromCeo.imagePublicId,
+      }
+    : null;
 
   return (
     <PublicPageShell
@@ -17,7 +25,7 @@ export default async function MessageFromCeoPage() {
       ]}
     >
       <MessageFromCeoSection
-        messageFromCeo={messageFromCeo}
+        messageFromCeo={messageFromCeoPublic}
         buttonLabel="Return Home"
         buttonHref="/"
       />

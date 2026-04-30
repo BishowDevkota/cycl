@@ -81,6 +81,7 @@ export default function HeroCarousel({
             sizes="100vw"
             className="object-cover"
             priority={index === 0}
+            loading={index === 0 ? "eager" : "lazy"}
             unoptimized
           />
 

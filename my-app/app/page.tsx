@@ -15,6 +15,15 @@ export default async function Home() {
   const messageFromCeo = await getMessageFromCeo();
   const rawContactDetails = await getContactDetails();
 
+  const messageFromCeoPublic = messageFromCeo
+    ? {
+        heading: messageFromCeo.heading,
+        description: messageFromCeo.description,
+        imageUrl: messageFromCeo.imageUrl,
+        imagePublicId: messageFromCeo.imagePublicId,
+      }
+    : null;
+
   const contactDetails = rawContactDetails
     ? {
         phone: {
@@ -47,7 +56,7 @@ export default async function Home() {
       <WelcomeSection aboutCompanyInfo={aboutCompanyInfo} />
       <main className="flex-1 w-full pt-12 pb-20 sm:pt-16 sm:pb-24 lg:pt-20 lg:pb-32">
         <MessageFromCeoSection
-          messageFromCeo={messageFromCeo}
+          messageFromCeo={messageFromCeoPublic}
           buttonLabel="Full Message"
           buttonHref="/message-from-ceo"
         />
