@@ -585,7 +585,7 @@ export const newsItems: NewsItem[] = [
     category: "Community",
     publishedAt: "2026-04-20",
     author: "Corporate Communications",
-    image: "/news images/news-1.jpeg",
+    image: "/news-images/news-1.jpeg",
   },
   {
     id: "news-2",
@@ -597,7 +597,7 @@ export const newsItems: NewsItem[] = [
     category: "Technology",
     publishedAt: "2026-03-22",
     author: "IT and Operations",
-    image: "/news images/news-2.jpeg",
+    image: "/news-images/news-2.jpeg",
   },
   {
     id: "news-3",
@@ -609,7 +609,7 @@ export const newsItems: NewsItem[] = [
     category: "Partnership",
     publishedAt: "2026-02-12",
     author: "Strategy Office",
-    image: "/news images/news-3.jpeg",
+    image: "/news-images/news-3.jpeg",
   },
 ];
 
