@@ -1,5 +1,6 @@
 import { ReactNode } from "react";
 import { requireAdminSession } from "@/lib/admin-auth";
+import AdminSidebar from "@/components/admin/AdminSidebar";
 
 export default async function ProtectedAdminLayout({
   children,
@@ -10,13 +11,20 @@ export default async function ProtectedAdminLayout({
 
   return (
     <div className="min-h-screen bg-zinc-50">
-      <header className="border-b border-zinc-200 bg-white">
-        <div className="mx-auto flex w-full max-w-5xl items-center justify-between px-6 py-4">
-          <p className="text-sm font-medium text-zinc-900">Admin Area</p>
-          <p className="text-sm text-zinc-600">Signed in as {session.email}</p>
-        </div>
+      <header className="border-b border-zinc-200 bg-white flex justify-center   items-center py-4">
+        {/* <div className="mx-auto flex w-full max-w-6xl items-center justify-between px-6 py-4">
+          <h1 className="text-lg font-bold text-zinc-900">Welcome to the Admin Area</h1>
+          <p className="text-sm text-zinc-600 font-bold">Signed in as {session.email}</p>
+        </div> */}
+        <h1 className="text-2xl font-bold text-teal-deep">Welcome to Admin Area</h1>
       </header>
-      <div className="mx-auto w-full max-w-5xl px-6 py-8">{children}</div>
+
+      <div className="flex w-full">
+        <AdminSidebar />
+        <main className="flex-1">
+          <div className="mx-auto w-full max-w-6xl px-6 py-8">{children}</div>
+        </main>
+      </div>
     </div>
   );
 }
