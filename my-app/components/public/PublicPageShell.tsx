@@ -32,18 +32,16 @@ export function PublicPageShell({
         {/* Background overlay for readability */}
         <div className="absolute inset-0 bg-[#123451]/60 backdrop-blur-[1px]" aria-hidden="true" />
 
-        {/* Decorative blur circles removed — were causing the gradient bleed on top-right */}
-
         {/* Content */}
         <div className="relative z-10 mx-auto max-w-screen-2xl px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
           <h1 className="mt-4 max-w-4xl text-3xl font-semibold leading-tight text-white sm:text-5xl lg:text-[3rem]">
             {title}
           </h1>
-          <p className="mt-5 max-w-3xl text-base leading-7 text-[#ecf9f8] sm:text-lg">
+          <p className="mt-2 max-w-3xl text-base leading-7 text-[#ecf9f8] sm:text-lg">
             {description}
           </p>
           {actions.length > 0 && (
-            <div className="mt-8 flex flex-wrap gap-3">
+            <div className="mt-4 flex flex-wrap gap-3">
               {actions.map((action) => (
                 <Link
                   key={action.href}
@@ -57,13 +55,11 @@ export function PublicPageShell({
           )}
         </div>
       </header>
-
       <main className="flex-1 py-6 sm:py-8 lg:py-10">
         <div className="mx-auto w-full max-w-screen-2xl px-4 sm:px-6 lg:px-8">
           {children}
         </div>
       </main>
-
       <Footer />
     </div>
   );

@@ -16,6 +16,7 @@ export type NewsItem = {
   category: string;
   publishedAt: string;
   author: string;
+  image?: string;
 };
 
 export type LeaderProfile = {
@@ -560,6 +561,19 @@ export const quarterlyReports: ReportAttachment[] = [
   },
 ];
 
+import fs from "fs";
+import path from "path";
+
+function resolveNewsImage(primaryFileName: string, fallback: string) {
+  try {
+    const p = path.join(process.cwd(), "public", "news images", primaryFileName);
+    if (fs.existsSync(p)) return `/news%20images/${primaryFileName}`;
+  } catch (e) {
+    // ignore
+  }
+  return fallback;
+}
+
 export const newsItems: NewsItem[] = [
   {
     id: "news-1",
@@ -571,6 +585,7 @@ export const newsItems: NewsItem[] = [
     category: "Community",
     publishedAt: "2026-04-20",
     author: "Corporate Communications",
+    image: resolveNewsImage("news 1.jpeg", "/news%20images/news%201.jpeg"),
   },
   {
     id: "news-2",
@@ -582,6 +597,7 @@ export const newsItems: NewsItem[] = [
     category: "Technology",
     publishedAt: "2026-03-22",
     author: "IT and Operations",
+    image: resolveNewsImage("news 2.jpeg", "/news%20images/news%202.jpeg"),
   },
   {
     id: "news-3",
@@ -593,6 +609,7 @@ export const newsItems: NewsItem[] = [
     category: "Partnership",
     publishedAt: "2026-02-12",
     author: "Strategy Office",
+    image: resolveNewsImage("news 3.jpeg", "/news%20images/news%203.jpeg"),
   },
 ];
 

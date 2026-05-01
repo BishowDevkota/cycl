@@ -27,14 +27,13 @@ function encodeFileName(name: string): string {
 }
 
 function MediaBanner({ label, file }: { label: string; file: string }) {
-  const lower = file.toLowerCase();
-  const url = `${BASE}/${encodeFileName(file)}`;
-  // Always show PDF icon in the banner (matches Annual/Quarterly pages)
+  const url = `${BASE}/pdf%20icon.jpeg`;
+
   return (
     <div className="w-full h-1/2 min-h-32 flex items-center justify-center bg-white">
       <img
-        src={`${BASE}/pdf%20icon.jpeg`}
-        alt={`${label} file`}
+        src={url}
+        alt={label}
         className="h-[85%] w-auto max-h-28 object-contain select-none"
         draggable={false}
       />
