@@ -249,7 +249,7 @@ export default function HeroManagement() {
   return (
     <div className="max-w-6xl mx-auto p-6">
       <h1 className="text-3xl font-bold mb-2">Homepage Management</h1>
-      <p className="text-sm text-gray-600 mb-6">
+      <p className="text-base text-gray-600 mb-6">
         Manage the content that appears on the public homepage.
       </p>
 
@@ -259,13 +259,13 @@ export default function HeroManagement() {
         </div>
       )}
 
-      <div className="bg-white rounded-lg shadow-lg p-6 mb-8">
+      <div className="bg-white  shadow-lg p-6 mb-8">
         <div className="mb-6">
-          <p className="text-sm font-semibold text-zinc-500">Hero Section</p>
+          <p className="text-base font-semibold text-zinc-500">Hero Section</p>
           <h2 className="text-2xl font-semibold">
             {editingId ? "Edit Hero Section" : "Create New Hero Section"}
           </h2>
-          <p className="text-sm text-zinc-500 mt-1">
+          <p className="text-base text-zinc-500 mt-1">
             Control the hero carousel shown at the top of the homepage, including the universal title and description.
           </p>
         </div>
@@ -273,7 +273,7 @@ export default function HeroManagement() {
         <div className="space-y-6">
           <div className="grid gap-6 sm:grid-cols-2">
             <div>
-              <label className="block text-sm font-medium mb-2">Hero Title *</label>
+              <label className="block text-base font-medium mb-2">Hero Title *</label>
               <input
                 type="text"
                 value={formData.title}
@@ -281,14 +281,14 @@ export default function HeroManagement() {
                   setFormData({ ...formData, title: e.target.value })
                 }
                 placeholder="Universal hero title"
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-4 py-2 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
-              <p className="mt-2 text-xs text-gray-500">
+              <p className="mt-2 text-sm text-gray-500">
                 This title appears on every hero slide.
               </p>
             </div>
             <div>
-              <label className="block text-sm font-medium mb-2">Hero Description</label>
+              <label className="block text-base font-medium mb-2">Hero Description</label>
               <textarea
                 value={formData.subtitle}
                 onChange={(e) =>
@@ -296,9 +296,9 @@ export default function HeroManagement() {
                 }
                 placeholder="Universal hero description"
                 rows={3}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-4 py-2 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
-              <p className="mt-2 text-xs text-gray-500">
+              <p className="mt-2 text-sm text-gray-500">
                 This description appears below the title across all hero slides.
               </p>
             </div>
@@ -310,7 +310,7 @@ export default function HeroManagement() {
               <button
                 type="button"
                 onClick={handleAddSlide}
-                className="px-4 py-2 bg-zinc-900 text-white rounded-lg hover:bg-zinc-700"
+                className="px-4 py-2 bg-teal-deep text-white  hover:bg-teal-700 hover:cursor-pointer hover:-translate-y-1 transition-all"
               >
                 Add Slide
               </button>
@@ -319,14 +319,14 @@ export default function HeroManagement() {
             {formData.slides.map((slide, index) => (
               <div
                 key={slide.clientId}
-                className="border border-gray-200 rounded-lg p-4 space-y-4"
+                className="border border-gray-200 p-4 space-y-4"
               >
                 <div className="flex items-center justify-between">
                   <h4 className="text-lg font-semibold">Slide {index + 1}</h4>
                   <button
                     type="button"
                     onClick={() => handleRemoveSlide(slide.clientId)}
-                    className="text-sm text-red-600 hover:text-red-700"
+                    className="text-base bg-red-500 hover:bg-red-700 text-white py-2 px-4 hover:cursor-pointer hover:-translate-y-1 transition-all"
                   >
                     Remove slide
                   </button>
@@ -334,7 +334,7 @@ export default function HeroManagement() {
 
 
                 <div>
-                  <label className="block text-sm font-medium mb-2">
+                  <label className="block text-base font-medium mb-2">
                     Background Image *
                   </label>
                   {slide.imageUrl && (
@@ -342,7 +342,7 @@ export default function HeroManagement() {
                       <img
                         src={slide.imageUrl}
                         alt="Preview"
-                        className="w-full h-48 object-cover rounded-lg"
+                        className="w-full h-48 object-cover"
                       />
                     </div>
                   )}
@@ -378,7 +378,7 @@ export default function HeroManagement() {
             <button
               onClick={handleSave}
               disabled={uploadingSlideId !== null}
-              className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50"
+              className="px-6 py-2 bg-blue-600 text-white hover:bg-blue-700 hover:cursor-pointer disabled:opacity-50 hover:-translate-y-1 transition-all"
             >
               {editingId ? "Update" : "Create"}
             </button>
@@ -402,7 +402,7 @@ export default function HeroManagement() {
           heroes.map((hero) => (
             <div
               key={hero._id?.toString()}
-              className="bg-white rounded-lg shadow-lg p-6"
+              className="bg-white shadow-lg p-6"
             >
               <div className="flex gap-6">
                 <div className="w-40 h-40 flex-shrink-0">
@@ -440,13 +440,13 @@ export default function HeroManagement() {
                   <div className="flex gap-4 mt-4">
                     <button
                       onClick={() => handleEdit(hero)}
-                      className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                      className="px-4 py-2 bg-blue-600 text-white hover:bg-blue-700 hover:cursor-pointer hover:-translate-y-1 transition-all"
                     >
                       Edit
                     </button>
                     <button
                       onClick={() => handleDelete(hero._id?.toString() || "")}
-                      className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
+                      className="px-4 py-2 hover:cursor-pointer bg-red-600 text-white hover:bg-red-700 hover:-translate-y-1 ease-out transition-all"
                     >
                       Delete
                     </button>
