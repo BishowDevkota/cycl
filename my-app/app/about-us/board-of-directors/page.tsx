@@ -75,7 +75,7 @@ function DirectorCard({ director }: DirectorCardProps) {
       tabIndex={0}
       aria-label={`${director.name}, ${director.role}`}
     >
-      <div className="relative aspect-4/5 w-full overflow-hidden">
+      <div className="relative aspect-[4/5] w-full overflow-hidden">
         <Image
           src={director.image}
           alt={`${director.name} portrait`}
@@ -123,7 +123,7 @@ function BoardOfDirectors() {
           style={{ backgroundImage: "url('/banner/banner.jpg')" }}
         />
         <div className="absolute inset-0 bg-slate-900/55" />
-        <div className="relative mx-auto flex max-w-7xl flex-col items-center px-4 py-16 text-center sm:px-6 lg:px-8">
+        <div className="relative mx-auto flex max-w-screen-xl flex-col items-center px-4 py-16 text-center sm:px-6 lg:px-8">
           <p className="text-xs font-semibold uppercase tracking-[0.3em] text-white/70">
             Board of Directors
           </p>
@@ -136,7 +136,7 @@ function BoardOfDirectors() {
         </div>
       </header>
 
-      <main className="mx-auto w-full max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+      <main className="mx-auto w-full max-w-screen-xl px-4 py-12 sm:px-6 lg:px-8">
         {chairman ? (
           <div className="mx-auto flex justify-center">
             <div className="min-w-xs">
