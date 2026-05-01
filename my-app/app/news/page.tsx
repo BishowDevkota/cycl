@@ -10,7 +10,7 @@ function encodeFileName(name: string): string {
 }
 
 function ImgBanner({ src, alt }: { src?: string; alt: string }) {
-  const url = src ?? "/news%20images%20/news%201.jpeg";
+  const url = src ?? "/news/news-1.jpeg";
   return (
     <div className="w-full h-48 flex items-center justify-center bg-white overflow-hidden">
       <img src={url} alt={alt} className="w-full h-full object-cover select-none" draggable={false} />
