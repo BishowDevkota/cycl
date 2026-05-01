@@ -38,9 +38,9 @@ export function AboutUsPillars({
         {cards.map((card) => (
           <article
             key={card.title}
-            className="flex h-full flex-col bg-white  text-teal-deep shadow-[0_12px_28px_rgba(0,0,0,0.12)] duration-300 ease-out transform hover:-translate-y-1"
+            className="flex h-full flex-col bg-white text-teal-mid shadow-[0_12px_28px_rgba(0,0,0,0.12)] duration-300 ease-out transform hover:-translate-y-1"
           >
-            <div className="flex items-center justify-between mb-2 bg-teal-deep text-white px-6 py-4">
+            <div className="flex items-center justify-between mb-2 bg-teal-mid text-white px-6 py-4">
               <h3 className="text-[24px] font-bold uppercase tracking-[4px]">
                 {card.title}
               </h3>
