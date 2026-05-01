@@ -1,10 +1,4 @@
-"use client";
-
-import { useState } from "react";
-import { PublicPageShell } from "@/components/public/PublicPageShell";
-import { SectionHeading } from "@/components/public/SectionHeading";
-
-interface Branch {
+export interface Branch {
   id: string;
   branchName: string;
   manager: string;
@@ -13,13 +7,13 @@ interface Branch {
   email: string;
 }
 
-interface ProvinceGroup {
+export interface ProvinceGroup {
   id: string;
   province: string;
   branches: Branch[];
 }
 
-const branchData: ProvinceGroup[] = [
+export const branchData: ProvinceGroup[] = [
   {
     id: "koshi",
     province: "Koshi Province",
@@ -188,140 +182,4 @@ const branchData: ProvinceGroup[] = [
   },
 ];
 
-const totalBranches = branchData.reduce((sum, p) => sum + p.branches.length, 0);
-
-export default function BranchesPage() {
-  const [selectedProvince, setSelectedProvince] = useState<string>(branchData[0].id);
-
-  const activeProvinceGroup =
-    branchData.find((p) => p.id === selectedProvince) ?? branchData[0];
-
-  return (
-    <PublicPageShell
-      imageUrl="/banner/banner.jpg"
-      eyebrow="Branch Network"
-      title="Branches Across Nepal"
-      description="Filter branches by province and access complete contact information for each branch."
-      actions={[
-        { label: "Contact Head Office", href: "/contact" },
-        { label: "View News", href: "/news" },
-      ]}
-    >
-      <section className="bg-white p-6 sm:p-8">
-        <SectionHeading
-          eyebrow="Branch Directory"
-          title="Find Your Nearest Branch"
-          description="Select a province from the sidebar to view all branches and contact details."
-        />
-
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            textAlign: "center",
-            marginBottom: 0,
-            fontSize: "32px",
-          }}
-        >
-          <SectionHeading
-            eyebrow="Branch Directory"
-            title={`Total Number of Branch Office: ${totalBranches}`}
-          />
-        </div>
-
-        <div className="flex gap-8 items-start">
-          {/* ── Province sidebar ── */}
-          <aside className="w-44 shrink-0 flex flex-col gap-0">
-            {branchData.map((provinceGroup) => {
-              const isActive = selectedProvince === provinceGroup.id;
-              return (
-                <button
-                  key={provinceGroup.id}
-                  onClick={() => setSelectedProvince(provinceGroup.id)}
-                  className={
-                    isActive
-                      ? "w-full px-4 py-3 text-sm font-medium text-left bg-green-800 text-white"
-                      : "w-full px-4 py-3 text-sm font-medium text-left bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors duration-150"
-                  }
-                >
-                  {provinceGroup.province}{" "}
-                  <span className="text-xs opacity-75">
-                    [{provinceGroup.branches.length}]
-                  </span>
-                </button>
-              );
-            })}
-          </aside>
-
-          {/* ── Branch grid ── */}
-          <div className="flex-1">
-            <div className="bg-teal-deep px-6 py-4 mb-6">
-              <h2 className="text-xl font-bold text-white">
-                {activeProvinceGroup.province}
-              </h2>
-              <p className="text-sm text-white/80 mt-1">
-                {activeProvinceGroup.branches.length} branches
-              </p>
-            </div>
-
-            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {activeProvinceGroup.branches.map((branch) => (
-                <article
-                  key={branch.id}
-                  className="flex flex-col bg-white border border-gray-200 shadow-md text-slate-700 overflow-hidden transition duration-200 hover:-translate-y-1 hover:shadow-lg"
-                >
-                  {/* Logo header */}
-                  <div className="w-full h-32 bg-white flex items-center justify-center border-b border-gray-200 overflow-hidden">
-                    <img
-                      src="/images/cyc-logo-introduction.png"
-                      alt="CYC Logo"
-                      className="h-24 w-auto object-contain"
-                    />
-                  </div>
-
-                  {/* Branch info */}
-                  <div className="flex flex-col flex-1 px-4 pt-4 pb-4">
-                    <h3 className="text-sm font-bold text-teal-deep leading-snug">
-                      {branch.branchName}
-                    </h3>
-                    <p className="text-xs text-slate-500 mt-0.5 italic">
-                      {branch.manager}
-                    </p>
-
-                    <div className="mt-3 space-y-2 text-xs flex-1">
-                      {branch.address && (
-                        <div className="flex gap-2">
-                          <span className="text-teal-deep font-semibold min-w-fit">Address:</span>
-                          <span className="text-slate-600">{branch.address}</span>
-                        </div>
-                      )}
-                      <div className="flex gap-2">
-                        <span className="text-teal-deep font-semibold min-w-fit">Phone:</span>
-                        <a
-                          href={`tel:${branch.phone}`}
-                          className="text-slate-600 hover:text-teal-deep transition font-medium"
-                        >
-                          {branch.phone}
-                        </a>
-                      </div>
-                      <div className="flex gap-2">
-                        <span className="text-teal-deep font-semibold min-w-fit">Email:</span>
-                        <a
-                          href={`mailto:${branch.email}`}
-                          className="text-slate-600 hover:text-teal-deep transition truncate"
-                        >
-                          {branch.email}
-                        </a>
-                      </div>
-                    </div>
-                  </div>
-                </article>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
-    </PublicPageShell>
-  );
-}
+export const totalBranches = branchData.reduce((sum, p) => sum + p.branches.length, 0);

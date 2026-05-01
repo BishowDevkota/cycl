@@ -15,7 +15,7 @@ export default function ContactPage() {
       title="Head Office, Branch Locations, and Contact Form"
       description="Contact details, map embed, and inquiry form are structured for production deployment. Form inputs are validated on the server for name, email, subject, and message."
       actions={[
-        { label: "View Branch Directory", href: "/branches" },
+        { label: "View Branch Directory", href: "/branches/koshi" },
         { label: "Read Notices", href: "/notices" },
       ]}
     >

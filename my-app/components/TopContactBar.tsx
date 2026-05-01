@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
+import { branchData } from "@/lib/branch-data";
 
 type ContactItem = { text: string; link: string; };
 type PublicContactDetails = {
@@ -43,16 +44,16 @@ const navItems: NavItem[] = [
     ],
   },
   {
-    label: "Branches", href: "/branches",
+    label: "Branches",
+    href: "/branches/koshi",
     children: [
-      { label: "All Branches", href: "/branches" },
-      { label: "Koshi Province", href: "/branches#koshi" },
-      { label: "Madhesh Province", href: "/branches#madhesh" },
-      { label: "Bagmati Province", href: "/branches#bagmati" },
-      { label: "Gandaki Province", href: "/branches#gandaki" },
-      { label: "Lumbini Province", href: "/branches#lumbini" },
-      { label: "Karnali Province", href: "/branches#karnali" },
-      { label: "Sudurpashchim Province", href: "/branches#sudurpashchim" },
+      { label: "Koshi Province", href: "/branches/koshi" },
+      { label: "Madesh Province", href: "/branches/madesh" },
+      { label: "Bagmati Province", href: "/branches/bagmati" },
+      { label: "Gandaki Province", href: "/branches/gandaki" },
+      { label: "Lumbini Province", href: "/branches/lumbini" },
+      { label: "Karnali Province", href: "/branches/karnali" },
+      { label: "Sudurpaschim Province", href: "/branches/sudurpaschim" },
     ],
   },
   {
@@ -123,6 +124,30 @@ export function TopContactBar() {
             </Link>
           </div>
           <div className="hidden items-center gap-6 text-sm lg:flex lg:text-base">
+            <div className="group relative">
+              <Link href="/branches/koshi" className="inline-flex items-center gap-1 hover:text-zinc-200">
+                <span>Branches</span>
+                <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="m6 9 6 6 6-6" />
+                </svg>
+              </Link>
+
+              <div className="pointer-events-none absolute right-0 top-full z-50 w-72 pt-3 opacity-0 transition-all duration-200 group-hover:pointer-events-auto group-hover:opacity-100">
+                <div className="overflow-hidden border border-white/15 bg-[#005d59] shadow-[0_20px_36px_rgba(0,0,0,0.22)]">
+                  {branchData.map((province) => (
+                    <Link
+                      key={province.id}
+                      href={`/branches/${province.id}`}
+                      className="flex items-center justify-between px-4 py-3 text-sm transition hover:bg-white/10"
+                    >
+                      <span>{province.province}</span>
+                      <span className="text-xs text-white/70">{province.branches.length}</span>
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            </div>
+
             {utilityLinks.map((link, index) => (
               <div key={link.label} className="flex items-center gap-6">
                 {index > 0 && <span className="h-5 w-px bg-white/40" />}
@@ -236,13 +261,25 @@ export function TopContactBar() {
             <div className="mx-auto flex w-full max-w-screen-2xl flex-col gap-4 text-lg font-medium text-zinc-800">
               {navItems.map((item) => (
                 <div key={item.label} className="rounded-xl border border-zinc-200/80 bg-white/75 p-3">
-                  <Link
-                    href={item.href}
-                    className="inline-flex w-full items-center justify-between rounded-lg px-2 py-2"
-                    onClick={() => setMobileMenuOpen(false)}
-                  >
-                    {item.label}
-                  </Link>
+                  <div className="flex flex-col gap-2">
+                    <Link
+                      href={item.href}
+                      className="inline-flex w-full items-center justify-between rounded-lg px-2 py-2"
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
+                      {item.label}
+                    </Link>
+                    {item.children?.map((child) => (
+                      <Link
+                        key={child.href}
+                        href={child.href}
+                        className="ml-4 block rounded px-2 py-2 text-base font-medium text-zinc-700 hover:bg-gray-50"
+                        onClick={() => setMobileMenuOpen(false)}
+                      >
+                        {child.label}
+                      </Link>
+                    ))}
+                  </div>
                 </div>
               ))}
               <Link
