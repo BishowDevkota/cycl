@@ -1,107 +1,129 @@
+import Image from "next/image";
 import Link from "next/link";
+
+import {
+  FiImage,
+  FiPhone,
+  FiInfo,
+  FiUser,
+  FiBarChart2,
+  FiBell,
+  FiServer,
+} from "react-icons/fi";
+
+const palette = {
+  deep: "#005B5C",
+  teal: "#007A8E",
+  mint: "#A8D8B9",
+  sand: "#F0E5D8",
+  off: "#F9F9F9",
+};
+
+function Card({ href, title, desc, icon: Icon, accent }: any) {
+  return (
+    <div     
+      className="group flex flex-col p-6 bg-white border border-zinc-100 shadow-[0_4px_14px_rgba(2,6,23,0.06)] transition-shadow duration-300 hover:shadow-[0_8px_24px_rgba(2,6,23,0.12)]"
+      
+    >
+      <div className="flex items-center gap-4">
+        <div
+          className="flex h-10 w-12 items-center justify-center rounded-lg text-white bg-teal-700"
+        
+        >
+          <Icon className="text-2xl" />
+        </div>
+
+        <div>
+          <p className="text-lg font-semibold text-zinc-900">{title}</p>
+          <p className="mt-1 text-sm text-zinc-600">{desc}</p>
+        </div>
+      </div>
+
+      <div className="mt-4 flex items-center justify-end">
+      <Link href={href}>
+        <span className=" flex items-center gap-1 text-base text-zinc-500 group-hover:text-zinc-700 transition">
+          <span>Open</span> <Image className="-rotate-90" src="/images/newsAndNotices/arrow.png" alt="Arrow" width={16} height={16} />
+        </span>
+      </Link>
+      </div>
+    </div>
+  );
+}
 
 export default function AdminHomePage() {
   return (
-    <main className="rounded-2xl border border-zinc-200 bg-white p-8 shadow-sm">
-      <h1 className="text-3xl font-semibold text-zinc-900">
-        Homepage Management
-      </h1>
-      <p className="mt-3 text-zinc-600">
-        Choose what you want to manage for the public homepage.
-      </p>
+    <main>
+      <header className="mb-6 bg-teal-deep">
+        <div className="flex items-center justify-between rounded-2xl px-6 py-6">
+          <div>
+            <h1 className="text-2xl font-semibold text-white">
+              Homepage Management
+            </h1>
+            <p className="mt-1 text-sm text-white/90">
+              Central control panel for public homepage content.
+            </p>
+          </div>
+         
+        </div>
+      </header>
 
-      <div className="mt-8 grid gap-4 sm:grid-cols-2">
-        <Link
+      <section className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+        <Card
           href="/admin/home/hero"
-          className="group rounded-xl border border-zinc-200 p-5 transition hover:border-zinc-300 hover:shadow-md"
-        >
-          <p className="text-lg font-semibold text-zinc-900">Hero Section</p>
-          <p className="mt-2 text-sm text-zinc-600">
-            Manage the hero carousel, slides, and call-to-action buttons.
-          </p>
-          <span className="mt-4 inline-flex text-sm font-medium text-zinc-900">
-            Manage hero
-          </span>
-        </Link>
+          title="Hero Section"
+          desc="Manage the hero carousel, slides, and CTAs."
+          icon={FiImage}
+          accent={palette.teal}
+        />
 
-        <Link
+        <Card
           href="/admin/home/contact"
-          className="group rounded-xl border border-zinc-200 p-5 transition hover:border-zinc-300 hover:shadow-md"
-        >
-          <p className="text-lg font-semibold text-zinc-900">Contact Details</p>
-          <p className="mt-2 text-sm text-zinc-600">
-            Manage phone, email, facebook, and whatsapp contact information.
-          </p>
-          <span className="mt-4 inline-flex text-sm font-medium text-zinc-900">
-            Manage contacts
-          </span>
-        </Link>
+          title="Contact Details"
+          desc="Phone, email and social links displayed on homepage."
+          icon={FiPhone}
+          accent={palette.mint}
+        />
 
-        <Link
+        <Card
           href="/admin/home/about-company-info"
-          className="group rounded-xl border border-zinc-200 p-5 transition hover:border-zinc-300 hover:shadow-md"
-        >
-          <p className="text-lg font-semibold text-zinc-900">About Company Info</p>
-          <p className="mt-2 text-sm text-zinc-600">
-            Manage the heading and description that describe the company.
-          </p>
-          <span className="mt-4 inline-flex text-sm font-medium text-zinc-900">
-            Manage about info
-          </span>
-        </Link>
+          title="About Company Info"
+          desc="Heading and description for the company section."
+          icon={FiInfo}
+          accent={palette.deep}
+        />
 
-        <Link
+        <Card
           href="/admin/home/message-from-ceo"
-          className="group rounded-xl border border-zinc-200 p-5 transition hover:border-zinc-300 hover:shadow-md"
-        >
-          <p className="text-lg font-semibold text-zinc-900">Message From CEO</p>
-          <p className="mt-2 text-sm text-zinc-600">
-            Manage the CEO message content, text, and uploaded image.
-          </p>
-          <span className="mt-4 inline-flex text-sm font-medium text-zinc-900">
-            Manage CEO message
-          </span>
-        </Link>
+          title="Message From CEO"
+          desc="CEO message content and image."
+          icon={FiUser}
+          accent={palette.teal}
+        />
 
-        <Link
+        <Card
           href="/admin/home/company-stats"
-          className="group rounded-xl border border-zinc-200 p-5 transition hover:border-zinc-300 hover:shadow-md"
-        >
-          <p className="text-lg font-semibold text-zinc-900">Company Stats</p>
-          <p className="mt-2 text-sm text-zinc-600">
-            Manage homepage statistics like branches, centers, deposits, and staff.
-          </p>
-          <span className="mt-4 inline-flex text-sm font-medium text-zinc-900">
-            Manage company stats
-          </span>
-        </Link>
+          title="Company Stats"
+          desc="Update numbers for branches, staff, deposits, and centers."
+          icon={FiBarChart2}
+          accent={palette.mint}
+        />
 
-        <Link
+        <Card
           href="/admin/home/notices"
-          className="group rounded-xl border border-zinc-200 p-5 transition hover:border-zinc-300 hover:shadow-md"
-        >
-          <p className="text-lg font-semibold text-zinc-900">Home Notices</p>
-          <p className="mt-2 text-sm text-zinc-600">
-            Manage homepage popup notices with text, image, or both.
-          </p>
-          <span className="mt-4 inline-flex text-sm font-medium text-zinc-900">
-            Manage notices
-          </span>
-        </Link>
+          title="Home Notices"
+          desc="Manage popup notices with text and images."
+          icon={FiBell}
+          accent={palette.deep}
+        />
 
-        <Link
+        <Card
           href="/admin/home/services"
-          className="group rounded-xl border border-zinc-200 p-5 transition hover:border-zinc-300 hover:shadow-md"
-        >
-          <p className="text-lg font-semibold text-zinc-900">Our Services Cards</p>
-          <p className="mt-2 text-sm text-zinc-600">
-            Manage dynamic service cards shown in the homepage Our Services section.
-          </p>
-          <span className="mt-4 inline-flex text-sm font-medium text-zinc-900">
-            Manage services
-          </span>
-        </Link>
-      </div>
+          title="Our Services Cards"
+          desc="Configure the services cards shown on homepage."
+          icon={FiServer}
+          accent={palette.teal}
+        />
+      </section>
     </main>
   );
 }
