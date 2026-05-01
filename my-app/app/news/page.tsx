@@ -10,9 +10,9 @@ function encodeFileName(name: string): string {
 }
 
 function ImgBanner({ src, alt }: { src?: string; alt: string }) {
-  const url = src ?? "/news%20images/news%201.jpeg";
+  const url = src ?? "/news%20images%20/news%201.jpeg";
   return (
-    <div className="w-full h-40 flex items-center justify-center bg-white overflow-hidden">
+    <div className="w-full h-48 flex items-center justify-center bg-white overflow-hidden">
       <img src={url} alt={alt} className="w-full h-full object-cover select-none" draggable={false} />
     </div>
   );
@@ -48,7 +48,7 @@ export default function NewsPage() {
                 key={item.id}
                 className="flex flex-col h-96 bg-teal-deep shadow-md text-white overflow-hidden transition duration-200 hover:-translate-y-0.5 hover:shadow-lg hover:brightness-75"
               >
-                <ImgBanner src={(item as any).image} alt={item.title} />
+                <ImgBanner src={item.image} alt={item.title} />
                 <div className="flex flex-col flex-1 px-4 pt-4 pb-4">
                   <p className="text-xs font-bold uppercase tracking-widest text-white/70">
                     {item.category}
