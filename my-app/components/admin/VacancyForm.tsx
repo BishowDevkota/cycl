@@ -94,16 +94,16 @@ export default function VacancyForm({
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6 max-w-4xl">
+    <form onSubmit={handleSubmit} className="max-w-5xl space-y-6">
       {error && (
-        <div className="p-4 bg-red-100 text-red-700 rounded">
+        <div className="border border-red-200 bg-red-50 p-4 text-red-700">
           {error}
         </div>
       )}
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div>
-          <label className="block text-sm font-medium mb-1">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+        <div className="border border-[#d6e6ed] bg-white p-4">
+          <label className="mb-1 block text-sm font-semibold uppercase tracking-[0.18em] text-teal-deep">
             Job Title *
           </label>
           <input
@@ -112,12 +112,12 @@ export default function VacancyForm({
             value={formData.title}
             onChange={handleInputChange}
             placeholder="e.g., Senior Developer"
-            className="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full border border-[#cfdfe6] px-3 py-2 outline-none focus:border-[#0d837f] focus:ring-1 focus:ring-[#0d837f]"
           />
         </div>
 
-        <div>
-          <label className="block text-sm font-medium mb-1">
+        <div className="border border-[#d6e6ed] bg-white p-4">
+          <label className="mb-1 block text-sm font-semibold uppercase tracking-[0.18em] text-teal-deep">
             Department *
           </label>
           <input
@@ -126,12 +126,12 @@ export default function VacancyForm({
             value={formData.department}
             onChange={handleInputChange}
             placeholder="e.g., IT"
-            className="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full border border-[#cfdfe6] px-3 py-2 outline-none focus:border-[#0d837f] focus:ring-1 focus:ring-[#0d837f]"
           />
         </div>
 
-        <div>
-          <label className="block text-sm font-medium mb-1">
+        <div className="border border-[#d6e6ed] bg-white p-4">
+          <label className="mb-1 block text-sm font-semibold uppercase tracking-[0.18em] text-teal-deep">
             Location *
           </label>
           <input
@@ -140,12 +140,12 @@ export default function VacancyForm({
             value={formData.location}
             onChange={handleInputChange}
             placeholder="e.g., New York"
-            className="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full border border-[#cfdfe6] px-3 py-2 outline-none focus:border-[#0d837f] focus:ring-1 focus:ring-[#0d837f]"
           />
         </div>
 
-        <div>
-          <label className="block text-sm font-medium mb-1">
+        <div className="border border-[#d6e6ed] bg-white p-4">
+          <label className="mb-1 block text-sm font-semibold uppercase tracking-[0.18em] text-teal-deep">
             Salary (optional)
           </label>
           <input
@@ -154,12 +154,12 @@ export default function VacancyForm({
             value={formData.salary}
             onChange={handleInputChange}
             placeholder="e.g., $50,000 - $70,000"
-            className="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full border border-[#cfdfe6] px-3 py-2 outline-none focus:border-[#0d837f] focus:ring-1 focus:ring-[#0d837f]"
           />
         </div>
 
-        <div>
-          <label className="block text-sm font-medium mb-1">
+        <div className="border border-[#d6e6ed] bg-white p-4">
+          <label className="mb-1 block text-sm font-semibold uppercase tracking-[0.18em] text-teal-deep">
             Experience (optional)
           </label>
           <input
@@ -168,12 +168,12 @@ export default function VacancyForm({
             value={formData.experience}
             onChange={handleInputChange}
             placeholder="e.g., 5+ years"
-            className="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full border border-[#cfdfe6] px-3 py-2 outline-none focus:border-[#0d837f] focus:ring-1 focus:ring-[#0d837f]"
           />
         </div>
 
-        <div>
-          <label className="block text-sm font-medium mb-1">
+        <div className="border border-[#d6e6ed] bg-white p-4">
+          <label className="mb-1 block text-sm font-semibold uppercase tracking-[0.18em] text-teal-deep">
             Application Deadline (optional)
           </label>
           <input
@@ -181,13 +181,13 @@ export default function VacancyForm({
             name="applicationDeadline"
             value={formData.applicationDeadline}
             onChange={handleInputChange}
-            className="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full border border-[#cfdfe6] px-3 py-2 outline-none focus:border-[#0d837f] focus:ring-1 focus:ring-[#0d837f]"
           />
         </div>
       </div>
 
-      <div>
-        <label className="block text-sm font-medium mb-1">
+      <div className="border border-[#d6e6ed] bg-white p-4">
+        <label className="mb-1 block text-sm font-semibold uppercase tracking-[0.18em] text-teal-deep">
           Job Description *
         </label>
         <textarea
@@ -196,24 +196,24 @@ export default function VacancyForm({
           onChange={handleInputChange}
           placeholder="Enter detailed job description..."
           rows={6}
-          className="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full border border-[#cfdfe6] px-3 py-2 outline-none focus:border-[#0d837f] focus:ring-1 focus:ring-[#0d837f]"
         />
       </div>
 
       <FormFieldBuilder fields={formFields} onChange={setFormFields} />
 
-      <div className="flex gap-3 justify-end pt-4 border-t">
+      <div className="flex justify-end gap-3 border-t border-[#d6e6ed] pt-4">
         <button
           type="button"
           onClick={() => router.back()}
-          className="px-6 py-2 bg-gray-300 text-gray-800 rounded hover:bg-gray-400"
+          className="border border-[#b9cfd8] bg-white px-6 py-2 text-[#123451] transition hover:bg-[#f3f7f9]"
         >
           Cancel
         </button>
         <button
           type="submit"
           disabled={loading}
-          className="px-6 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50"
+          className="border border-[#0d837f] bg-[#0d837f] px-6 py-2 text-white transition hover:bg-[#08716e] disabled:opacity-50"
         >
           {loading
             ? "Saving..."

@@ -4,8 +4,8 @@ export default function CreateVacancyPage(): React.JSX.Element {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold mb-2">Create New Vacancy</h1>
-        <p className="text-gray-600">
+        <h1 className="mb-2 text-3xl font-bold text-[#123451]">Create New Vacancy</h1>
+        <p className="text-slate-600">
           Add a new job opening with custom application form fields.
         </p>
       </div>

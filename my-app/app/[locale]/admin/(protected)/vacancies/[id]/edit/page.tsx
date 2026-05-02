@@ -54,7 +54,7 @@ export default function EditVacancyPage({
   }
 
   if (error) {
-    return <div className="p-4 bg-red-100 text-red-700 rounded">{error}</div>;
+    return <div className="border border-red-200 bg-red-50 p-4 text-red-700">{error}</div>;
   }
 
   if (!vacancy) {
@@ -64,8 +64,8 @@ export default function EditVacancyPage({
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold mb-2">Edit Vacancy</h1>
-        <p className="text-gray-600">
+        <h1 className="mb-2 text-3xl font-bold text-[#123451]">Edit Vacancy</h1>
+        <p className="text-slate-600">
           Update job details and application form fields.
         </p>
       </div>

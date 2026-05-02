@@ -123,64 +123,64 @@ export default function ApplicantsPage({
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
+      <div className="flex items-center justify-between border-b border-[#d6e6ed] pb-4">
         <div>
-          <h1 className="text-3xl font-bold">Applicants</h1>
-          <p className="text-gray-600 mt-1">{vacancyTitle}</p>
+          <h1 className="text-3xl font-bold text-[#123451]">Applicants</h1>
+          <p className="mt-1 text-slate-600">{vacancyTitle}</p>
         </div>
         <Link
           href="/admin/vacancies"
-          className="px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700"
+          className="border border-[#123451] bg-[#123451] px-4 py-2 text-white transition hover:bg-[#0e2b42]"
         >
           ← Back
         </Link>
       </div>
 
       {error && (
-        <div className="p-4 bg-red-100 text-red-700 rounded">
+        <div className="border border-red-200 bg-red-50 p-4 text-red-700">
           {error}
         </div>
       )}
 
       {applicants.length === 0 ? (
-        <div className="text-center py-12 text-gray-500">
+        <div className="border border-[#d6e6ed] bg-white py-12 text-center text-slate-500">
           <p>No applicants yet</p>
         </div>
       ) : (
-        <div className="overflow-x-auto border rounded-lg">
+        <div className="overflow-x-auto border border-[#d6e6ed] bg-white">
           <table className="w-full border-collapse text-sm">
-            <thead className="bg-gray-100 border-b">
+            <thead className="bg-[#f4fafb] border-b border-[#d6e6ed]">
               <tr>
-                <th className="px-4 py-3 text-left font-semibold">Name</th>
-                <th className="px-4 py-3 text-left font-semibold">Email</th>
-                <th className="px-4 py-3 text-left font-semibold">Phone</th>
-                <th className="px-4 py-3 text-left font-semibold">Applied</th>
-                <th className="px-4 py-3 text-left font-semibold">Status</th>
+                <th className="px-4 py-3 text-left font-semibold text-[#123451]">Name</th>
+                <th className="px-4 py-3 text-left font-semibold text-[#123451]">Email</th>
+                <th className="px-4 py-3 text-left font-semibold text-[#123451]">Phone</th>
+                <th className="px-4 py-3 text-left font-semibold text-[#123451]">Applied</th>
+                <th className="px-4 py-3 text-left font-semibold text-[#123451]">Status</th>
                 {formFields
                   .filter((f) => !["pdf"].includes(f.type))
                   .slice(0, 3)
                   .map((field) => (
                     <th
                       key={field.id}
-                      className="px-4 py-3 text-left font-semibold"
+                      className="px-4 py-3 text-left font-semibold text-[#123451]"
                       title={field.label}
                     >
                       {field.label}
                     </th>
                   ))}
-                <th className="px-4 py-3 text-left font-semibold">Actions</th>
+                <th className="px-4 py-3 text-left font-semibold text-[#123451]">Actions</th>
               </tr>
             </thead>
             <tbody>
               {applicants.map((applicant, idx) => (
                 <tr
                   key={applicant.id}
-                  className={idx % 2 === 0 ? "bg-white" : "bg-gray-50"}
+                  className={idx % 2 === 0 ? "bg-white" : "bg-[#fbfdfe]"}
                 >
-                  <td className="px-4 py-3 font-medium">{applicant.applicantName}</td>
-                  <td className="px-4 py-3">{applicant.email}</td>
-                  <td className="px-4 py-3">{applicant.phone}</td>
-                  <td className="px-4 py-3 text-sm text-gray-600">
+                  <td className="px-4 py-3 font-medium text-[#123451]">{applicant.applicantName}</td>
+                  <td className="px-4 py-3 text-slate-700">{applicant.email}</td>
+                  <td className="px-4 py-3 text-slate-700">{applicant.phone}</td>
+                  <td className="px-4 py-3 text-sm text-slate-600">
                     {new Date(applicant.appliedAt).toLocaleDateString()}
                   </td>
                   <td className="px-4 py-3">
@@ -192,9 +192,9 @@ export default function ApplicantsPage({
                           e.target.value,
                         )
                       }
-                      className={`px-2 py-1 rounded text-sm font-medium border-0 cursor-pointer ${
+                      className={`cursor-pointer border px-2 py-1 text-sm font-medium ${
                         statusColors[applicant.status] ||
-                        "bg-gray-100 text-gray-800"
+                        "border-slate-200 bg-slate-50 text-slate-800"
                       }`}
                     >
                       <option value="submitted">Submitted</option>
@@ -209,7 +209,7 @@ export default function ApplicantsPage({
                     .map((field) => (
                       <td
                         key={field.id}
-                        className="px-4 py-3 text-sm text-gray-700 truncate max-w-xs"
+                        className="max-w-xs truncate px-4 py-3 text-sm text-slate-700"
                         title={String(
                           applicant[field.label] || "-",
                         )}
@@ -221,13 +221,13 @@ export default function ApplicantsPage({
                     <div className="flex gap-2">
                       <Link
                         href={`/admin/applications/${applicant.id}`}
-                        className="text-blue-600 hover:underline text-sm"
+                        className="text-sm font-medium text-teal-deep underline decoration-[#f5ad4a] underline-offset-4"
                       >
                         View
                       </Link>
                       <button
                         onClick={() => void handleDelete(applicant.id)}
-                        className="text-red-600 hover:underline text-sm"
+                        className="text-sm font-medium text-red-600 underline underline-offset-4"
                       >
                         Delete
                       </button>

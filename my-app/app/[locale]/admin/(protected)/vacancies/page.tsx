@@ -58,28 +58,31 @@ export default function AdminVacanciesPage(): React.JSX.Element {
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold">Job Vacancies</h1>
+      <div className="flex items-center justify-between border-b border-[#d6e6ed] pb-4">
+        <div>
+          <h1 className="text-3xl font-bold text-[#123451]">Job Vacancies</h1>
+          <p className="mt-1 text-sm text-slate-600">Manage open roles, application forms, and applicant records.</p>
+        </div>
         <Link
           href="/admin/vacancies/create"
-          className="px-6 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+          className="border border-[#0d837f] bg-[#0d837f] px-6 py-2 text-white transition hover:bg-[#08716e]"
         >
           + Create Vacancy
         </Link>
       </div>
 
       {error && (
-        <div className="p-4 bg-red-100 text-red-700 rounded">
+        <div className="border border-red-200 bg-red-50 p-4 text-red-700">
           {error}
         </div>
       )}
 
       {vacancies.length === 0 ? (
-        <div className="text-center py-12 text-gray-500">
+        <div className="border border-[#d6e6ed] bg-white py-12 text-center text-slate-500">
           <p className="mb-4">No vacancies found.</p>
           <Link
             href="/admin/vacancies/create"
-            className="text-blue-600 hover:underline"
+            className="font-semibold text-teal-deep underline decoration-[#f5ad4a] underline-offset-4"
           >
             Create your first vacancy
           </Link>
@@ -89,40 +92,40 @@ export default function AdminVacanciesPage(): React.JSX.Element {
           {vacancies.map((vacancy) => (
             <div
               key={vacancy._id?.toString()}
-              className="border rounded-lg p-6 hover:shadow-lg transition"
+              className="border border-[#d6e6ed] bg-white p-6 transition hover:border-[#bcd7e2]"
             >
-              <div className="flex justify-between items-start mb-3">
+              <div className="mb-3 flex items-start justify-between border-l-4 border-[#f5ad4a] pl-4">
                 <div className="flex-1">
-                  <h3 className="text-xl font-semibold">{vacancy.title}</h3>
-                  <p className="text-gray-600">
+                  <h3 className="text-xl font-semibold text-[#123451]">{vacancy.title}</h3>
+                  <p className="text-slate-600">
                     {vacancy.department} • {vacancy.location}
                   </p>
                 </div>
                 <span
-                  className={`px-3 py-1 rounded text-sm font-medium ${
+                  className={`border px-3 py-1 text-sm font-medium ${
                     vacancy.isActive
-                      ? "bg-green-100 text-green-800"
-                      : "bg-gray-100 text-gray-800"
+                      ? "border-green-200 bg-green-50 text-green-800"
+                      : "border-slate-200 bg-slate-50 text-slate-800"
                   }`}
                 >
                   {vacancy.isActive ? "Active" : "Inactive"}
                 </span>
               </div>
 
-              <p className="text-gray-700 mb-4 line-clamp-2">
+              <p className="mb-4 line-clamp-2 text-slate-700">
                 {vacancy.description}
               </p>
 
-              <div className="flex gap-2 justify-end">
+              <div className="flex justify-end gap-2">
                 <Link
                   href={`/admin/vacancies/${vacancy._id?.toString()}/applicants`}
-                  className="px-4 py-2 bg-green-600 text-white text-sm rounded hover:bg-green-700"
+                  className="border border-[#0d837f] bg-[#0d837f] px-4 py-2 text-sm text-white transition hover:bg-[#08716e]"
                 >
                   View Applicants
                 </Link>
                 <Link
                   href={`/admin/vacancies/${vacancy._id?.toString()}/edit`}
-                  className="px-4 py-2 bg-blue-600 text-white text-sm rounded hover:bg-blue-700"
+                  className="border border-[#123451] bg-[#123451] px-4 py-2 text-sm text-white transition hover:bg-[#0e2b42]"
                 >
                   Edit
                 </Link>
@@ -130,7 +133,7 @@ export default function AdminVacanciesPage(): React.JSX.Element {
                   onClick={() =>
                     void handleDelete(vacancy._id?.toString() || "")
                   }
-                  className="px-4 py-2 bg-red-600 text-white text-sm rounded hover:bg-red-700"
+                  className="border border-red-600 bg-red-600 px-4 py-2 text-sm text-white transition hover:bg-red-700"
                 >
                   Delete
                 </button>

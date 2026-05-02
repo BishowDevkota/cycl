@@ -10,18 +10,8 @@ export default async function ProtectedAdminLayout({
   await requireAdminSession();
 
   return (
-<<<<<<< Updated upstream:my-app/app/admin/(protected)/layout.tsx
-    <div className="min-h-screen bg-zinc-50">
-      <header className="border-b border-zinc-200 bg-white flex justify-center   items-center py-4">
-       
-        <h1 className="text-2xl font-bold text-teal-deep">Welcome to Admin Area</h1>
-      </header>
-
-      <div className="flex w-full">
-=======
     <div className="min-h-screen bg-zinc-50 md:flex">
       <div className="md:shrink-0">
->>>>>>> Stashed changes:my-app/app/[locale]/admin/(protected)/layout.tsx
         <AdminSidebar />
       </div>
 

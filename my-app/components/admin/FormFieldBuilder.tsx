@@ -54,11 +54,11 @@ export default function FormFieldBuilder({
 
   return (
     <div className="space-y-4">
-      <div className="flex justify-between items-center">
+      <div className="flex items-center justify-between border-b border-[#d6e6ed] pb-3">
         <h3 className="text-lg font-semibold">Application Form Fields</h3>
         <button
           onClick={addField}
-          className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+          className="border border-[#0d837f] bg-[#0d837f] px-4 py-2 text-white transition hover:bg-[#08716e]"
         >
           + Add Field
         </button>
@@ -68,12 +68,12 @@ export default function FormFieldBuilder({
         {fields.map((field, index) => (
           <div
             key={field.id}
-            className="border rounded-lg p-4 bg-gray-50"
+            className="border border-[#d6e6ed] bg-[#f9fcfe] p-4"
           >
             {editingId === field.id ? (
               <div className="space-y-3">
                 <div>
-                  <label className="block text-sm font-medium mb-1">
+                  <label className="mb-1 block text-sm font-semibold uppercase tracking-[0.18em] text-teal-deep">
                     Label
                   </label>
                   <input
@@ -82,12 +82,12 @@ export default function FormFieldBuilder({
                     onChange={(e) =>
                       updateField(field.id, { label: e.target.value })
                     }
-                    className="w-full px-3 py-2 border rounded"
+                    className="w-full border border-[#cfdfe6] px-3 py-2 outline-none focus:border-[#0d837f] focus:ring-1 focus:ring-[#0d837f]"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium mb-1">
+                  <label className="mb-1 block text-sm font-semibold uppercase tracking-[0.18em] text-teal-deep">
                     Field Type
                   </label>
                   <select
@@ -97,7 +97,7 @@ export default function FormFieldBuilder({
                         type: e.target.value as FormField["type"],
                       })
                     }
-                    className="w-full px-3 py-2 border rounded"
+                    className="w-full border border-[#cfdfe6] px-3 py-2 outline-none focus:border-[#0d837f] focus:ring-1 focus:ring-[#0d837f]"
                   >
                     <option value="text">Text</option>
                     <option value="email">Email</option>
@@ -111,7 +111,7 @@ export default function FormFieldBuilder({
 
                 {(field.type === "select" || field.type === "checkbox") && (
                   <div>
-                    <label className="block text-sm font-medium mb-1">
+                    <label className="mb-1 block text-sm font-semibold uppercase tracking-[0.18em] text-teal-deep">
                       Options (comma-separated)
                     </label>
                     <input
@@ -126,14 +126,14 @@ export default function FormFieldBuilder({
                         })
                       }
                       placeholder="Option 1, Option 2, Option 3"
-                      className="w-full px-3 py-2 border rounded"
+                      className="w-full border border-[#cfdfe6] px-3 py-2 outline-none focus:border-[#0d837f] focus:ring-1 focus:ring-[#0d837f]"
                     />
                   </div>
                 )}
 
                 {field.type !== "pdf" && (
                   <div>
-                    <label className="block text-sm font-medium mb-1">
+                    <label className="mb-1 block text-sm font-semibold uppercase tracking-[0.18em] text-teal-deep">
                       Placeholder
                     </label>
                     <input
@@ -142,7 +142,7 @@ export default function FormFieldBuilder({
                       onChange={(e) =>
                         updateField(field.id, { placeholder: e.target.value })
                       }
-                      className="w-full px-3 py-2 border rounded"
+                      className="w-full border border-[#cfdfe6] px-3 py-2 outline-none focus:border-[#0d837f] focus:ring-1 focus:ring-[#0d837f]"
                     />
                   </div>
                 )}
@@ -160,16 +160,16 @@ export default function FormFieldBuilder({
 
                 <button
                   onClick={() => setEditingId(null)}
-                  className="px-3 py-1 bg-green-600 text-white text-sm rounded hover:bg-green-700"
+                  className="border border-green-600 bg-green-600 px-3 py-1 text-sm text-white transition hover:bg-green-700"
                 >
                   Done
                 </button>
               </div>
             ) : (
-              <div className="flex justify-between items-start">
+              <div className="flex items-start justify-between">
                 <div className="flex-1">
                   <p className="font-medium">{field.label}</p>
-                  <p className="text-sm text-gray-600">
+                  <p className="text-sm text-slate-600">
                     Type: {field.type}
                     {field.required && " • Required"}
                   </p>
@@ -178,26 +178,26 @@ export default function FormFieldBuilder({
                   <button
                     onClick={() => moveField(field.id, "up")}
                     disabled={index === 0}
-                    className="px-2 py-1 text-sm bg-gray-300 rounded disabled:opacity-50"
+                    className="border border-slate-300 bg-slate-100 px-2 py-1 text-sm text-slate-800 transition disabled:opacity-50"
                   >
                     ↑
                   </button>
                   <button
                     onClick={() => moveField(field.id, "down")}
                     disabled={index === fields.length - 1}
-                    className="px-2 py-1 text-sm bg-gray-300 rounded disabled:opacity-50"
+                    className="border border-slate-300 bg-slate-100 px-2 py-1 text-sm text-slate-800 transition disabled:opacity-50"
                   >
                     ↓
                   </button>
                   <button
                     onClick={() => setEditingId(field.id)}
-                    className="px-3 py-1 text-sm bg-blue-600 text-white rounded hover:bg-blue-700"
+                    className="border border-[#123451] bg-[#123451] px-3 py-1 text-sm text-white transition hover:bg-[#0e2b42]"
                   >
                     Edit
                   </button>
                   <button
                     onClick={() => removeField(field.id)}
-                    className="px-3 py-1 text-sm bg-red-600 text-white rounded hover:bg-red-700"
+                    className="border border-red-600 bg-red-600 px-3 py-1 text-sm text-white transition hover:bg-red-700"
                   >
                     Delete
                   </button>
@@ -209,7 +209,7 @@ export default function FormFieldBuilder({
       </div>
 
       {fields.length === 0 && (
-        <p className="text-center text-gray-500 py-4">
+        <p className="py-4 text-center text-slate-500">
           No fields added. Click "Add Field" to create the application form.
         </p>
       )}

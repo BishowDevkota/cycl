@@ -71,8 +71,10 @@ export default function AdminSidebar() {
                 <Link
                   key={`${href}-${label}`}
                   href={href}
-                  className={`group flex items-center gap-3 rounded-md px-4 py-2 text-sm transition ${
-                    isActive(href) ? "bg-white/15 text-white" : "text-white/90 hover:bg-white/10"
+                  className={`group flex items-center gap-3 border-l-4 px-4 py-2 text-sm transition ${
+                    isActive(href)
+                      ? "border-[#f5ad4a] bg-white/15 text-white shadow-[inset_0_0_0_1px_rgba(255,255,255,0.08)]"
+                      : "border-transparent text-white/90 hover:border-[#bcd7e2] hover:bg-white/10"
                   }`}
                 >
                   <span className="text-lg text-white/95">
@@ -93,8 +95,10 @@ export default function AdminSidebar() {
                 <Link
                   key={href}
                   href={href}
-                  className={`group flex items-center gap-3 rounded-md px-4 py-2 text-sm transition ${
-                    isActive(href) ? "bg-white/15 text-white" : "text-white/90 hover:bg-white/10"
+                  className={`group flex items-center gap-3 border-l-4 px-4 py-2 text-sm transition ${
+                    isActive(href)
+                      ? "border-[#f5ad4a] bg-white/15 text-white shadow-[inset_0_0_0_1px_rgba(255,255,255,0.08)]"
+                      : "border-transparent text-white/90 hover:border-[#bcd7e2] hover:bg-white/10"
                   }`}
                 >
                   <span className="text-lg text-white/95">
