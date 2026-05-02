@@ -409,7 +409,7 @@ export default function HeroManagement() {
                   {hero.slides?.[0]?.imageUrl ? (
                     <img
                       src={hero.slides[0].imageUrl}
-                      alt={hero.slides?.[0]?.title || "Hero slide preview"}
+                      alt={hero.title || "Hero slide preview"}
                       className="w-full h-full object-cover rounded-lg"
                     />
                   ) : (
