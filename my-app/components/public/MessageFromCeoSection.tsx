@@ -19,15 +19,8 @@ export function MessageFromCeoSection({
   
 
   return (
-<<<<<<< HEAD
-    <section className="relative overflow-hidden px-4 py-16 md:px-6 lg:py-24">
-      {/* Subtle background decoration */}
-      <div className="pointer-events-none absolute -right-24 -top-24 h-96 w-96 rounded-full b " />
-      
-=======
     <section className="relative overflow-hidden bg-[#f8fafc] px-4 py-6 md:px-6 md:py-8">
 
->>>>>>> ceo
       <div className="relative z-10 mx-auto max-w-6xl">
         <div className="overflow-hidden rounded-2xl border-0 bg-white shadow-2xl">
           <div className="grid lg:grid-cols-5">
