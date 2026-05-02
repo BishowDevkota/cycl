@@ -12,10 +12,7 @@ export default async function ProtectedAdminLayout({
   return (
     <div className="min-h-screen bg-zinc-50">
       <header className="border-b border-zinc-200 bg-white flex justify-center   items-center py-4">
-        {/* <div className="mx-auto flex w-full max-w-6xl items-center justify-between px-6 py-4">
-          <h1 className="text-lg font-bold text-zinc-900">Welcome to the Admin Area</h1>
-          <p className="text-sm text-zinc-600 font-bold">Signed in as {session.email}</p>
-        </div> */}
+       
         <h1 className="text-2xl font-bold text-teal-deep">Welcome to Admin Area</h1>
       </header>
 

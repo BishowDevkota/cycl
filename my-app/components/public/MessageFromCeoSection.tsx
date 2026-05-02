@@ -4,6 +4,7 @@ import Link from "next/link";
 import { RichTextContent } from "@/components/public/RichTextContent";
 import type { MessageFromCeo } from "@/services/message-from-ceo-service";
 import { useEffect, useRef, useState } from "react";
+import {useTranslations} from "next-intl";
 
 type MessageFromCeoSectionProps = {
   messageFromCeo: MessageFromCeo | null;
@@ -16,6 +17,8 @@ export function MessageFromCeoSection({
   buttonLabel,
   buttonHref,
 }: MessageFromCeoSectionProps) {
+  const t = useTranslations('Home');
+  
   const ceoName = "Dolendra Prasad Sharma";
   const ceoDesignation = "Chief Executive Officer";
   const sectionRef = useRef<HTMLDivElement>(null);
@@ -99,7 +102,7 @@ export function MessageFromCeoSection({
             <div className="rich-text-container">
               <RichTextContent
                 html={
-                  messageFromCeo?.description ||
+                  t('message_from_ceo') || messageFromCeo?.description ||
                   "<p>Thank you for your continued hard work and dedication. We are building something meaningful together.</p>"
                 }
                 className="text-start font-sans text-xl leading-8 text-slate-700 md:text-[16.5px]"

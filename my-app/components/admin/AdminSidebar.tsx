@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { FiHome, FiGrid } from "react-icons/fi";
+import { FiHome, FiGrid, FiBriefcase } from "react-icons/fi";
 
 export default function AdminSidebar() {
   const palette = {
@@ -49,6 +49,13 @@ export default function AdminSidebar() {
             </span>
             <span>Home</span>
           </Link>
+
+          <Link href={`/admin/vacancies/${}`} className="group flex items-center gap-3 rounded-md px-4 py-2 text-sm hover:bg-white/10">
+            <span className="text-lg text-white/95">
+              <FiBriefcase />
+            </span>
+            <span>Vacancies</span>
+          </Link>
         </nav>
 
         <div className="mt-auto border-t border-white/10 px-6 py-4 text-xs opacity-90">
@@ -58,3 +65,4 @@ export default function AdminSidebar() {
     </aside>
   );
 }
+
