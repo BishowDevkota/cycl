@@ -15,6 +15,15 @@ export default async function Home() {
   const messageFromCeo = await getMessageFromCeo();
   const rawContactDetails = await getContactDetails();
 
+  const aboutCompanyInfoPublic = aboutCompanyInfo
+    ? {
+        heading: aboutCompanyInfo.heading,
+        description: aboutCompanyInfo.description,
+        imageUrl: aboutCompanyInfo.imageUrl,
+        imagePublicId: aboutCompanyInfo.imagePublicId,
+      }
+    : null;
+
   const messageFromCeoPublic = messageFromCeo
     ? {
         heading: messageFromCeo.heading,
@@ -53,7 +62,7 @@ export default async function Home() {
   return (
     <div className="flex flex-col min-h-screen">
       <HeroSection />
-      <WelcomeSection aboutCompanyInfo={aboutCompanyInfo} />
+      <WelcomeSection aboutCompanyInfo={aboutCompanyInfoPublic} />
       <main className="flex-1 w-full pt-12 pb-20 sm:pt-16 sm:pb-24 lg:pt-20 lg:pb-32">
         <MessageFromCeoSection
           messageFromCeo={messageFromCeoPublic}

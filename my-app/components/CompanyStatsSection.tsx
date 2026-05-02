@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useRef, useState } from "react";
+import { useLocale } from "next-intl";
 
 export interface CompanyStatCard {
   _id?: string;
@@ -63,6 +64,7 @@ const fallbackStats: CompanyStatCard[] = [
 ];
 
 export function CompanyStatsSection() {
+  const locale = useLocale();
   const [visible, setVisible] = useState(false);
   const [stats, setStats] = useState<CompanyStatCard[]>([]);
   const [displayValues, setDisplayValues] = useState<Record<string, string>>({});
@@ -76,7 +78,7 @@ export function CompanyStatsSection() {
 
     const fetchStats = async () => {
       try {
-        const response = await fetch("/api/home/company-stats", {
+        const response = await fetch(`/${locale}/api/home/company-stats`, {
           cache: "no-store",
         });
 

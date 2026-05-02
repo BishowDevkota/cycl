@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { ADMIN_SESSION_COOKIE, verifyAdminSession } from "@/lib/admin-session";
 import createMiddleware from 'next-intl/middleware';
 
+const DEFAULT_LOCALE = "en";
+
 // 1. Initialize the next-intl middleware
 const intlMiddleware = createMiddleware({
   locales: ['en', 'ne'],
@@ -10,6 +12,13 @@ const intlMiddleware = createMiddleware({
 
 export async function proxy(request: NextRequest) {
   const { pathname, search } = request.nextUrl;
+
+  if (pathname.startsWith("/api/")) {
+    const locale = request.cookies.get("NEXT_LOCALE")?.value || DEFAULT_LOCALE;
+    const rewrittenUrl = request.nextUrl.clone();
+    rewrittenUrl.pathname = `/${locale}${pathname}`;
+    return NextResponse.rewrite(rewrittenUrl);
+  }
 
   // 2. Run next-intl middleware first to handle locale prefixes (e.g., /en/admin)
   const response = intlMiddleware(request);
@@ -50,6 +59,7 @@ export const config = {
   matcher: [
     // Enable a redirect to a matching locale at the root
     '/', 
+    '/api/:path*',
     
     // Set up a skip-list for paths that should not be internationalized
     '/((?!api|_next|_vercel|.*\\..*).*)'
