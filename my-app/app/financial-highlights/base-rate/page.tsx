@@ -27,7 +27,10 @@ function encodeFileName(name: string): string {
 }
 
 function MediaBanner({ label, file }: { label: string; file: string }) {
-  const url = `${BASE}/pdf%20icon.jpeg`;
+  const isPdf = file.toLowerCase().endsWith(".pdf");
+  const url = isPdf
+    ? `${BASE}/pdf%20icon.jpeg`
+    : `${BASE}/${encodeFileName(file)}`;
 
   return (
     <div className="w-full h-1/2 min-h-32 flex items-center justify-center bg-white">
