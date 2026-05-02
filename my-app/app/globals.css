@@ -43,11 +43,11 @@
 }
 
 @theme {
-  --color-teal-deep: #005B5C;  
-  --color-teal-mid:  #007A8E;  
-  --color-mint:      #A8D8B9;
-  --color-blush:     #F0E5D8;   
-  --color-off-white: #F9F9F9;   
+  --color-teal-deep: #005B5C;
+  --color-teal-mid: #007A8E;
+  --color-mint: #A8D8B9;
+  --color-blush: #F0E5D8;
+  --color-off-white: #F9F9F9;  
 }
 
 @keyframes marquee {
