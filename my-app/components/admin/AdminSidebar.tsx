@@ -50,7 +50,7 @@ export default function AdminSidebar() {
             <span>Home</span>
           </Link>
 
-          <Link href={`/admin/vacancies/${}`} className="group flex items-center gap-3 rounded-md px-4 py-2 text-sm hover:bg-white/10">
+          <Link href={`/admin`} className="group flex items-center gap-3 rounded-md px-4 py-2 text-sm hover:bg-white/10">
             <span className="text-lg text-white/95">
               <FiBriefcase />
             </span>
