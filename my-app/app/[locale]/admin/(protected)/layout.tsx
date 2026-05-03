@@ -10,7 +10,7 @@ export default async function ProtectedAdminLayout({
   await requireAdminSession();
 
   return (
-    <div className="min-h-screen bg-zinc-50 md:flex">
+    <div className="min-h-screen md:flex" style={{ backgroundColor: "#F0E5D8" }}>
       <div className="md:shrink-0">
         <AdminSidebar />
       </div>
