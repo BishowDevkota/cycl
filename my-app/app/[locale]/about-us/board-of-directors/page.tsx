@@ -1,5 +1,6 @@
 import Image from "next/image";
-import { Footer } from "@/components/Footer";
+import { PublicPageShell } from "@/components/public/PublicPageShell";
+import { SectionHeading } from "@/components/public/SectionHeading";
 import { FiPhone, FiMail, FiMapPin } from "react-icons/fi";
 
 type Director = {
@@ -71,7 +72,7 @@ type DirectorCardProps = {
 function DirectorCard({ director }: DirectorCardProps) {
   return (
     <article
-      className="group relative overflow-hidden bg-white shadow-[0_16px_34px_rgba(15,23,42,0.08)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_22px_46px_rgba(15,23,42,0.12)] focus-within:-translate-y-1 focus-within:shadow-[0_22px_46px_rgba(15,23,42,0.12)] focus-within:ring-1 focus-within:ring-[#0d837f] focus-within:ring-offset-2 mt-10"
+      className="group relative mt-10 overflow-hidden bg-white shadow-[0_16px_34px_rgba(15,23,42,0.08)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_22px_46px_rgba(15,23,42,0.12)] focus-within:-translate-y-1 focus-within:shadow-[0_22px_46px_rgba(15,23,42,0.12)] focus-within:ring-2 focus-within:ring-[#0d837f] focus-within:ring-offset-2"
       tabIndex={0}
       aria-label={`${director.name}, ${director.role}`}
     >
@@ -81,17 +82,16 @@ function DirectorCard({ director }: DirectorCardProps) {
           alt={`${director.name} portrait`}
           fill
           sizes="(min-width: 1024px) 22vw, (min-width: 768px) 45vw, 100vw"
-          className="object-cover transition-transform duration-500 ease-out group-hover:scale-105 group-focus-within:scale-105 group-hover:brightness-90"
+          className="object-cover transition-transform duration-500 ease-out group-hover:scale-105 group-focus-within:scale-105 group-hover:brightness-90 group-focus-within:brightness-90"
         />
       </div>
 
-      <div className="relative z-10 p-4 text-center group-hover:opacity-0 group-focus-within:opacity-0">
+      <div className="relative z-10 border-t border-slate-100 bg-white p-4 text-center transition-opacity duration-300 group-hover:opacity-0 group-focus-within:opacity-0">
         <h3 className="text-xl font-bold text-slate-800">{director.name}</h3>
-        <p className="text-base text-bold text-slate-500">{director.role}</p>
+        <p className="text-base font-medium text-slate-500">{director.role}</p>
       </div>
 
-      <div className="absolute inset-0 flex flex-col justify-end bg-linear
-      -to-t from-slate-900/80 via-slate-900/60 to-transparent p-4 text-white opacity-0 transition-opacity duration-300 group-hover:opacity-100 group-focus-within:opacity-100 pointer-events-auto gap-2">
+      <div className="absolute inset-0 flex flex-col justify-end bg-linear-to-t from-slate-900/80 via-slate-900/60 to-transparent p-4 text-white opacity-0 transition-opacity duration-300 group-hover:opacity-100 group-focus-within:opacity-100 pointer-events-auto gap-2">
         <p className="text-lg font-bold uppercase tracking-[0.2em] text-white">Contact</p>
         <div className="mt-2 flex flex-col items-start gap-2 text-left">
           <div className="flex items-center gap-2 text-base font-semibold">
@@ -117,30 +117,26 @@ function BoardOfDirectors() {
   const members = directors.filter((member) => !member.isChairman);
 
   return (
-    <div className="min-h-screen bg-[#f8fafc]">
-      <header className="relative isolate overflow-hidden bg-slate-900 text-white">
-        <div
-          className="absolute inset-0 bg-cover bg-center"
-          style={{ backgroundImage: "url('/banner/banner.jpg')" }}
+    <PublicPageShell
+      imageUrl="/banner/banner2.jpg"
+      eyebrow="About Us"
+      title="Board of Directors"
+      description="Meet the board members guiding governance, oversight, and long-term institutional growth."
+      actions={[
+        { label: "Introduction", href: "/about-us" },
+        { label: "Chairman Message", href: "/about-us/chairman-message" },
+      ]}
+    >
+      <section className="rounded-3xl bg-white p-6 shadow-[0_20px_40px_rgba(13,44,62,0.08)] sm:p-8">
+        <SectionHeading
+          eyebrow="Leadership"
+          title="Board of Directors"
+          description="Hover any card to see the contact details."
         />
-        <div className="absolute inset-0 bg-slate-900/55" />
-        <div className="relative mx-auto flex max-w-7xl flex-col items-center px-4 py-16 text-center sm:px-6 lg:px-8">
-          <p className="text-xs font-semibold uppercase tracking-[0.3em] text-white/70">
-            Board of Directors
-          </p>
-          <h1 className="mt-3 text-3xl font-semibold sm:text-4xl">
-            Board of Directors
-          </h1>
-          <p className="mt-2 text-sm text-white/80">
-            Home - Board of Directors
-          </p>
-        </div>
-      </header>
 
-      <main className="mx-auto w-full max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
         {chairman ? (
           <div className="mx-auto flex justify-center">
-            <div className="min-w-xs">
+            <div className="w-full max-w-sm">
               <DirectorCard director={chairman} />
             </div>
           </div>
@@ -151,10 +147,8 @@ function BoardOfDirectors() {
             <DirectorCard key={director.name} director={director} />
           ))}
         </div>
-      </main>
-
-      <Footer />
-    </div>
+      </section>
+    </PublicPageShell>
   );
 }
 

@@ -6,8 +6,8 @@ import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { branchData } from "@/lib/branch-data";
 import { useTranslations } from "next-intl";
-import { HiOutlineTranslate } from "react-icons/hi"; // Professional translation icon
-import { MdLanguage } from "react-icons/md"; // Globe icon
+import { HiOutlineTranslate } from "react-icons/hi";
+import { MdLanguage } from "react-icons/md";
 
 type ContactItem = { text: string; link: string; };
 type PublicContactDetails = {
@@ -57,7 +57,7 @@ const navItems: NavItem[] = [
       { label: "Lumbini Province", href: "/branches/lumbini" },
       { label: "Karnali Province", href: "/branches/karnali" },
       { label: "Sudurpaschim Province", href: "/branches/sudurpaschim" },
-    ],
+    ]
   },
   {
     label: "News & Notices", href: "/news-notices",
@@ -83,7 +83,6 @@ export function TopContactBar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [contact, setContact] = useState<PublicContactDetails | null>(null);
 
-  // Determine current locale from pathname
   const currentLocale = pathname.split("/")[1] || "en";
 
   const handleLanguageChange = (newLocale: string) => {
@@ -116,7 +115,6 @@ export function TopContactBar() {
   const normalizePath = (href: string) => href.split("#")[0];
   const isActiveRoute = (href: string) => {
     const normalizedHref = normalizePath(href);
-    // Adjust for locale prefix
     const pathWithoutLocale = pathname.replace(`/${currentLocale}`, "") || "/";
     if (normalizedHref === "/") return pathWithoutLocale === "/";
     return pathWithoutLocale === normalizedHref || pathWithoutLocale.startsWith(`${normalizedHref}/`);
@@ -138,47 +136,24 @@ export function TopContactBar() {
               <span>{emailText}</span>
             </Link>
           </div>
-          
+
           <div className="flex items-center gap-6 text-sm lg:text-base">
             {/* Language Switcher - Desktop */}
             <div className="hidden items-center gap-2 lg:flex border-r border-white/20 pr-6 mr-1">
               <HiOutlineTranslate className="h-5 w-5 text-white/80" />
-              <button 
+              <button
                 onClick={() => handleLanguageChange('en')}
                 className={`transition-opacity ${currentLocale === 'en' ? 'font-bold underline underline-offset-4' : 'opacity-70 hover:opacity-100'}`}
               >
                 EN
               </button>
               <span className="opacity-40">|</span>
-              <button 
+              <button
                 onClick={() => handleLanguageChange('ne')}
                 className={`transition-opacity ${currentLocale === 'ne' ? 'font-bold underline underline-offset-4' : 'opacity-70 hover:opacity-100'}`}
               >
                 नेपाली
               </button>
-            </div>
-
-            <div className="hidden lg:group lg:relative lg:block">
-              <Link href="/branches/koshi" className="inline-flex items-center gap-1 hover:text-zinc-200">
-                <span>Branches</span>
-                <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="m6 9 6 6 6-6" />
-                </svg>
-              </Link>
-              <div className="pointer-events-none absolute right-0 top-full z-50 w-72 pt-3 opacity-0 transition-all duration-200 group-hover:pointer-events-auto group-hover:opacity-100">
-                <div className="overflow-hidden border border-white/15 bg-[#005d59] shadow-[0_20px_36px_rgba(0,0,0,0.22)]">
-                  {branchData.map((province) => (
-                    <Link
-                      key={province.id}
-                      href={`/branches/${province.id}`}
-                      className="flex items-center justify-between px-4 py-3 text-sm transition hover:bg-white/10"
-                    >
-                      <span>{province.province}</span>
-                      <span className="text-xs text-white/70">{province.branches.length}</span>
-                    </Link>
-                  ))}
-                </div>
-              </div>
             </div>
 
             {utilityLinks.map((link, index) => (
@@ -269,14 +244,14 @@ export function TopContactBar() {
 
           {/* Mobile Actions: Language + Menu */}
           <div className="flex items-center gap-4 xl:hidden">
-            <button 
+            <button
               onClick={() => handleLanguageChange(currentLocale === 'en' ? 'ne' : 'en')}
               className="flex items-center gap-1 rounded-lg border border-zinc-300 px-3 py-1.5 text-sm font-semibold text-zinc-700"
             >
               <MdLanguage className="h-4 w-4 text-[#005d59]" />
               {currentLocale === 'en' ? 'NE' : 'EN'}
             </button>
-            
+
             <button
               type="button"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}

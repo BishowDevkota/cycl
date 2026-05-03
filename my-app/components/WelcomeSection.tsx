@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import type { AboutCompanyInfo } from "@/services/about-company-info-service";
@@ -14,6 +15,8 @@ export function WelcomeSection({ aboutCompanyInfo }: WelcomeSectionProps) {
   const hasCmsContent = Boolean(aboutCompanyInfo?.heading || aboutCompanyInfo?.description);
   const locale = useLocale();
   const t = useTranslations('Home');
+  const [visible, setVisible] = useState(false);
+  const sectionRef = useRef<HTMLElement | null>(null);
 
   const localizedHeading =
     locale === "ne"
@@ -25,24 +28,55 @@ export function WelcomeSection({ aboutCompanyInfo }: WelcomeSectionProps) {
       ? aboutCompanyInfo?.["description-ne"] || aboutCompanyInfo?.description || aboutCompanyInfo?.["description-en"] || ""
       : aboutCompanyInfo?.["description-en"] || aboutCompanyInfo?.description || aboutCompanyInfo?.["description-ne"] || "";
 
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setVisible(true);
+        }
+      },
+      { threshold: 0.25 },
+    );
+
+    if (sectionRef.current) {
+      observer.observe(sectionRef.current);
+    }
+
+    return () => observer.disconnect();
+  }, []);
+
   return (
-    <section className="w-full bg-[#efefef] pb-10 sm:pb-14 lg:pb-16">
+    <>
+      <style>{`
+        @keyframes floatBubble {
+          0%, 100% {
+            transform: translateY(0);
+          }
+          50% {
+            transform: translateY(-16px);
+          }
+        }
+      `}</style>
+      <section
+        ref={sectionRef}
+        className="w-full bg-[#efefef] pb-10 sm:pb-14 lg:pb-16"
+      >
       <div className="mx-auto grid w-full max-w-7xl grid-cols-1 items-start gap-10 px-4 sm:px-6 lg:grid-cols-[1.06fr_0.94fr] lg:gap-12 lg:px-8">
         {/* Left Side: Visual Elements */}
-        <div className="relative min-h-[430px] sm:min-h-[520px]">
+        <div className={`relative min-h-[430px] transition-all duration-700 ease-out sm:min-h-[520px] ${visible ? "translate-y-0 opacity-100" : "translate-y-6 opacity-0"}`}>
           <div className="absolute left-0 top-0 h-[270px] w-[360px] overflow-hidden sm:h-[323px] sm:w-[430px] lg:h-[390px] lg:w-[520px]">
-            <div className="h-[360px] w-[360px] -translate-y-[90px] rounded-full bg-[#007A8E] sm:h-[430px] sm:w-[430px] sm:-translate-y-[108px] lg:h-[520px] lg:w-[520px] lg:-translate-y-[130px]" />
+            <div className="h-[360px] w-[360px] -translate-y-[90px] rounded-full bg-[#007A8E] shadow-[0_24px_70px_rgba(0,122,142,0.28)] animate-[floatBubble_8s_ease-in-out_infinite] sm:h-[430px] sm:w-[430px] sm:-translate-y-[108px] lg:h-[520px] lg:w-[520px] lg:-translate-y-[130px]" />
           </div>
 
-          <div className="relative z-10 px-6 pt-6 sm:px-10 sm:pt-8 lg:px-12 lg:pt-10">
+          <div className="relative z-10 px-6 pt-6 transition-all duration-700 delay-150 sm:px-10 sm:pt-8 lg:px-12 lg:pt-10">
             <div className="flex">
-              <h2 className="max-w-[20ch] text-[1.2rem] font-semibold leading-[1.14] tracking-[0.01em] text-white sm:text-[2rem] lg:text-[2.2rem]">
+              <h2 className={`max-w-[20ch] text-[1.2rem] font-semibold leading-[1.14] tracking-[0.01em] text-white transition-all duration-700 sm:text-[2rem] lg:text-[2.2rem] ${visible ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0"}`}>
                 <p>{localizedHeading || t('welcome_title')}</p>
               </h2>
             </div>
 
             <div
-              className="relative mt-5 h-[240px] w-full max-w-[520px] overflow-hidden border-[5px] border-[#d6ab33] bg-white/8 shadow-[0_10px_30px_rgba(0,0,0,0.12)] sm:mt-6 sm:h-[320px] lg:mt-7 lg:h-[395px]"
+              className={`relative mt-5 h-[240px] w-full max-w-[520px] overflow-hidden border-[5px] border-[#d6ab33] bg-white/8 shadow-[0_10px_30px_rgba(0,0,0,0.12)] transition-all duration-700 delay-200 sm:mt-6 sm:h-[320px] lg:mt-7 lg:h-[395px] ${visible ? "translate-y-0 opacity-100" : "translate-y-6 opacity-0"}`}
               aria-label="About company image"
             >
               <Image
@@ -59,7 +93,7 @@ export function WelcomeSection({ aboutCompanyInfo }: WelcomeSectionProps) {
         </div>
 
         {/* Right Side: Content */}
-        <article className="max-w-[650px] pt-8 text-[#2e3f54] sm:pt-10 lg:pt-12">
+        <article className={`max-w-[650px] pt-8 text-[#2e3f54] transition-all duration-700 delay-300 sm:pt-10 lg:pt-12 ${visible ? "translate-y-0 opacity-100" : "translate-y-6 opacity-0"}`}>
           {hasCmsContent ? (
             <>
               <RichTextContent
@@ -85,7 +119,7 @@ export function WelcomeSection({ aboutCompanyInfo }: WelcomeSectionProps) {
 
           <Link
             href="/about-us"
-            className="mt-8 inline-flex items-center justify-center gap-2 rounded-md bg-[#007A8E] px-7 py-3 text-base font-semibold text-white shadow-[0_8px_22px_rgba(0,122,142,0.28)] transition-all duration-300 hover:-translate-y-0.5 hover:bg-[#006a7b]"
+            className={`mt-8 inline-flex items-center justify-center gap-2 rounded-md bg-[#007A8E] px-7 py-3 text-base font-semibold text-white shadow-[0_8px_22px_rgba(0,122,142,0.28)] transition-all duration-300 hover:-translate-y-0.5 hover:bg-[#006a7b] ${visible ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0"}`}
           >
             {t("read_more")}
             <svg
@@ -104,6 +138,7 @@ export function WelcomeSection({ aboutCompanyInfo }: WelcomeSectionProps) {
           </Link>
         </article>
       </div>
-    </section>
+      </section>
+    </>
   );
 }
