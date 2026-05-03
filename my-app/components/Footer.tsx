@@ -1,19 +1,21 @@
 'use client';
 
+import Image from 'next/image';
+import React from 'react';
+import { 
+  FaFacebookF, 
+  FaInstagram, 
+  FaYoutube, 
+  FaPhoneAlt, 
+  FaEnvelope, 
+  FaMapMarkerAlt 
+} from 'react-icons/fa';
+
 export function Footer() {
   const usefulLinks = [
-    {
-      label: 'Nepal Rastra Bank',
-      href: 'https://www.nrb.org.np',
-    },
-    {
-      label: 'Reliable Nepal Life Insurance',
-      href: 'https://reliablenepallife.com.np',
-    },
-    {
-      label: 'Karja Suchana Kendra',
-      href: 'https://www.karjasuchana.com.np',
-    },
+    { label: 'Nepal Rastra Bank', href: 'https://www.nrb.org.np' },
+    { label: 'Reliable Nepal Life Insurance', href: 'https://reliablenepallife.com.np' },
+    { label: 'Karja Suchana Kendra', href: 'https://www.karjasuchana.com.np' },
   ];
 
   const aboutUsLinks = [
@@ -24,106 +26,117 @@ export function Footer() {
   ];
 
   return (
-    <footer className="relative overflow-hidden bg-[#005b5c] text-gray-100">
-      <div className="pointer-events-none absolute -left-24 top-8 h-56 w-56 rounded-full bg-[#f6921e]/12 blur-3xl" />
-      <div className="pointer-events-none absolute bottom-6 -right-14 h-44 w-44 rounded-full bg-[#72b4a8]/20 blur-3xl" />
-
-      <div className="relative mx-auto max-w-7xl px-6 py-14 sm:px-8 lg:px-10">
-        <div className="grid grid-cols-1 gap-10 md:grid-cols-2 lg:grid-cols-4 lg:gap-12">
-          <div>
-            <h3 className="mb-4 border-b border-[#f6921e]/70 pb-3 text-base font-bold tracking-wide text-white">
-              About CYC Nepal
-            </h3>
-            <p className="text-base font-medium leading-7 text-start text-gray-100/95">
+    <footer className="bg-[#005B5C] text-[#F9F9F9] font-sans">
+      <div className="relative mx-auto max-w-7xl px-8 py-14 lg:px-12">
+        <div className="grid grid-cols-1 gap-10 md:grid-cols-2 lg:grid-cols-4">
+          
+          {/* Brand Section */}
+          <div className="space-y-6">
+            {/* Increased Image size slightly */}
+            <Image 
+              src="/cyc-logo.jpg" 
+              alt="CYC Nepal Logo" 
+              width={220} 
+              height={85} 
+              className="h-auto w-auto" 
+            />
+          
+            {/* Decreased from text-lg to text-base */}
+            <p className="text-base leading-relaxed opacity-90">
               CYC Nepal Laghubitta Bittiya Sanstha previously known as CYC
               (Chartare Youth Club) is a leading Microfinance in Nepal which is
-              located in Sabhagriha Chowk,Pokhara.
+              located in Sabhagriha Chowk, Pokhara.
             </p>
           </div>
 
+          {/* Useful Links */}
           <div>
-            <h3 className="mb-4 border-b border-[#f6921e]/70 pb-3 text-base font-bold tracking-wide text-white">
+            {/* Decreased from text-xl to text-lg */}
+            <h3 className="mb-5 text-lg font-bold uppercase tracking-wider text-[#A8D8B9]">
               Useful Links
             </h3>
-            <ul className="space-y-2 text-base leading-7">
+            {/* Decreased from text-lg to text-base */}
+            <ul className="space-y-3 text-base">
               {usefulLinks.map((link) => (
                 <li key={link.label}>
                   <a
                     href={link.href}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="group inline-flex font-semibold text-gray-100 transition-colors hover:text-[#f6921e]"
+                    className="transition-colors hover:text-[#A8D8B9]"
                   >
-                    <span className="border-b border-transparent bg-linear-to-r from-[#f6921e] to-[#f8b866] bg-size-[0%_2px] bg-bottom-left bg-no-repeat pb-0.5 transition-all duration-300 group-hover:bg-size-[100%_2px]">
-                      {link.label}
-                    </span>
+                    {link.label}
                   </a>
                 </li>
               ))}
             </ul>
           </div>
 
+          {/* About Us Links */}
           <div>
-            <h3 className="mb-4 border-b border-[#f6921e]/70 pb-3 text-base font-bold tracking-wide text-white">
+            {/* Decreased from text-xl to text-lg */}
+            <h3 className="mb-5 text-lg font-bold uppercase tracking-wider text-[#A8D8B9]">
               About Us
             </h3>
-            <ul className="space-y-2 text-base leading-7">
+            {/* Decreased from text-lg to text-base */}
+            <ul className="space-y-3 text-base">
               {aboutUsLinks.map((link) => (
                 <li key={link.label}>
                   <a
                     href={link.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="group inline-flex font-semibold text-gray-100 transition-colors hover:text-[#f6921e]"
+                    className="transition-colors hover:text-[#A8D8B9]"
                   >
-                    <span className="border-b border-transparent bg-linear-to-r from-[#f6921e] to-[#f8b866] bg-size-[0%_2px] bg-bottom-left bg-no-repeat pb-0.5 transition-all duration-300 group-hover:bg-size-[100%_2px]">
-                      {link.label}
-                    </span>
+                    {link.label}
                   </a>
                 </li>
               ))}
             </ul>
           </div>
 
-          <div>
-            <h3 className="mb-4 border-b border-[#f6921e]/70 pb-3 text-base font-bold tracking-wide text-white">
-              Contact Us
-            </h3>
-            <div className="space-y-2 text-base font-semibold leading-7 text-gray-100/95">
-              <p>
-                <a
-                  href="https://maps.google.com/?q=Sabhagriha+Chowk+Pokhara"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="transition-colors hover:text-[#f6921e]"
-                >
-                  Sabhagriha Chowk,Pokhara
+          {/* Contact & Social Section */}
+          <div className="space-y-6">
+            <div>
+              {/* Decreased from text-xl to text-lg */}
+              <h3 className="mb-5 text-lg font-bold uppercase tracking-wider text-[#A8D8B9]">
+                Follow Us On
+              </h3>
+              <div className="flex gap-4">
+                <a href="#" className="flex h-9 w-9 items-center justify-center rounded-full border border-gray-400 transition-all hover:bg-[#A8D8B9] hover:text-[#005B5C] hover:border-transparent">
+                  <FaFacebookF size={16} />
                 </a>
-              </p>
-              <p>
-                <a
-                  href="tel:+977061590894"
-                  className="transition-colors hover:text-[#f6921e]"
-                >
-                  +(977) 061-590894, 590895
+                <a href="#" className="flex h-9 w-9 items-center justify-center rounded-full border border-gray-400 transition-all hover:bg-[#A8D8B9] hover:text-[#005B5C] hover:border-transparent">
+                  <FaInstagram size={16} />
                 </a>
-              </p>
-              <p>
-                <a
-                  href="mailto:info@cycnlbsl.org.np"
-                  className="transition-colors hover:text-[#f6921e]"
-                >
-                  info@cycnlbsl.org.np
+                <a href="#" className="flex h-9 w-9 items-center justify-center rounded-full border border-gray-400 transition-all hover:bg-[#A8D8B9] hover:text-[#005B5C] hover:border-transparent">
+                  <FaYoutube size={16} />
                 </a>
-              </p>
+              </div>
+            </div>
+
+            {/* Decreased from text-lg to text-base */}
+            <div className="space-y-3 text-base">
+              <h3 className="text-lg font-bold uppercase tracking-wider text-[#A8D8B9]">Contact Us</h3>
+              <div className="flex items-start gap-3">
+                <FaPhoneAlt className="mt-1 text-[#A8D8B9]" size={14} />
+                <a href="tel:+977061590894" className="hover:text-[#A8D8B9]">+(977) 061-590894</a>
+              </div>
+              <div className="flex items-start gap-3">
+                <FaEnvelope className="mt-1 text-[#A8D8B9]" size={14} />
+                <a href="mailto:info@cycnlbsl.org.np" className="hover:text-[#A8D8B9]">info@cycnlbsl.org.np</a>
+              </div>
+              <div className="flex items-start gap-3">
+                <FaMapMarkerAlt className="mt-1 text-[#A8D8B9]" size={14} />
+                <span>Sabhagriha Chowk, Pokhara, Nepal</span>
+              </div>
             </div>
           </div>
         </div>
       </div>
 
-      <div className="border-t border-[#f6921e]/50 bg-[#00494a] pt-4 pb-15">
-        <div className="mx-auto max-w-7xl px-6 text-center sm:px-8 lg:px-10">
-          <p className="text-sm font-semibold leading-6 text-gray-100">
+      {/* Bottom Bar */}
+      <div className="border-t border-white/10 bg-[#00494a] pb-15 pt-4">
+        <div className="mx-auto max-w-7xl px-8 text-center text-sm opacity-80">
+          <p>
             2026 © CYC Nepal Laghubitta Bittiya Sanstha Ltd. All rights
             reserved. Developed By Techvion Technology
           </p>
