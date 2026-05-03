@@ -26,7 +26,7 @@ export function Footer() {
   ];
 
   return (
-    <footer className="bg-[#005B5C] text-[#F9F9F9] font-sans">
+    <footer className="bg-teal-deep text-off-white font-sans">
       <div className="relative mx-auto max-w-7xl px-8 py-14 lg:px-12">
         <div className="grid grid-cols-1 gap-10 md:grid-cols-2 lg:grid-cols-4">
           
@@ -52,7 +52,7 @@ export function Footer() {
           {/* Useful Links */}
           <div>
             {/* Decreased from text-xl to text-lg */}
-            <h3 className="mb-5 text-lg font-bold uppercase tracking-wider text-[#A8D8B9]">
+            <h3 className="mb-5 text-lg font-bold uppercase tracking-wider text-mint">
               Useful Links
             </h3>
             {/* Decreased from text-lg to text-base */}
@@ -63,7 +63,7 @@ export function Footer() {
                     href={link.href}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="transition-colors hover:text-[#A8D8B9]"
+                    className="transition-colors hover:text-mint"
                   >
                     {link.label}
                   </a>
@@ -75,7 +75,7 @@ export function Footer() {
           {/* About Us Links */}
           <div>
             {/* Decreased from text-xl to text-lg */}
-            <h3 className="mb-5 text-lg font-bold uppercase tracking-wider text-[#A8D8B9]">
+            <h3 className="mb-5 text-lg font-bold uppercase tracking-wider text-mint">
               About Us
             </h3>
             {/* Decreased from text-lg to text-base */}
@@ -84,7 +84,7 @@ export function Footer() {
                 <li key={link.label}>
                   <a
                     href={link.href}
-                    className="transition-colors hover:text-[#A8D8B9]"
+                    className="transition-colors hover:text-mint"
                   >
                     {link.label}
                   </a>
@@ -97,17 +97,17 @@ export function Footer() {
           <div className="space-y-6">
             <div>
               {/* Decreased from text-xl to text-lg */}
-              <h3 className="mb-5 text-lg font-bold uppercase tracking-wider text-[#A8D8B9]">
+              <h3 className="mb-5 text-lg font-bold uppercase tracking-wider text-mint">
                 Follow Us On
               </h3>
               <div className="flex gap-4">
-                <a href="#" className="flex h-9 w-9 items-center justify-center rounded-full border border-gray-400 transition-all hover:bg-[#A8D8B9] hover:text-[#005B5C] hover:border-transparent">
+                <a href="#" className="flex h-9 w-9 items-center justify-center rounded-full border border-gray-400 transition-all hover:bg-mint hover:text-teal-deep hover:border-transparent">
                   <FaFacebookF size={16} />
                 </a>
-                <a href="#" className="flex h-9 w-9 items-center justify-center rounded-full border border-gray-400 transition-all hover:bg-[#A8D8B9] hover:text-[#005B5C] hover:border-transparent">
+                <a href="#" className="flex h-9 w-9 items-center justify-center rounded-full border border-gray-400 transition-all hover:bg-mint hover:text-teal-deep hover:border-transparent">
                   <FaInstagram size={16} />
                 </a>
-                <a href="#" className="flex h-9 w-9 items-center justify-center rounded-full border border-gray-400 transition-all hover:bg-[#A8D8B9] hover:text-[#005B5C] hover:border-transparent">
+                <a href="#" className="flex h-9 w-9 items-center justify-center rounded-full border border-gray-400 transition-all hover:bg-mint hover:text-teal-deep hover:border-transparent">
                   <FaYoutube size={16} />
                 </a>
               </div>
@@ -115,17 +115,17 @@ export function Footer() {
 
             {/* Decreased from text-lg to text-base */}
             <div className="space-y-3 text-base">
-              <h3 className="text-lg font-bold uppercase tracking-wider text-[#A8D8B9]">Contact Us</h3>
+              <h3 className="text-lg font-bold uppercase tracking-wider text-mint">Contact Us</h3>
               <div className="flex items-start gap-3">
-                <FaPhoneAlt className="mt-1 text-[#A8D8B9]" size={14} />
-                <a href="tel:+977061590894" className="hover:text-[#A8D8B9]">+(977) 061-590894</a>
+                <FaPhoneAlt className="mt-1 text-mint" size={14} />
+                <a href="tel:+977061590894" className="hover:text-mint">+(977) 061-590894</a>
               </div>
               <div className="flex items-start gap-3">
-                <FaEnvelope className="mt-1 text-[#A8D8B9]" size={14} />
-                <a href="mailto:info@cycnlbsl.org.np" className="hover:text-[#A8D8B9]">info@cycnlbsl.org.np</a>
+                <FaEnvelope className="mt-1 text-mint" size={14} />
+                <a href="mailto:info@cycnlbsl.org.np" className="hover:text-mint">info@cycnlbsl.org.np</a>
               </div>
               <div className="flex items-start gap-3">
-                <FaMapMarkerAlt className="mt-1 text-[#A8D8B9]" size={14} />
+                <FaMapMarkerAlt className="mt-1 text-mint" size={14} />
                 <span>Sabhagriha Chowk, Pokhara, Nepal</span>
               </div>
             </div>

@@ -63,9 +63,9 @@ export function WelcomeSection({ aboutCompanyInfo }: WelcomeSectionProps) {
       >
       <div className="mx-auto grid w-full max-w-7xl grid-cols-1 items-start gap-10 px-4 sm:px-6 lg:grid-cols-[1.06fr_0.94fr] lg:gap-12 lg:px-8">
         {/* Left Side: Visual Elements */}
-        <div className={`relative min-h-[430px] transition-all duration-700 ease-out sm:min-h-[520px] ${visible ? "translate-y-0 opacity-100" : "translate-y-6 opacity-0"}`}>
-          <div className="absolute left-0 top-0 h-[270px] w-[360px] overflow-hidden sm:h-[323px] sm:w-[430px] lg:h-[390px] lg:w-[520px]">
-            <div className="h-[360px] w-[360px] -translate-y-[90px] rounded-full bg-[#007A8E] shadow-[0_24px_70px_rgba(0,122,142,0.28)] animate-[floatBubble_8s_ease-in-out_infinite] sm:h-[430px] sm:w-[430px] sm:-translate-y-[108px] lg:h-[520px] lg:w-[520px] lg:-translate-y-[130px]" />
+        <div className={`relative min-h-107.5 transition-all duration-700 ease-out sm:min-h-130 ${visible ? "translate-y-0 opacity-100" : "translate-y-6 opacity-0"}`}>
+          <div className="absolute left-0 top-0 h-67.5 w-90 overflow-hidden sm:h-80.75 sm:w-107.5 lg:h-97.5 lg:w-130">
+            <div className="h-90 w-90 -translate-y-22.5 rounded-full bg-teal-mid shadow-[0_24px_70px_rgba(0,122,142,0.28)] animate-[floatBubble_8s_ease-in-out_infinite] sm:h-107.5 sm:w-107.5 sm:-translate-y-27 lg:h-130 lg:w-130 lg:-translate-y-32.5" />
           </div>
 
           <div className="relative z-10 px-6 pt-6 transition-all duration-700 delay-150 sm:px-10 sm:pt-8 lg:px-12 lg:pt-10">
@@ -76,7 +76,7 @@ export function WelcomeSection({ aboutCompanyInfo }: WelcomeSectionProps) {
             </div>
 
             <div
-              className={`relative mt-5 h-[240px] w-full max-w-[520px] overflow-hidden border-[5px] border-[#d6ab33] bg-white/8 shadow-[0_10px_30px_rgba(0,0,0,0.12)] transition-all duration-700 delay-200 sm:mt-6 sm:h-[320px] lg:mt-7 lg:h-[395px] ${visible ? "translate-y-0 opacity-100" : "translate-y-6 opacity-0"}`}
+              className={`relative mt-5 h-60 w-full max-w-130 overflow-hidden border-[5px] border-[#d6ab33] bg-white/8 shadow-[0_10px_30px_rgba(0,0,0,0.12)] transition-all duration-700 delay-200 sm:mt-6 sm:h-80 lg:mt-7 lg:h-98.75 ${visible ? "translate-y-0 opacity-100" : "translate-y-6 opacity-0"}`}
               aria-label="About company image"
             >
               <Image
@@ -87,13 +87,13 @@ export function WelcomeSection({ aboutCompanyInfo }: WelcomeSectionProps) {
                 className="object-cover"
                 priority
               />
-              <div className="absolute inset-[8px] border border-white/60 bg-white/6" aria-hidden="true" />
+              <div className="absolute inset-2 border border-white/60 bg-white/6" aria-hidden="true" />
             </div>
           </div>
         </div>
 
         {/* Right Side: Content */}
-        <article className={`max-w-[650px] pt-8 text-[#2e3f54] transition-all duration-700 delay-300 sm:pt-10 lg:pt-12 ${visible ? "translate-y-0 opacity-100" : "translate-y-6 opacity-0"}`}>
+        <article className={`max-w-162.5 pt-8 text-[#2e3f54] transition-all duration-700 delay-300 sm:pt-10 lg:pt-12 ${visible ? "translate-y-0 opacity-100" : "translate-y-6 opacity-0"}`}>
           {hasCmsContent ? (
             <>
               <RichTextContent
@@ -119,7 +119,7 @@ export function WelcomeSection({ aboutCompanyInfo }: WelcomeSectionProps) {
 
           <Link
             href="/about-us"
-            className={`mt-8 inline-flex items-center justify-center gap-2 rounded-md bg-[#007A8E] px-7 py-3 text-base font-semibold text-white shadow-[0_8px_22px_rgba(0,122,142,0.28)] transition-all duration-300 hover:-translate-y-0.5 hover:bg-[#006a7b] ${visible ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0"}`}
+            className={`mt-8 inline-flex items-center justify-center gap-2 rounded-md bg-teal-mid px-7 py-3 text-base font-semibold text-white shadow-[0_8px_22px_rgba(0,122,142,0.28)] transition-all duration-300 hover:-translate-y-0.5 hover:bg-[#006a7b] ${visible ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0"}`}
           >
             {t("read_more")}
             <svg
