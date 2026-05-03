@@ -256,6 +256,14 @@ export default function ServicesSection({
           margin: 0 0 16px 0;
           line-height: 1.15;
           font-weight: 700;
+          transform: translateY(18px);
+          opacity: 0;
+          transition: transform 0.7s ease, opacity 0.7s ease;
+        }
+
+        .services-heading.visible {
+          transform: translateY(0);
+          opacity: 1;
         }
 
         .services-subtext {
@@ -266,6 +274,14 @@ export default function ServicesSection({
           margin: 0 auto 72px;
           line-height: 1.7;
           font-weight: 300;
+          transform: translateY(18px);
+          opacity: 0;
+          transition: transform 0.7s ease 0.1s, opacity 0.7s ease 0.1s;
+        }
+
+        .services-subtext.visible {
+          transform: translateY(0);
+          opacity: 1;
         }
 
         .services-grid {
@@ -307,6 +323,11 @@ export default function ServicesSection({
           box-shadow: 0 20px 60px rgba(0,91,92,0.13);
         }
 
+        .service-card.ready {
+          opacity: 1;
+          transform: translateY(0);
+        }
+
         // .service-card::before {
         //   content: '';
         //   position: absolute;
@@ -329,11 +350,12 @@ export default function ServicesSection({
         }
 
         .icon-wrapper img {
-          transition: transform 0.4s ease;
+          transition: transform 0.4s ease, filter 0.4s ease;
         }
 
         .service-card:hover .icon-wrapper img {
-          transform: scale(1.25);
+          transform: scale(1.2);
+          filter: drop-shadow(0 14px 24px rgba(0, 91, 92, 0.18));
         }
 
         .service-icon-svg {
@@ -446,14 +468,14 @@ export default function ServicesSection({
             <span className="eyebrow-line" />
           </div>
 
-          <h2 className="services-heading">{resolvedHeading}</h2>
-          <p className="services-subtext">{resolvedDescription}</p>
+          <h2 className={`services-heading ${visible ? "visible" : ""}`}>{resolvedHeading}</h2>
+          <p className={`services-subtext ${visible ? "visible" : ""}`}>{resolvedDescription}</p>
 
           <div className="services-grid">
             {resolvedServices.map((svc: ServicesSectionItem, i: number) => (
               <div
                 key={svc.id}
-                className={`service-card ${visible ? "visible" : ""}`}
+                className={`service-card ${visible ? "visible ready" : ""}`}
                 style={{ animationDelay: `${0.05 + i * 0.1}s` }}
               >
                 <div className="icon-wrapper ">

@@ -62,7 +62,7 @@ export default function ManagementTeamPage() {
                 tabIndex={0}
                 aria-label={`${top.name}, ${top.role}`}
               >
-                <div className="relative aspect-[3/4] w-full overflow-hidden">
+                <div className="relative aspect-3/4 w-full overflow-hidden">
                   <Image
                     src={top.image}
                     alt={`${top.name} portrait`}
@@ -77,7 +77,7 @@ export default function ManagementTeamPage() {
                   <p className="text-base text-bold text-slate-500">{top.role}</p>
                 </div>
 
-                <div className="absolute inset-0 flex flex-col justify-end bg-gradient-to-t from-slate-900/80 via-slate-900/60 to-transparent p-4 text-white opacity-0 transition-opacity duration-300 group-hover:opacity-100 group-focus-within:opacity-100 pointer-events-auto gap-2">
+                <div className="absolute inset-0 flex flex-col justify-end bg-linear-to-t from-slate-900/80 via-slate-900/60 to-transparent p-4 text-white opacity-0 transition-opacity duration-300 group-hover:opacity-100 group-focus-within:opacity-100 pointer-events-auto gap-2">
                   <p className="text-lg font-bold uppercase tracking-[0.2em] text-white">Contact</p>
                   <div className="mt-2 flex flex-col items-start gap-2 text-left">
                     <div className="flex items-center gap-2 text-base font-semibold">
@@ -108,7 +108,7 @@ export default function ManagementTeamPage() {
                     tabIndex={0}
                     aria-label={`${member.name}, ${member.role}`}
                   >
-                    <div className="relative aspect-[4/5] w-full overflow-hidden">
+                    <div className="relative aspect-4/5 w-full overflow-hidden">
                       <Image
                         src={member.image}
                         alt={`${member.name} portrait`}
@@ -123,7 +123,7 @@ export default function ManagementTeamPage() {
                       <p className="text-base text-bold text-slate-500">{member.role}</p>
                     </div>
 
-                    <div className="absolute inset-0 flex flex-col justify-end bg-gradient-to-t from-slate-900/80 via-slate-900/60 to-transparent p-4 text-white opacity-0 transition-opacity duration-300 group-hover:opacity-100 group-focus-within:opacity-100 pointer-events-auto gap-2">
+                    <div className="absolute inset-0 flex flex-col justify-end bg-linear-to-t from-slate-900/80 via-slate-900/60 to-transparent p-4 text-white opacity-0 transition-opacity duration-300 group-hover:opacity-100 group-focus-within:opacity-100 pointer-events-auto gap-2">
                       <p className="text-lg font-bold uppercase tracking-[0.2em] text-white">Contact</p>
                       <div className="mt-2 flex flex-col items-start gap-2 text-left">
                         <div className="flex items-center gap-2 text-base font-semibold">

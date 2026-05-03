@@ -98,7 +98,7 @@ export function ActiveNoticePopup() {
   return (
     <>
       {isOpen && (
-        <div className="fixed inset-0 z-[120] grid place-items-center bg-slate-950/45 px-4 py-8">
+        <div className="fixed inset-0 z-120 grid place-items-center bg-slate-950/45 px-4 py-8">
           <div className="w-full max-w-4xl overflow-hidden rounded-2xl border border-[#cfe2ea] bg-white shadow-[0_28px_60px_rgba(2,30,45,0.35)]">
             <div className="flex items-center justify-between border-b border-[#e4edf1] bg-[#f5fafc] px-5 py-4 sm:px-6">
               <div>
@@ -131,7 +131,7 @@ export function ActiveNoticePopup() {
             </div>
 
             <div className="grid grid-cols-1 gap-0 md:grid-cols-[1fr_1.4fr]">
-              <div className="max-h-[420px] overflow-y-auto border-b border-[#e8eff3] bg-[#fbfdff] p-3 md:max-h-[500px] md:border-b-0 md:border-r">
+              <div className="max-h-105 overflow-y-auto border-b border-[#e8eff3] bg-[#fbfdff] p-3 md:max-h-125 md:border-b-0 md:border-r">
                 {notices.map((notice) => {
                   const isSelected = notice._id === selectedNotice?._id;
                   const listTitle =
@@ -220,7 +220,7 @@ export function ActiveNoticePopup() {
         <button
           type="button"
           onClick={() => setIsOpen(true)}
-          className="fixed bottom-6 right-5 z-[90] inline-flex items-center gap-2 rounded-full bg-[#0d837f] px-4 py-2.5 text-sm font-semibold text-white shadow-[0_14px_30px_rgba(13,131,127,0.35)] transition hover:brightness-110"
+          className="fixed bottom-6 right-5 z-90 inline-flex items-center gap-2 rounded-full bg-[#0d837f] px-4 py-2.5 text-sm font-semibold text-white shadow-[0_14px_30px_rgba(13,131,127,0.35)] transition hover:brightness-110"
         >
           <span className="inline-flex h-2.5 w-2.5 rounded-full bg-[#ffd9a4]" aria-hidden="true" />
           Active Notices
