@@ -5,6 +5,17 @@ import type { HeroSection, HeroSlide } from "@/services/hero-service";
 
 type HeroSlideInput = HeroSlide & { clientId: string };
 
+type HeroFormData = {
+  title: string;
+  subtitle: string;
+  "title-en": string;
+  "title-ne": string;
+  "subtitle-en": string;
+  "subtitle-ne": string;
+  slides: HeroSlideInput[];
+  isActive: boolean;
+};
+
 const DEFAULT_SECTION_TITLE = "Homepage Hero";
 
 function createEmptySlide(): HeroSlideInput {
@@ -15,7 +26,7 @@ function createEmptySlide(): HeroSlideInput {
   };
 }
 
-function createEmptyForm() {
+function createEmptyForm(): HeroFormData {
   return {
     title: "",
     subtitle: "",
@@ -37,9 +48,7 @@ export default function HeroManagement() {
   const [removedImagePublicIds, setRemovedImagePublicIds] = useState<string[]>(
     [],
   );
-  const [formData, setFormData] = useState<
-    Omit<HeroSection, "_id" | "slides"> & { slides: HeroSlideInput[] }
-  >(createEmptyForm());
+  const [formData, setFormData] = useState<HeroFormData>(createEmptyForm());
 
   const fetchHeroes = useCallback(async () => {
     try {
@@ -474,7 +483,7 @@ export default function HeroManagement() {
               className="bg-white shadow-lg p-6"
             >
               <div className="flex gap-6">
-                <div className="w-40 h-40 flex-shrink-0">
+                <div className="w-40 h-40 shrink-0">
                   {hero.slides?.[0]?.imageUrl ? (
                     <img
                       src={hero.slides[0].imageUrl}

@@ -6,7 +6,18 @@ import type { AboutCompanyInfo } from "@/services/about-company-info-service";
 import { RichTextEditor } from "@/components/admin/RichTextEditor";
 import { hasRichTextContent } from "@/lib/rich-text";
 
-function createEmptyForm(): Omit<AboutCompanyInfo, "_id" | "createdAt" | "updatedAt"> {
+type AboutCompanyInfoForm = {
+  heading: string;
+  "heading-en": string;
+  "heading-ne": string;
+  description: string;
+  "description-en": string;
+  "description-ne": string;
+  imageUrl: string;
+  imagePublicId: string;
+};
+
+function createEmptyForm(): AboutCompanyInfoForm {
   return {
     heading: "",
     "heading-en": "",
@@ -25,7 +36,7 @@ export default function AboutCompanyInfoManagement() {
   const [error, setError] = useState("");
   const [editingId, setEditingId] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
-  const [formData, setFormData] = useState(createEmptyForm());
+  const [formData, setFormData] = useState<AboutCompanyInfoForm>(createEmptyForm());
 
   const fetchItems = useCallback(async () => {
     try {

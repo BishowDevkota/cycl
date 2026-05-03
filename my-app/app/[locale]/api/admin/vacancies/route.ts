@@ -29,6 +29,13 @@ export async function GET(): Promise<NextResponse> {
       );
     }
 
+    if (!ObjectId.isValid(session.sub)) {
+      return NextResponse.json(
+        { error: "Invalid session" },
+        { status: 401 },
+      );
+    }
+
     const vacancies = await getAllVacancies(new ObjectId(session.sub));
 
     return NextResponse.json(vacancies, { status: 200 });
@@ -58,6 +65,13 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     if (!session || !session.sub) {
       return NextResponse.json(
         { error: "Invalid or expired session" },
+        { status: 401 },
+      );
+    }
+
+    if (!ObjectId.isValid(session.sub)) {
+      return NextResponse.json(
+        { error: "Invalid session" },
         { status: 401 },
       );
     }

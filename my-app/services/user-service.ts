@@ -39,6 +39,10 @@ export async function getUserById(id: string | ObjectId): Promise<User | null> {
   const db = await getDb();
   const collection = db.collection<User>(USERS_COLLECTION);
 
+  if (typeof id === "string" && !ObjectId.isValid(id)) {
+    return null;
+  }
+
   const objId = typeof id === "string" ? new ObjectId(id) : id;
   return await collection.findOne({ _id: objId });
 }
@@ -49,6 +53,10 @@ export async function updateUser(
 ): Promise<User | null> {
   const db = await getDb();
   const collection = db.collection<User>(USERS_COLLECTION);
+
+  if (typeof id === "string" && !ObjectId.isValid(id)) {
+    return null;
+  }
 
   const objId = typeof id === "string" ? new ObjectId(id) : id;
   const result = await collection.findOneAndUpdate(
@@ -63,6 +71,10 @@ export async function updateUser(
 export async function deleteUser(id: string | ObjectId): Promise<boolean> {
   const db = await getDb();
   const collection = db.collection<User>(USERS_COLLECTION);
+
+  if (typeof id === "string" && !ObjectId.isValid(id)) {
+    return false;
+  }
 
   const objId = typeof id === "string" ? new ObjectId(id) : id;
   const result = await collection.deleteOne({ _id: objId });
