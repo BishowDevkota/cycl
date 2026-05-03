@@ -1,6 +1,7 @@
 'use client';
 
 import Image from 'next/image';
+import Link from 'next/link';
 import React from 'react';
 import { 
   FaFacebookF, 
@@ -19,10 +20,10 @@ export function Footer() {
   ];
 
   const aboutUsLinks = [
-    { label: 'About', href: 'https://cycnlbsl.org.np/about-us' },
-    { label: 'News', href: 'https://cycnlbsl.org.np/news' },
-    { label: 'Notices', href: 'https://cycnlbsl.org.np/notices' },
-    { label: 'Contact', href: 'https://cycnlbsl.org.np/contact-us' },
+    { label: 'About', href: '/about-us' },
+    { label: 'News', href: '/news' },
+    { label: 'Notices', href: '/notices' },
+    { label: 'Contact', href: '/contact' },
   ];
 
   return (
@@ -82,12 +83,12 @@ export function Footer() {
             <ul className="space-y-3 text-base">
               {aboutUsLinks.map((link) => (
                 <li key={link.label}>
-                  <a
+                  <Link
                     href={link.href}
                     className="transition-colors hover:text-mint"
                   >
                     {link.label}
-                  </a>
+                  </Link>
                 </li>
               ))}
             </ul>
