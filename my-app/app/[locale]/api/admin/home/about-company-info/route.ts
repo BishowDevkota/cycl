@@ -11,9 +11,12 @@ import {
 import { hasRichTextContent } from "@/lib/rich-text";
 
 function hasRequiredFields(data: Partial<AboutCompanyInfo>) {
+  const heading = data.heading?.trim() || data["heading-en"]?.trim() || data["heading-ne"]?.trim() || "";
+  const description = data.description?.trim() || data["description-en"]?.trim() || data["description-ne"]?.trim() || "";
+
   return Boolean(
-    data.heading?.trim() &&
-      hasRichTextContent(data.description) &&
+    heading &&
+      hasRichTextContent(description) &&
       data.imageUrl?.trim() &&
       data.imagePublicId?.trim(),
   );
@@ -66,8 +69,12 @@ export async function POST(request: NextRequest) {
     }
 
     const aboutCompanyInfo = await createAboutCompanyInfo({
-      heading: data.heading?.trim() || "",
-      description: data.description?.trim() || "",
+      heading: data.heading?.trim() || data["heading-en"]?.trim() || "",
+      "heading-en": data["heading-en"]?.trim() || data.heading?.trim() || "",
+      "heading-ne": data["heading-ne"]?.trim() || data.heading?.trim() || data["heading-en"]?.trim() || "",
+      description: data.description?.trim() || data["description-en"]?.trim() || "",
+      "description-en": data["description-en"]?.trim() || data.description?.trim() || "",
+      "description-ne": data["description-ne"]?.trim() || data.description?.trim() || data["description-en"]?.trim() || "",
       imageUrl: data.imageUrl?.trim() || "",
       imagePublicId: data.imagePublicId?.trim() || "",
     });
@@ -115,8 +122,12 @@ export async function PUT(request: NextRequest) {
     }
 
     const aboutCompanyInfo = await updateAboutCompanyInfo(id, {
-      heading: data.heading?.trim(),
-      description: data.description?.trim(),
+      heading: data.heading?.trim() || data["heading-en"]?.trim(),
+      "heading-en": data["heading-en"]?.trim() || data.heading?.trim(),
+      "heading-ne": data["heading-ne"]?.trim() || data.heading?.trim() || data["heading-en"]?.trim(),
+      description: data.description?.trim() || data["description-en"]?.trim(),
+      "description-en": data["description-en"]?.trim() || data.description?.trim(),
+      "description-ne": data["description-ne"]?.trim() || data.description?.trim() || data["description-en"]?.trim(),
       imageUrl: data.imageUrl?.trim(),
       imagePublicId: data.imagePublicId?.trim(),
     });

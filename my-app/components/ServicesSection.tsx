@@ -3,13 +3,21 @@
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useLocale } from "next-intl";
+import { useTranslations } from "next-intl";
 
 export interface ServicesSectionItem {
   id: string;
   title: string;
+  "title-en"?: string;
+  "title-ne"?: string;
   description: string;
+  "description-en"?: string;
+  "description-ne"?: string;
   image: string;
   stat: string;
+  "stat-en"?: string;
+  "stat-ne"?: string;
   route: string;
 }
 
@@ -43,6 +51,10 @@ interface ServicesSectionProps {
 interface ServicesSectionApiMeta {
   heading?: string;
   description?: string;
+  "heading-en"?: string;
+  "heading-ne"?: string;
+  "description-en"?: string;
+  "description-ne"?: string;
 }
 
 export default function ServicesSection({
@@ -55,6 +67,8 @@ export default function ServicesSection({
   const [apiHeading, setApiHeading] = useState<string>("");
   const [apiDescription, setApiDescription] = useState<string>("");
   const sectionRef = useRef<HTMLElement | null>(null);
+  const locale = useLocale();
+  const t = useTranslations("Home");
 
   useEffect(() => {
     let active = true;
@@ -73,9 +87,15 @@ export default function ServicesSection({
           ? (serviceJson as Array<{
               _id?: string;
               title?: string;
+              "title-en"?: string;
+              "title-ne"?: string;
               description?: string;
-              imageUrl?: string;
+              "description-en"?: string;
+              "description-ne"?: string;
               stat?: string;
+              "stat-en"?: string;
+              "stat-ne"?: string;
+              imageUrl?: string;
               route?: string;
             }>)
           : [];
@@ -87,12 +107,32 @@ export default function ServicesSection({
         }
 
         const mappedServices = serviceItems
-          .filter((item) => item?.title && item?.description && item?.route)
+          .filter(
+            (item) =>
+              (item?.title || item["title-en"] || item["title-ne"]) &&
+              (item?.description || item["description-en"] || item["description-ne"]) &&
+              item?.route,
+          )
           .map((item, index) => ({
             id: item._id?.toString?.() || `${item.route}-${index}`,
-            title: item.title || "",
-            description: item.description || "",
-            stat: item.stat || "",
+            title:
+              locale === "ne"
+                ? item["title-ne"] || item.title || item["title-en"] || ""
+                : item["title-en"] || item.title || item["title-ne"] || "",
+            "title-en": item["title-en"] || item.title || "",
+            "title-ne": item["title-ne"] || item.title || item["title-en"] || "",
+            description:
+              locale === "ne"
+                ? item["description-ne"] || item.description || item["description-en"] || ""
+                : item["description-en"] || item.description || item["description-ne"] || "",
+            "description-en": item["description-en"] || item.description || "",
+            "description-ne": item["description-ne"] || item.description || item["description-en"] || "",
+            stat:
+              locale === "ne"
+                ? item["stat-ne"] || item.stat || item["stat-en"] || ""
+                : item["stat-en"] || item.stat || item["stat-ne"] || "",
+            "stat-en": item["stat-en"] || item.stat || "",
+            "stat-ne": item["stat-ne"] || item.stat || item["stat-en"] || "",
             route: item.route || "",
             image:
               item.imageUrl ||
@@ -102,8 +142,16 @@ export default function ServicesSection({
           }));
 
         setApiServices(mappedServices);
-        setApiHeading(meta?.heading || "");
-        setApiDescription(meta?.description || "");
+        setApiHeading(
+          locale === "ne"
+            ? meta?.["heading-ne"] || meta?.heading || meta?.["heading-en"] || ""
+            : meta?.["heading-en"] || meta?.heading || meta?.["heading-ne"] || "",
+        );
+        setApiDescription(
+          locale === "ne"
+            ? meta?.["description-ne"] || meta?.description || meta?.["description-en"] || ""
+            : meta?.["description-en"] || meta?.description || meta?.["description-ne"] || "",
+        );
       } catch (error) {
         console.error("Error fetching public services data:", error);
       }
@@ -114,7 +162,7 @@ export default function ServicesSection({
     return () => {
       active = false;
     };
-  }, []);
+  }, [locale]);
 
   const resolvedServices =
     services && services.length > 0
@@ -126,11 +174,11 @@ export default function ServicesSection({
   const resolvedHeading =
     heading?.trim() ||
     apiHeading?.trim() ||
-    `${totalServices} Service${totalServices === 1 ? "" : "s"} We Offer`;
+    t("services_heading");
   const resolvedDescription =
     description?.trim() ||
     apiDescription?.trim() ||
-    `Explore ${totalServices} service${totalServices === 1 ? "" : "s"} crafted for your financial needs.`;
+    t("services_description");
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -394,7 +442,7 @@ export default function ServicesSection({
         <div className="services-container">
           <div className="services-eyebrow">
             <span className="eyebrow-line" />
-            <span className="eyebrow-text">Our Services</span>
+            <span className="eyebrow-text">{t("services_eyebrow")}</span>
             <span className="eyebrow-line" />
           </div>
 

@@ -16,7 +16,8 @@ function hasImage(data: Partial<HomeNotice>) {
 }
 
 function hasText(data: Partial<HomeNotice>) {
-  return hasRichTextContent(data.text);
+  const text = data.text?.trim() || data["text-en"]?.trim() || data["text-ne"]?.trim() || "";
+  return hasRichTextContent(text);
 }
 
 function hasRequiredFields(data: Partial<HomeNotice>) {
@@ -66,8 +67,12 @@ export async function POST(request: NextRequest) {
     }
 
     const notice = await createHomeNotice({
-      title: data.title?.trim() || "",
-      text: data.text?.trim() || "",
+      title: data.title?.trim() || data["title-en"]?.trim() || "",
+      "title-en": data["title-en"]?.trim() || data.title?.trim() || "",
+      "title-ne": data["title-ne"]?.trim() || data.title?.trim() || data["title-en"]?.trim() || "",
+      text: data.text?.trim() || data["text-en"]?.trim() || "",
+      "text-en": data["text-en"]?.trim() || data.text?.trim() || "",
+      "text-ne": data["text-ne"]?.trim() || data.text?.trim() || data["text-en"]?.trim() || "",
       imageUrl: data.imageUrl?.trim() || "",
       imagePublicId: data.imagePublicId?.trim() || "",
     });
@@ -116,8 +121,12 @@ export async function PUT(request: NextRequest) {
     }
 
     const notice = await updateHomeNotice(id, {
-      title: data.title?.trim() || "",
-      text: data.text?.trim() || "",
+      title: data.title?.trim() || data["title-en"]?.trim() || "",
+      "title-en": data["title-en"]?.trim() || data.title?.trim() || "",
+      "title-ne": data["title-ne"]?.trim() || data.title?.trim() || data["title-en"]?.trim() || "",
+      text: data.text?.trim() || data["text-en"]?.trim() || "",
+      "text-en": data["text-en"]?.trim() || data.text?.trim() || "",
+      "text-ne": data["text-ne"]?.trim() || data.text?.trim() || data["text-en"]?.trim() || "",
       imageUrl: data.imageUrl?.trim() || "",
       imagePublicId: data.imagePublicId?.trim() || "",
     });

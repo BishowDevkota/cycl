@@ -4,7 +4,7 @@ import Link from "next/link";
 import { RichTextContent } from "@/components/public/RichTextContent";
 import type { MessageFromCeo } from "@/services/message-from-ceo-service";
 import { useEffect, useRef, useState } from "react";
-import {useTranslations} from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 
 type MessageFromCeoSectionProps = {
   messageFromCeo: MessageFromCeo | null;
@@ -17,6 +17,7 @@ export function MessageFromCeoSection({
   buttonLabel,
   buttonHref,
 }: MessageFromCeoSectionProps) {
+  const locale = useLocale();
   const t = useTranslations('Home');
   
   const ceoName = "Dolendra Prasad Sharma";
@@ -39,6 +40,14 @@ export function MessageFromCeoSection({
 
   return () => observer.disconnect();
 }, []);
+
+  const localizedDescription =
+    locale === "ne"
+      ? messageFromCeo?.["description-ne"] || messageFromCeo?.description || messageFromCeo?.["description-en"] || ""
+      : messageFromCeo?.["description-en"] || messageFromCeo?.description || messageFromCeo?.["description-ne"] || "";
+
+  const renderedDescription = localizedDescription || t('message_from_ceo');
+  const renderedButtonLabel = buttonLabel || t("full_message");
 
   return (
     <section className="overflow-hidden bg-transparent px-4 pb-6 pt-2 md:px-6 md:pb-8 md:pt-2 lg:pb-20 lg:pt-4">
@@ -90,10 +99,10 @@ export function MessageFromCeoSection({
             {/* Header */}
             <div className="mb-6">
               <p className="font-sans text-xs font-black uppercase tracking-[0.2em] text-[#0a2d52]/50">
-                Message From
+                {t("message_from_ceo_label")}
               </p>
               <h2 className="font-sans text-4xl font-black text-[#0a2d52] md:text-5xl">
-                THE CEO
+                {t("message_from_ceo_title")}
               </h2>
               <div className="mt-3 h-1.5 w-14 bg-[#6ba47d]" />
             </div>
@@ -101,10 +110,7 @@ export function MessageFromCeoSection({
             {/* Rich Text Body */}
             <div className="rich-text-container">
               <RichTextContent
-                html={
-                  t('message_from_ceo') || messageFromCeo?.description ||
-                  "<p>Thank you for your continued hard work and dedication. We are building something meaningful together.</p>"
-                }
+                html={renderedDescription || "<p>Thank you for your continued hard work and dedication. We are building something meaningful together.</p>"}
                 className="text-start font-sans text-xl leading-8 text-slate-700 md:text-[16.5px]"
               />
             </div>
@@ -124,7 +130,7 @@ export function MessageFromCeoSection({
                     transition-all duration-300 ease-out
                     hover:bg-teal-deep/90 hover:scale-105"
                 >
-                  {buttonLabel}
+                  {renderedButtonLabel}
                 </Link>
               </div>
             </div>

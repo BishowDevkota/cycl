@@ -9,7 +9,11 @@ import { RichTextEditor } from "@/components/admin/RichTextEditor";
 function createEmptyForm(): Omit<HomeNotice, "_id" | "createdAt" | "updatedAt"> {
   return {
     title: "",
+    "title-en": "",
+    "title-ne": "",
     text: "",
+    "text-en": "",
+    "text-ne": "",
     imageUrl: "",
     imagePublicId: "",
   };
@@ -93,7 +97,12 @@ export default function NoticesManagement() {
   };
 
   const handleSave = async () => {
-    if (!hasImage(formData) && !hasText(formData)) {
+    const titleEn = formData["title-en"].trim() || formData.title.trim();
+    const titleNe = formData["title-ne"].trim() || titleEn;
+    const textEn = formData["text-en"].trim() || formData.text.trim();
+    const textNe = formData["text-ne"].trim() || textEn;
+
+    if ((!hasImage(formData) && !hasText(formData)) || !titleEn || !titleNe) {
       setError("Add text, image, or both.");
       return;
     }
@@ -107,7 +116,15 @@ export default function NoticesManagement() {
       const response = await fetch(url, {
         method,
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({
+          ...formData,
+          title: titleEn,
+          "title-en": titleEn,
+          "title-ne": titleNe,
+          text: textEn,
+          "text-en": textEn,
+          "text-ne": textNe,
+        }),
       });
 
       if (!response.ok) {
@@ -128,7 +145,11 @@ export default function NoticesManagement() {
     setEditingId(item._id?.toString() || null);
     setFormData({
       title: item.title,
+      "title-en": item["title-en"] || item.title,
+      "title-ne": item["title-ne"] || item.title,
       text: item.text,
+      "text-en": item["text-en"] || item.text,
+      "text-ne": item["text-ne"] || item.text,
       imageUrl: item.imageUrl,
       imagePublicId: item.imagePublicId,
     });
@@ -183,23 +204,51 @@ export default function NoticesManagement() {
 
           <div className="space-y-4">
             <div>
-              <label className="mb-1 block text-sm font-medium">Title (optional)</label>
+              <label className="mb-1 block text-sm font-medium">Title (English)</label>
               <input
                 type="text"
-                value={formData.title}
+                value={formData["title-en"]}
                 onChange={(event) =>
-                  setFormData((prev) => ({ ...prev, title: event.target.value }))
+                  setFormData((prev) => ({
+                    ...prev,
+                    title: event.target.value,
+                    "title-en": event.target.value,
+                  }))
                 }
                 className="w-full rounded-lg border border-gray-300 px-3 py-2"
                 placeholder="Notice title"
               />
             </div>
 
+            <div>
+              <label className="mb-1 block text-sm font-medium">Title (Nepali)</label>
+              <input
+                type="text"
+                value={formData["title-ne"]}
+                onChange={(event) =>
+                  setFormData((prev) => ({
+                    ...prev,
+                    "title-ne": event.target.value,
+                  }))
+                }
+                className="w-full rounded-lg border border-gray-300 px-3 py-2"
+                placeholder="सूचना शीर्षक"
+              />
+            </div>
+
             <RichTextEditor
-              label="Text Content (optional)"
-              value={formData.text}
-              onChange={(value) => setFormData((prev) => ({ ...prev, text: value }))}
+              label="Text Content (English)"
+              value={formData["text-en"]}
+              onChange={(value) => setFormData((prev) => ({ ...prev, text: value, "text-en": value }))}
               placeholder="Write notice text here"
+              helperText="If both image and text are added, image is shown first then text."
+            />
+
+            <RichTextEditor
+              label="Text Content (Nepali)"
+              value={formData["text-ne"]}
+              onChange={(value) => setFormData((prev) => ({ ...prev, "text-ne": value }))}
+              placeholder="सूचना नेपालीमा लेख्नुहोस्"
               helperText="If both image and text are added, image is shown first then text."
             />
 
@@ -258,8 +307,11 @@ export default function NoticesManagement() {
               {items.map((item, index) => (
                 <div key={item._id?.toString()} className="rounded-lg border border-gray-200 p-4">
                   <h3 className="text-lg font-semibold text-gray-900">
-                    {item.title || `Notice ${items.length - index}`}
+                    {item["title-en"] || item.title || `Notice ${items.length - index}`}
                   </h3>
+                  {item["title-ne"] ? (
+                    <p className="text-sm text-gray-500">{item["title-ne"]}</p>
+                  ) : null}
 
                   {item.imageUrl ? (
                     <Image

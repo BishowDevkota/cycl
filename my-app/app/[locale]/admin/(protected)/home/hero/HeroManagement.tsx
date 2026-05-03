@@ -17,8 +17,12 @@ function createEmptySlide(): HeroSlideInput {
 
 function createEmptyForm() {
   return {
-    title: DEFAULT_SECTION_TITLE,
+    title: "",
     subtitle: "",
+    "title-en": "",
+    "title-ne": "",
+    "subtitle-en": "",
+    "subtitle-ne": "",
     slides: [createEmptySlide()],
     isActive: false,
   };
@@ -159,8 +163,12 @@ export default function HeroManagement() {
     setEditingId(hero._id?.toString() || null);
     setRemovedImagePublicIds([]);
     setFormData({
-      title: hero.title || DEFAULT_SECTION_TITLE,
-      subtitle: hero.subtitle || "",
+      title: hero.title || hero["title-en"] || DEFAULT_SECTION_TITLE,
+      subtitle: hero.subtitle || hero["subtitle-en"] || "",
+      "title-en": hero["title-en"] || hero.title || "",
+      "title-ne": hero["title-ne"] || hero.title || "",
+      "subtitle-en": hero["subtitle-en"] || hero.subtitle || "",
+      "subtitle-ne": hero["subtitle-ne"] || hero.subtitle || "",
       isActive: hero.isActive,
       slides:
         slides.length > 0
@@ -175,6 +183,16 @@ export default function HeroManagement() {
   const handleSave = async () => {
     if (!formData.slides.length) {
       setError("At least one slide is required");
+      return;
+    }
+
+    const titleEn = formData["title-en"].trim() || formData.title.trim();
+    const titleNe = formData["title-ne"].trim() || titleEn;
+    const subtitleEn = formData["subtitle-en"].trim() || formData.subtitle.trim();
+    const subtitleNe = formData["subtitle-ne"].trim() || subtitleEn;
+
+    if (!titleEn || !titleNe) {
+      setError("Both English and Nepali hero titles are required");
       return;
     }
 
@@ -194,8 +212,12 @@ export default function HeroManagement() {
       const method = editingId ? "PUT" : "POST";
 
       const payload = {
-        title: formData.title || DEFAULT_SECTION_TITLE,
-        subtitle: formData.subtitle,
+        title: titleEn,
+        subtitle: subtitleEn,
+        "title-en": titleEn,
+        "title-ne": titleNe,
+        "subtitle-en": subtitleEn,
+        "subtitle-ne": subtitleNe,
         isActive: formData.isActive,
         slides: formData.slides.map((slide) => ({
           imageUrl: slide.imageUrl,
@@ -273,33 +295,80 @@ export default function HeroManagement() {
         <div className="space-y-6">
           <div className="grid gap-6 sm:grid-cols-2">
             <div>
-              <label className="block text-base font-medium mb-2">Hero Title *</label>
+              <label className="block text-base font-medium mb-2">Hero Title (English) *</label>
               <input
                 type="text"
-                value={formData.title}
+                value={formData["title-en"]}
                 onChange={(e) =>
-                  setFormData({ ...formData, title: e.target.value })
+                  setFormData({
+                    ...formData,
+                    title: e.target.value,
+                    "title-en": e.target.value,
+                  })
                 }
-                placeholder="Universal hero title"
+                placeholder="Enter English hero title"
                 className="w-full px-4 py-2 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
               <p className="mt-2 text-sm text-gray-500">
-                This title appears on every hero slide.
+                This title appears when the site is viewed in English.
               </p>
             </div>
             <div>
-              <label className="block text-base font-medium mb-2">Hero Description</label>
-              <textarea
-                value={formData.subtitle}
+              <label className="block text-base font-medium mb-2">Hero Title (Nepali) *</label>
+              <input
+                type="text"
+                value={formData["title-ne"]}
                 onChange={(e) =>
-                  setFormData({ ...formData, subtitle: e.target.value })
+                  setFormData({
+                    ...formData,
+                    "title-ne": e.target.value,
+                  })
                 }
-                placeholder="Universal hero description"
+                placeholder="नेपाली शीर्षक प्रविष्ट गर्नुहोस्"
+                className="w-full px-4 py-2 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+              <p className="mt-2 text-sm text-gray-500">
+                This title appears when the site is viewed in Nepali.
+              </p>
+            </div>
+          </div>
+
+          <div className="grid gap-6 sm:grid-cols-2">
+            <div>
+              <label className="block text-base font-medium mb-2">Hero Description (English)</label>
+              <textarea
+                value={formData["subtitle-en"]}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    subtitle: e.target.value,
+                    "subtitle-en": e.target.value,
+                  })
+                }
+                placeholder="Enter English hero description"
                 rows={3}
                 className="w-full px-4 py-2 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
               <p className="mt-2 text-sm text-gray-500">
-                This description appears below the title across all hero slides.
+                This description appears when the site is viewed in English.
+              </p>
+            </div>
+            <div>
+              <label className="block text-base font-medium mb-2">Hero Description (Nepali)</label>
+              <textarea
+                value={formData["subtitle-ne"]}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    "subtitle-ne": e.target.value,
+                  })
+                }
+                placeholder="नेपाली विवरण प्रविष्ट गर्नुहोस्"
+                rows={3}
+                className="w-full px-4 py-2 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+              <p className="mt-2 text-sm text-gray-500">
+                This description appears when the site is viewed in Nepali.
               </p>
             </div>
           </div>
@@ -422,9 +491,14 @@ export default function HeroManagement() {
                   <div className="flex items-start justify-between">
                     <div>
                       <h3 className="text-xl font-semibold">Hero Section</h3>
-                      <p className="text-gray-600 mt-2">{hero.title || "No title set"}</p>
-                      {hero.subtitle ? (
-                        <p className="text-sm text-gray-500 mt-1">{hero.subtitle}</p>
+                      <p className="text-gray-600 mt-2">
+                        {hero["title-en"] || hero.title || "No title set"}
+                      </p>
+                      {hero["title-ne"] ? (
+                        <p className="text-sm text-gray-500 mt-1">{hero["title-ne"]}</p>
+                      ) : null}
+                      {hero["subtitle-en"] ? (
+                        <p className="text-sm text-gray-500 mt-1">{hero["subtitle-en"]}</p>
                       ) : null}
                       <p className="text-gray-600 mt-2">
                         {(hero.slides?.length || 0)} slide

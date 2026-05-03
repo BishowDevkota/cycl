@@ -1,12 +1,17 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useLocale } from "next-intl";
+import { useTranslations } from "next-intl";
 
 export interface CompanyStatCard {
   _id?: string;
   heading: string;
+  "heading-en"?: string;
+  "heading-ne"?: string;
   value: string;
+  "value-en"?: string;
+  "value-ne"?: string;
   imageUrl: string;
   displayOrder: number;
   isActive: boolean;
@@ -16,7 +21,11 @@ const fallbackStats: CompanyStatCard[] = [
   {
     _id: "fallback-1",
     heading: "Active Client",
+    "heading-en": "Active Client",
+    "heading-ne": "सक्रिय ग्राहक",
     value: "123",
+    "value-en": "123",
+    "value-ne": "१२३",
     imageUrl: "/companyhighlights/client.jpg",
     displayOrder: 0,
     isActive: true,
@@ -24,7 +33,11 @@ const fallbackStats: CompanyStatCard[] = [
   {
     _id: "fallback-2",
     heading: "Total Staff",
+    "heading-en": "Total Staff",
+    "heading-ne": "कुल कर्मचारी",
     value: "123",
+    "value-en": "123",
+    "value-ne": "१२३",
     imageUrl: "/companyhighlights/staff_icon.webp",
     displayOrder: 1,
     isActive: true,
@@ -32,7 +45,11 @@ const fallbackStats: CompanyStatCard[] = [
   {
     _id: "fallback-3",
     heading: "Saving and Deposit",
+    "heading-en": "Saving and Deposit",
+    "heading-ne": "बचत र निक्षेप",
     value: "123",
+    "value-en": "123",
+    "value-ne": "१२३",
     imageUrl: "/companyhighlights/saving_deposit.png",
     displayOrder: 2,
     isActive: true,
@@ -40,7 +57,11 @@ const fallbackStats: CompanyStatCard[] = [
   {
     _id: "fallback-4",
     heading: "Number of Centers",
+    "heading-en": "Number of Centers",
+    "heading-ne": "केन्द्रहरूको संख्या",
     value: "123",
+    "value-en": "123",
+    "value-ne": "१२३",
     imageUrl: "/companyhighlights/centers.webp",
     displayOrder: 3,
     isActive: true,
@@ -48,7 +69,11 @@ const fallbackStats: CompanyStatCard[] = [
   {
     _id: "fallback-5",
     heading: "Oustanding Loan",
+    "heading-en": "Outstanding Loan",
+    "heading-ne": "बक्यौता ऋण",
     value: "10,000",
+    "value-en": "10,000",
+    "value-ne": "१०,०००",
     imageUrl: "/companyhighlights/loan_outstanding.png",
     displayOrder: 4,
     isActive: true,
@@ -56,7 +81,11 @@ const fallbackStats: CompanyStatCard[] = [
   {
     _id: "fallback-6",
     heading: "Branch Offices",
+    "heading-en": "Branch Offices",
+    "heading-ne": "शाखा कार्यालयहरू",
     value: "123",
+    "value-en": "123",
+    "value-ne": "१२३",
     imageUrl: "/companyhighlights/office_branch.png",
     displayOrder: 5,
     isActive: true,
@@ -65,6 +94,7 @@ const fallbackStats: CompanyStatCard[] = [
 
 export function CompanyStatsSection() {
   const locale = useLocale();
+  const t = useTranslations("Home");
   const [visible, setVisible] = useState(false);
   const [stats, setStats] = useState<CompanyStatCard[]>([]);
   const [displayValues, setDisplayValues] = useState<Record<string, string>>({});
@@ -101,6 +131,17 @@ export function CompanyStatsSection() {
                 typeof item.value === "string" &&
                 typeof item.imageUrl === "string",
             )
+            .map((item) => ({
+              ...item,
+              heading:
+                locale === "ne"
+                  ? item["heading-ne"] || item.heading || item["heading-en"] || ""
+                  : item["heading-en"] || item.heading || item["heading-ne"] || "",
+              value:
+                locale === "ne"
+                  ? item["value-ne"] || item.value || item["value-en"] || ""
+                  : item["value-en"] || item.value || item["value-ne"] || "",
+            }))
             .sort((a, b) => a.displayOrder - b.displayOrder),
         );
       } catch (error) {
@@ -113,9 +154,23 @@ export function CompanyStatsSection() {
     return () => {
       active = false;
     };
-  }, []);
+  }, [locale]);
 
-  const renderedStats = stats.length > 0 ? stats : fallbackStats;
+  const renderedStats = useMemo(
+    () =>
+      (stats.length > 0 ? stats : fallbackStats).map((item) => ({
+        ...item,
+        heading:
+          locale === "ne"
+            ? item["heading-ne"] || item.heading || item["heading-en"] || ""
+            : item["heading-en"] || item.heading || item["heading-ne"] || "",
+        value:
+          locale === "ne"
+            ? item["value-ne"] || item.value || item["value-en"] || ""
+            : item["value-en"] || item.value || item["value-ne"] || "",
+      })),
+    [locale, stats],
+  );
 
   const formatNumber = (n: number, original: string) => {
     const hasDecimal = original.indexOf(".") !== -1;
@@ -158,7 +213,6 @@ export function CompanyStatsSection() {
     if (toAnimate.length === 0) return;
 
     const timeouts: number[] = [];
-    setAnimatedMap((s) => ({ ...s }));
 
     toAnimate.forEach((item) => {
       const originalIdx = renderedStats.findIndex((r) => (r._id || r.heading) === (item._id || item.heading));
@@ -395,10 +449,8 @@ export function CompanyStatsSection() {
       <section className="highlights-section" ref={sectionRef}>
         <div className="highlights-container">
           <div className="highlights-header">
-            <h2 className="highlights-heading">Company Highlights</h2>
-            <p className="highlights-subtext">
-              Key metrics showcasing our growth and commitment to serving our members.
-            </p>
+            <h2 className="highlights-heading">{t("company_highlights_title")}</h2>
+            <p className="highlights-subtext">{t("company_highlights_description")}</p>
           </div>
 
           <div className="highlights-grid">

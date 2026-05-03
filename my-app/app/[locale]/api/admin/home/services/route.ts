@@ -13,11 +13,24 @@ import {
 } from "@/services/home-services-service";
 
 function normalizePayload(data: Partial<HomeServiceItem>) {
+  const titleEn = data["title-en"]?.trim() || data.title?.trim() || "";
+  const titleNe = data["title-ne"]?.trim() || data.title?.trim() || titleEn;
+  const descriptionEn = data["description-en"]?.trim() || data.description?.trim() || "";
+  const descriptionNe = data["description-ne"]?.trim() || data.description?.trim() || descriptionEn;
+  const statEn = data["stat-en"]?.trim() || data.stat?.trim() || "";
+  const statNe = data["stat-ne"]?.trim() || data.stat?.trim() || statEn;
+
   return {
-    title: data.title?.trim() || "",
-    description: data.description?.trim() || "",
+    title: titleEn,
+    "title-en": titleEn,
+    "title-ne": titleNe,
+    description: descriptionEn,
+    "description-en": descriptionEn,
+    "description-ne": descriptionNe,
     route: data.route?.trim() || "",
-    stat: data.stat?.trim() || "",
+    stat: statEn,
+    "stat-en": statEn,
+    "stat-ne": statNe,
     imageUrl: data.imageUrl?.trim() || "",
     imagePublicId: data.imagePublicId?.trim() || "",
     displayOrder:
@@ -108,11 +121,19 @@ export async function PUT(request: NextRequest) {
       const data = (await request.json()) as {
         heading?: string;
         description?: string;
+        "heading-en"?: string;
+        "heading-ne"?: string;
+        "description-en"?: string;
+        "description-ne"?: string;
       };
 
       const meta = await upsertHomeServicesSectionMeta({
-        heading: data.heading?.trim() || "",
-        description: data.description?.trim() || "",
+        heading: data.heading?.trim() || data["heading-en"]?.trim() || "",
+        "heading-en": data["heading-en"]?.trim() || data.heading?.trim() || "",
+        "heading-ne": data["heading-ne"]?.trim() || data.heading?.trim() || data["heading-en"]?.trim() || "",
+        description: data.description?.trim() || data["description-en"]?.trim() || "",
+        "description-en": data["description-en"]?.trim() || data.description?.trim() || "",
+        "description-ne": data["description-ne"]?.trim() || data.description?.trim() || data["description-en"]?.trim() || "",
       });
 
       return NextResponse.json(meta);

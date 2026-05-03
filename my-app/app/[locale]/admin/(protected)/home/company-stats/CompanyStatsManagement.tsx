@@ -5,7 +5,11 @@ import type { CompanyStats } from "@/services/company-stats-service";
 
 type CompanyStatsForm = {
   heading: string;
+  "heading-en": string;
+  "heading-ne": string;
   value: string;
+  "value-en": string;
+  "value-ne": string;
   imageUrl: string;
   imagePublicId: string;
   displayOrder: string;
@@ -13,7 +17,7 @@ type CompanyStatsForm = {
 };
 
 const FIELD_CONFIG: Array<{
-  key: keyof Omit<CompanyStatsForm, "isActive">;
+  key: keyof Omit<CompanyStatsForm, "isActive" | "heading-en" | "heading-ne" | "value-en" | "value-ne">;
   label: string;
   placeholder: string;
   type?: string;
@@ -22,11 +26,6 @@ const FIELD_CONFIG: Array<{
     key: "heading",
     label: "Card Heading",
     placeholder: "Branch Offices",
-  },
-  {
-    key: "value",
-    label: "Card Data",
-    placeholder: "3321",
   },
   {
     key: "imageUrl",
@@ -44,7 +43,11 @@ const FIELD_CONFIG: Array<{
 function createEmptyForm(): CompanyStatsForm {
   return {
     heading: "",
+    "heading-en": "",
+    "heading-ne": "",
     value: "",
+    "value-en": "",
+    "value-ne": "",
     imageUrl: "",
     imagePublicId: "",
     displayOrder: "0",
@@ -88,7 +91,7 @@ export default function CompanyStatsManagement() {
   }, [fetchItems]);
 
   const handleChange = (
-    key: keyof Omit<CompanyStatsForm, "isActive">,
+    key: keyof Omit<CompanyStatsForm, "isActive" | "heading-en" | "heading-ne" | "value-en" | "value-ne">,
     value: string,
   ) => {
     setFormData((prev) => ({
@@ -140,13 +143,23 @@ export default function CompanyStatsManagement() {
     }
   };
 
-  const hasMissingFields = FIELD_CONFIG.some(({ key }) => {
-    const value = String(formData[key] ?? "");
-    return !value.trim();
-  });
-
   const handleSave = async () => {
-    if (hasMissingFields) {
+    const headingEn = formData["heading-en"].trim() || formData.heading.trim();
+    const headingNe = formData["heading-ne"].trim() || headingEn;
+    const valueEn = formData["value-en"].trim() || formData.value.trim();
+    const valueNe = formData["value-ne"].trim() || valueEn;
+
+    if (!headingEn || !headingNe) {
+      setError("Both English and Nepali headings are required");
+      return;
+    }
+
+    if (!valueEn || !valueNe) {
+      setError("Both English and Nepali card data values are required");
+      return;
+    }
+
+    if (FIELD_CONFIG.some(({ key }) => !String(formData[key] ?? "").trim())) {
       setError("All company stats fields are required");
       return;
     }
@@ -158,13 +171,19 @@ export default function CompanyStatsManagement() {
       const method = editingId ? "PUT" : "POST";
 
       const payload = {
-        heading: formData.heading,
-        value: formData.value,
+        heading: headingEn,
+        "heading-en": headingEn,
+        "heading-ne": headingNe,
+        value: valueEn,
+        "value-en": valueEn,
+        "value-ne": valueNe,
         imageUrl: formData.imageUrl,
         imagePublicId: formData.imagePublicId,
         displayOrder: Number(formData.displayOrder) || 0,
         isActive: formData.isActive,
-        ...(editingId && originalImagePublicId && originalImagePublicId !== formData.imagePublicId
+        ...(editingId &&
+        originalImagePublicId &&
+        originalImagePublicId !== formData.imagePublicId
           ? { removedImagePublicId: originalImagePublicId }
           : {}),
       };
@@ -194,7 +213,11 @@ export default function CompanyStatsManagement() {
     setOriginalImagePublicId(item.imagePublicId ?? "");
     setFormData({
       heading: item.heading ?? "",
+      "heading-en": item["heading-en"] ?? item.heading ?? "",
+      "heading-ne": item["heading-ne"] ?? item.heading ?? "",
       value: item.value ?? "",
+      "value-en": item["value-en"] ?? item.value ?? "",
+      "value-ne": item["value-ne"] ?? item.value ?? "",
       imageUrl: item.imageUrl ?? "",
       imagePublicId: item.imagePublicId ?? "",
       displayOrder: String(item.displayOrder ?? 0),
@@ -251,15 +274,79 @@ export default function CompanyStatsManagement() {
           </h2>
 
           <div className="space-y-4">
+            <div>
+              <label className="mb-1 block text-sm font-medium">Heading (English)</label>
+              <input
+                type="text"
+                value={formData["heading-en"]}
+                onChange={(event) =>
+                  setFormData((prev) => ({
+                    ...prev,
+                    heading: event.target.value,
+                    "heading-en": event.target.value,
+                  }))
+                }
+                className="w-full rounded-lg border border-gray-300 px-3 py-2"
+                placeholder="Branch Offices"
+              />
+            </div>
+
+            <div>
+              <label className="mb-1 block text-sm font-medium">Heading (Nepali)</label>
+              <input
+                type="text"
+                value={formData["heading-ne"]}
+                onChange={(event) =>
+                  setFormData((prev) => ({
+                    ...prev,
+                    "heading-ne": event.target.value,
+                  }))
+                }
+                className="w-full rounded-lg border border-gray-300 px-3 py-2"
+                placeholder="शाखा कार्यालय"
+              />
+            </div>
+
+            <div>
+              <label className="mb-1 block text-sm font-medium">Card Data (English)</label>
+              <input
+                type="text"
+                value={formData["value-en"]}
+                onChange={(event) =>
+                  setFormData((prev) => ({
+                    ...prev,
+                    value: event.target.value,
+                    "value-en": event.target.value,
+                  }))
+                }
+                className="w-full rounded-lg border border-gray-300 px-3 py-2"
+                placeholder="3321"
+              />
+            </div>
+
+            <div>
+              <label className="mb-1 block text-sm font-medium">Card Data (Nepali)</label>
+              <input
+                type="text"
+                value={formData["value-ne"]}
+                onChange={(event) =>
+                  setFormData((prev) => ({
+                    ...prev,
+                    "value-ne": event.target.value,
+                  }))
+                }
+                className="w-full rounded-lg border border-gray-300 px-3 py-2"
+                placeholder="३३२१"
+              />
+            </div>
+
             {FIELD_CONFIG.map((field) => (
               <div key={field.key}>
-                <label className="mb-1 block text-sm font-medium">
-                  {field.label}
-                </label>
+                <label className="mb-1 block text-sm font-medium">{field.label}</label>
                 <input
                   type={field.type || "text"}
                   value={formData[field.key] ?? ""}
-                  onChange={(e) => handleChange(field.key, e.target.value)}
+                  onChange={(event) => handleChange(field.key, event.target.value)}
                   className="w-full rounded-lg border border-gray-300 px-3 py-2"
                   placeholder={field.placeholder}
                 />
@@ -275,9 +362,7 @@ export default function CompanyStatsManagement() {
                 disabled={uploading}
                 className="w-full rounded-lg border border-gray-300 px-3 py-2"
               />
-              {uploading && (
-                <p className="mt-2 text-sm text-blue-600">Uploading image...</p>
-              )}
+              {uploading && <p className="mt-2 text-sm text-blue-600">Uploading image...</p>}
               {formData.imageUrl ? (
                 <div className="mt-3 rounded-lg border border-gray-200 bg-gray-50 p-3">
                   <p className="text-sm font-medium text-gray-700">Preview</p>
@@ -334,8 +419,14 @@ export default function CompanyStatsManagement() {
               {items.map((item) => (
                 <div key={item._id?.toString()} className="rounded-lg border border-gray-200 p-4">
                   <div className="grid grid-cols-1 gap-2 text-sm text-gray-700 sm:grid-cols-2">
-                    <p><span className="font-medium">Heading:</span> {item.heading}</p>
-                    <p><span className="font-medium">Value:</span> {item.value}</p>
+                    <p><span className="font-medium">Heading:</span> {item["heading-en"] || item.heading}</p>
+                    {item["heading-ne"] ? (
+                      <p><span className="font-medium">Heading (NP):</span> {item["heading-ne"]}</p>
+                    ) : null}
+                    <p><span className="font-medium">Value:</span> {item["value-en"] || item.value}</p>
+                    {item["value-ne"] ? (
+                      <p><span className="font-medium">Value (NP):</span> {item["value-ne"]}</p>
+                    ) : null}
                     <p><span className="font-medium">Image URL:</span> {item.imageUrl}</p>
                     <p><span className="font-medium">Display order:</span> {item.displayOrder}</p>
                     <p><span className="font-medium">Active:</span> {item.isActive ? "Yes" : "No"}</p>

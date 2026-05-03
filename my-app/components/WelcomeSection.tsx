@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import type { AboutCompanyInfo } from "@/services/about-company-info-service";
 import { RichTextContent } from "@/components/public/RichTextContent";
-import { useTranslations } from 'next-intl';
+import { useLocale, useTranslations } from "next-intl";
 
 type WelcomeSectionProps = {
   aboutCompanyInfo: AboutCompanyInfo | null;
@@ -12,7 +12,18 @@ type WelcomeSectionProps = {
 
 export function WelcomeSection({ aboutCompanyInfo }: WelcomeSectionProps) {
   const hasCmsContent = Boolean(aboutCompanyInfo?.heading || aboutCompanyInfo?.description);
+  const locale = useLocale();
   const t = useTranslations('Home');
+
+  const localizedHeading =
+    locale === "ne"
+      ? aboutCompanyInfo?.["heading-ne"] || aboutCompanyInfo?.heading || aboutCompanyInfo?.["heading-en"] || ""
+      : aboutCompanyInfo?.["heading-en"] || aboutCompanyInfo?.heading || aboutCompanyInfo?.["heading-ne"] || "";
+
+  const localizedDescription =
+    locale === "ne"
+      ? aboutCompanyInfo?.["description-ne"] || aboutCompanyInfo?.description || aboutCompanyInfo?.["description-en"] || ""
+      : aboutCompanyInfo?.["description-en"] || aboutCompanyInfo?.description || aboutCompanyInfo?.["description-ne"] || "";
 
   return (
     <section className="w-full bg-[#efefef] pb-10 sm:pb-14 lg:pb-16">
@@ -26,7 +37,7 @@ export function WelcomeSection({ aboutCompanyInfo }: WelcomeSectionProps) {
           <div className="relative z-10 px-6 pt-6 sm:px-10 sm:pt-8 lg:px-12 lg:pt-10">
             <div className="flex">
               <h2 className="max-w-[20ch] text-[1.2rem] font-semibold leading-[1.14] tracking-[0.01em] text-white sm:text-[2rem] lg:text-[2.2rem]">
-                <p>{ t('welcome_title') || aboutCompanyInfo?.heading}</p>
+                <p>{localizedHeading || t('welcome_title')}</p>
               </h2>
             </div>
 
@@ -52,7 +63,7 @@ export function WelcomeSection({ aboutCompanyInfo }: WelcomeSectionProps) {
           {hasCmsContent ? (
             <>
               <RichTextContent
-                html={t('welcome_text1') + '<br><br>' + t('welcome_text2')}
+                html={localizedDescription || (t('welcome_text1') + '<br><br>' + t('welcome_text2'))}
                 className="rich-text-content text-[17px] leading-[1.75] text-[#32455e] sm:text-[18px]"
               />
             </>
@@ -76,7 +87,7 @@ export function WelcomeSection({ aboutCompanyInfo }: WelcomeSectionProps) {
             href="/about-us"
             className="mt-8 inline-flex items-center justify-center gap-2 rounded-md bg-[#007A8E] px-7 py-3 text-base font-semibold text-white shadow-[0_8px_22px_rgba(0,122,142,0.28)] transition-all duration-300 hover:-translate-y-0.5 hover:bg-[#006a7b]"
           >
-            Read More
+            {t("read_more")}
             <svg
               className="h-4 w-4"
               viewBox="0 0 24 24"

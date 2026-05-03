@@ -1,5 +1,4 @@
-"use client"
-import { useTranslations } from 'next-intl';
+"use client";
 
 import { useEffect, useState } from "react";
 import Image from "next/image";
@@ -31,7 +30,6 @@ export default function HeroCarousel({
   subtitle,
   intervalMs = 6000,
 }: HeroCarouselProps) {
-  const t = useTranslations('Home');
   const [activeIndex, setActiveIndex] = useState(0);
   const [now, setNow] = useState<Date | null>(null);
 
@@ -95,12 +93,12 @@ export default function HeroCarousel({
 
 <div className="absolute inset-0 flex flex-col items-center justify-end text-white px-4 pb-6 pt-6 sm:px-6 sm:pb-8 lg:px-8 lg:pb-10">
               <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4 text-center leading-tight">
-                {t('hero_title')}
+                {title}
               </h1>
 
               {subtitle && (
                 <p className="text-base sm:text-lg text-gray-100 mb-8 text-center max-w-3xl">
-                  {t('hero_subtitle')}
+                  {subtitle}
                 </p>
               )}
             </div>

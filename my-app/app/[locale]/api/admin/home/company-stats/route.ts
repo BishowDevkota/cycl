@@ -14,6 +14,10 @@ function normalizeField(value: unknown) {
 }
 
 function normalizePayload(payload: Partial<CompanyStats>): Omit<CompanyStats, "_id"> {
+  const headingEn = normalizeField(payload["heading-en"] || payload.heading);
+  const headingNe = normalizeField(payload["heading-ne"] || payload.heading || headingEn);
+  const valueEn = normalizeField(payload["value-en"] || payload.value);
+  const valueNe = normalizeField(payload["value-ne"] || payload.value || valueEn);
   const displayOrder =
     typeof payload.displayOrder === "number" && Number.isFinite(payload.displayOrder)
       ? payload.displayOrder
@@ -25,8 +29,12 @@ function normalizePayload(payload: Partial<CompanyStats>): Omit<CompanyStats, "_
       : String(payload.isActive).toLowerCase() !== "false";
 
   return {
-    heading: normalizeField(payload.heading),
-    value: normalizeField(payload.value),
+    heading: headingEn,
+    "heading-en": headingEn,
+    "heading-ne": headingNe,
+    value: valueEn,
+    "value-en": valueEn,
+    "value-ne": valueNe,
     imageUrl: normalizeField(payload.imageUrl),
     imagePublicId: normalizeField(payload.imagePublicId),
     displayOrder,

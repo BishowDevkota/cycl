@@ -9,9 +9,15 @@ type FormState = Omit<HomeServiceItem, "_id" | "createdAt" | "updatedAt">;
 function createEmptyForm(): FormState {
   return {
     title: "",
+    "title-en": "",
+    "title-ne": "",
     description: "",
+    "description-en": "",
+    "description-ne": "",
     route: "",
     stat: "",
+    "stat-en": "",
+    "stat-ne": "",
     imageUrl: "",
     imagePublicId: "",
     displayOrder: 0,
@@ -22,7 +28,11 @@ function createEmptyForm(): FormState {
 export default function ServicesManagement() {
   const [items, setItems] = useState<HomeServiceItem[]>([]);
   const [sectionHeading, setSectionHeading] = useState("");
+  const [sectionHeadingEn, setSectionHeadingEn] = useState("");
+  const [sectionHeadingNe, setSectionHeadingNe] = useState("");
   const [sectionDescription, setSectionDescription] = useState("");
+  const [sectionDescriptionEn, setSectionDescriptionEn] = useState("");
+  const [sectionDescriptionNe, setSectionDescriptionNe] = useState("");
   const [savingSection, setSavingSection] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -48,10 +58,18 @@ export default function ServicesManagement() {
         const meta = (await metaResponse.json()) as {
           heading?: string;
           description?: string;
+          "heading-en"?: string;
+          "heading-ne"?: string;
+          "description-en"?: string;
+          "description-ne"?: string;
         } | null;
 
         setSectionHeading(meta?.heading || "");
+        setSectionHeadingEn(meta?.["heading-en"] || meta?.heading || "");
+        setSectionHeadingNe(meta?.["heading-ne"] || meta?.heading || "");
         setSectionDescription(meta?.description || "");
+        setSectionDescriptionEn(meta?.["description-en"] || meta?.description || "");
+        setSectionDescriptionNe(meta?.["description-ne"] || meta?.description || "");
       }
     } catch {
       setError("Failed to load home services");
@@ -106,7 +124,12 @@ export default function ServicesManagement() {
   };
 
   const handleSave = async () => {
-    if (!formData.title.trim() || !formData.description.trim() || !formData.route.trim()) {
+    const titleEn = formData["title-en"].trim() || formData.title.trim();
+    const titleNe = formData["title-ne"].trim() || titleEn;
+    const descriptionEn = formData["description-en"].trim() || formData.description.trim();
+    const descriptionNe = formData["description-ne"].trim() || descriptionEn;
+
+    if (!titleEn || !titleNe || !descriptionEn || !descriptionNe || !formData.route.trim()) {
       setError("Title, description, and route are required");
       return;
     }
@@ -120,7 +143,15 @@ export default function ServicesManagement() {
       const response = await fetch(url, {
         method,
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({
+          ...formData,
+          title: titleEn,
+          "title-en": titleEn,
+          "title-ne": titleNe,
+          description: descriptionEn,
+          "description-en": descriptionEn,
+          "description-ne": descriptionNe,
+        }),
       });
 
       if (!response.ok) {
@@ -144,8 +175,12 @@ export default function ServicesManagement() {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          heading: sectionHeading,
-          description: sectionDescription,
+          heading: sectionHeadingEn.trim() || sectionHeading.trim(),
+          "heading-en": sectionHeadingEn.trim() || sectionHeading.trim(),
+          "heading-ne": sectionHeadingNe.trim() || sectionHeadingEn.trim() || sectionHeading.trim(),
+          description: sectionDescriptionEn.trim() || sectionDescription.trim(),
+          "description-en": sectionDescriptionEn.trim() || sectionDescription.trim(),
+          "description-ne": sectionDescriptionNe.trim() || sectionDescriptionEn.trim() || sectionDescription.trim(),
         }),
       });
 
@@ -166,9 +201,15 @@ export default function ServicesManagement() {
     setEditingId(item._id?.toString() || null);
     setFormData({
       title: item.title,
+      "title-en": item["title-en"] || item.title,
+      "title-ne": item["title-ne"] || item.title,
       description: item.description,
+      "description-en": item["description-en"] || item.description,
+      "description-ne": item["description-ne"] || item.description,
       route: item.route,
       stat: item.stat,
+      "stat-en": item["stat-en"] || item.stat,
+      "stat-ne": item["stat-ne"] || item.stat,
       imageUrl: item.imageUrl,
       imagePublicId: item.imagePublicId,
       displayOrder: item.displayOrder,
@@ -225,23 +266,52 @@ export default function ServicesManagement() {
 
         <div className="grid gap-4 md:grid-cols-2">
           <div>
-            <label className="mb-1 block text-sm font-medium">Main Heading</label>
+            <label className="mb-1 block text-sm font-medium">Main Heading (English)</label>
             <input
               type="text"
-              value={sectionHeading}
-              onChange={(event) => setSectionHeading(event.target.value)}
+              value={sectionHeadingEn}
+              onChange={(event) => {
+                setSectionHeading(event.target.value);
+                setSectionHeadingEn(event.target.value);
+              }}
               className="w-full rounded-lg border border-gray-300 px-3 py-2"
               placeholder="What We Offer"
             />
           </div>
 
           <div>
-            <label className="mb-1 block text-sm font-medium">Description</label>
+            <label className="mb-1 block text-sm font-medium">Main Heading (Nepali)</label>
+            <input
+              type="text"
+              value={sectionHeadingNe}
+              onChange={(event) => setSectionHeadingNe(event.target.value)}
+              className="w-full rounded-lg border border-gray-300 px-3 py-2"
+              placeholder="हाम्रो सेवाहरू"
+            />
+          </div>
+        </div>
+
+        <div className="mt-4 grid gap-4 md:grid-cols-2">
+          <div>
+            <label className="mb-1 block text-sm font-medium">Description (English)</label>
             <textarea
-              value={sectionDescription}
-              onChange={(event) => setSectionDescription(event.target.value)}
+              value={sectionDescriptionEn}
+              onChange={(event) => {
+                setSectionDescription(event.target.value);
+                setSectionDescriptionEn(event.target.value);
+              }}
               className="min-h-24 w-full rounded-lg border border-gray-300 px-3 py-2"
               placeholder="Empowering members with trusted financial solutions..."
+            />
+          </div>
+
+          <div>
+            <label className="mb-1 block text-sm font-medium">Description (Nepali)</label>
+            <textarea
+              value={sectionDescriptionNe}
+              onChange={(event) => setSectionDescriptionNe(event.target.value)}
+              className="min-h-24 w-full rounded-lg border border-gray-300 px-3 py-2"
+              placeholder="विश्वसनीय वित्तीय समाधानमार्फत सदस्यहरूलाई सशक्त बनाउँदै..."
             />
           </div>
         </div>
@@ -264,12 +334,16 @@ export default function ServicesManagement() {
 
           <div className="space-y-4">
             <div>
-              <label className="mb-1 block text-sm font-medium">Title *</label>
+              <label className="mb-1 block text-sm font-medium">Title (English) *</label>
               <input
                 type="text"
-                value={formData.title}
+                value={formData["title-en"]}
                 onChange={(event) =>
-                  setFormData((prev) => ({ ...prev, title: event.target.value }))
+                  setFormData((prev) => ({
+                    ...prev,
+                    title: event.target.value,
+                    "title-en": event.target.value,
+                  }))
                 }
                 className="w-full rounded-lg border border-gray-300 px-3 py-2"
                 placeholder="Micro Enterprise Loan"
@@ -277,14 +351,49 @@ export default function ServicesManagement() {
             </div>
 
             <div>
-              <label className="mb-1 block text-sm font-medium">Description *</label>
-              <textarea
-                value={formData.description}
+              <label className="mb-1 block text-sm font-medium">Title (Nepali) *</label>
+              <input
+                type="text"
+                value={formData["title-ne"]}
                 onChange={(event) =>
-                  setFormData((prev) => ({ ...prev, description: event.target.value }))
+                  setFormData((prev) => ({
+                    ...prev,
+                    "title-ne": event.target.value,
+                  }))
+                }
+                className="w-full rounded-lg border border-gray-300 px-3 py-2"
+                placeholder="सूक्ष्म उद्यम ऋण"
+              />
+            </div>
+
+            <div>
+              <label className="mb-1 block text-sm font-medium">Description (English) *</label>
+              <textarea
+                value={formData["description-en"]}
+                onChange={(event) =>
+                  setFormData((prev) => ({
+                    ...prev,
+                    description: event.target.value,
+                    "description-en": event.target.value,
+                  }))
                 }
                 className="min-h-24 w-full rounded-lg border border-gray-300 px-3 py-2"
                 placeholder="Short summary shown in the card"
+              />
+            </div>
+
+            <div>
+              <label className="mb-1 block text-sm font-medium">Description (Nepali) *</label>
+              <textarea
+                value={formData["description-ne"]}
+                onChange={(event) =>
+                  setFormData((prev) => ({
+                    ...prev,
+                    "description-ne": event.target.value,
+                  }))
+                }
+                className="min-h-24 w-full rounded-lg border border-gray-300 px-3 py-2"
+                placeholder="कार्डमा देखाइने छोटो विवरण"
               />
             </div>
 
@@ -302,15 +411,32 @@ export default function ServicesManagement() {
             </div>
 
             <div>
-                <label className="mb-1 block text-sm font-medium">Stat Badge</label>
+                <label className="mb-1 block text-sm font-medium">Stat Badge (English)</label>
                 <input
                   type="text"
-                  value={formData.stat}
+                  value={formData["stat-en"] || formData.stat}
                   onChange={(event) =>
-                    setFormData((prev) => ({ ...prev, stat: event.target.value }))
+                    setFormData((prev) => ({
+                      ...prev,
+                      stat: event.target.value,
+                      "stat-en": event.target.value,
+                    }))
                   }
                   className="w-full rounded-lg border border-gray-300 px-3 py-2"
                   placeholder="13.25% Annual"
+                />
+            </div>
+
+            <div>
+                <label className="mb-1 block text-sm font-medium">Stat Badge (Nepali)</label>
+                <input
+                  type="text"
+                  value={formData["stat-ne"] || ""}
+                  onChange={(event) =>
+                    setFormData((prev) => ({ ...prev, "stat-ne": event.target.value }))
+                  }
+                  className="w-full rounded-lg border border-gray-300 px-3 py-2"
+                  placeholder="१३.२५% वार्षिक"
                 />
             </div>
 
@@ -400,7 +526,12 @@ export default function ServicesManagement() {
               {items.map((item) => (
                 <div key={item._id?.toString()} className="rounded-lg border border-gray-200 p-4">
                   <div className="flex items-start justify-between gap-3">
-                    <h3 className="text-lg font-semibold text-gray-900">{item.title}</h3>
+                    <div>
+                      <h3 className="text-lg font-semibold text-gray-900">{item["title-en"] || item.title}</h3>
+                      {item["title-ne"] ? (
+                        <p className="text-sm text-gray-500">{item["title-ne"]}</p>
+                      ) : null}
+                    </div>
                     <span
                       className={`rounded px-2 py-1 text-xs font-medium ${
                         item.isActive ? "bg-emerald-100 text-emerald-700" : "bg-gray-100 text-gray-700"
@@ -420,11 +551,17 @@ export default function ServicesManagement() {
                     />
                   ) : null}
 
-                  <p className="mt-3 text-sm text-gray-700">{item.description}</p>
+                  <p className="mt-3 text-sm text-gray-700">{item["description-en"] || item.description}</p>
+                  {item["description-ne"] ? (
+                    <p className="mt-2 text-sm text-gray-500">{item["description-ne"]}</p>
+                  ) : null}
 
                   <div className="mt-3 space-y-1 text-xs text-gray-600">
                     <p><span className="font-medium">Route:</span> {item.route}</p>
-                    <p><span className="font-medium">Stat:</span> {item.stat || "-"}</p>
+                    <p><span className="font-medium">Stat:</span> {item["stat-en"] || item.stat || "-"}</p>
+                    {item["stat-ne"] ? (
+                      <p><span className="font-medium">Stat (NP):</span> {item["stat-ne"]}</p>
+                    ) : null}
                     <p><span className="font-medium">Order:</span> {item.displayOrder}</p>
                   </div>
 

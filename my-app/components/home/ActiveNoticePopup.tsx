@@ -3,11 +3,16 @@
 import { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import { hasRichTextContent } from "@/lib/rich-text";
+import { useLocale } from "next-intl";
 
 type HomeNotice = {
   _id?: string;
   title: string;
+  "title-en"?: string;
+  "title-ne"?: string;
   text: string;
+  "text-en"?: string;
+  "text-ne"?: string;
   imageUrl: string;
   imagePublicId: string;
   createdAt?: string;
@@ -15,6 +20,7 @@ type HomeNotice = {
 };
 
 export function ActiveNoticePopup() {
+  const locale = useLocale();
   const [notices, setNotices] = useState<HomeNotice[]>([]);
   const [isOpen, setIsOpen] = useState(false);
   const [selectedId, setSelectedId] = useState("");
@@ -60,13 +66,30 @@ export function ActiveNoticePopup() {
   const selectedNotice =
     notices.find((notice) => notice._id === selectedId) ?? notices[0];
 
-  const selectedTitle = useMemo(() => {
+  const localizedNotice = useMemo(() => {
     if (!selectedNotice) {
+      return null;
+    }
+
+    const title =
+      locale === "ne"
+        ? selectedNotice["title-ne"] || selectedNotice.title || selectedNotice["title-en"] || "Notice"
+        : selectedNotice["title-en"] || selectedNotice.title || selectedNotice["title-ne"] || "Notice";
+    const text =
+      locale === "ne"
+        ? selectedNotice["text-ne"] || selectedNotice.text || selectedNotice["text-en"] || ""
+        : selectedNotice["text-en"] || selectedNotice.text || selectedNotice["text-ne"] || "";
+
+    return { ...selectedNotice, title, text };
+  }, [locale, selectedNotice]);
+
+  const selectedTitle = useMemo(() => {
+    if (!localizedNotice) {
       return "Notice";
     }
 
-    return selectedNotice.title?.trim() || "Notice";
-  }, [selectedNotice]);
+    return localizedNotice.title?.trim() || "Notice";
+  }, [localizedNotice]);
 
   if (!notices.length) {
     return null;
@@ -111,7 +134,10 @@ export function ActiveNoticePopup() {
               <div className="max-h-[420px] overflow-y-auto border-b border-[#e8eff3] bg-[#fbfdff] p-3 md:max-h-[500px] md:border-b-0 md:border-r">
                 {notices.map((notice) => {
                   const isSelected = notice._id === selectedNotice?._id;
-                  const listTitle = notice.title?.trim() || "Notice";
+                  const listTitle =
+                    locale === "ne"
+                      ? notice["title-ne"] || notice.title || notice["title-en"] || "Notice"
+                      : notice["title-en"] || notice.title || notice["title-ne"] || "Notice";
                   const listDate = notice.updatedAt || notice.createdAt;
 
                   return (
@@ -146,9 +172,9 @@ export function ActiveNoticePopup() {
                 <h4 className="text-lg font-semibold text-[#123451] sm:text-xl">
                   {selectedTitle}
                 </h4>
-                {selectedNotice.updatedAt || selectedNotice.createdAt ? (
+                {localizedNotice?.updatedAt || localizedNotice?.createdAt ? (
                   <p className="mt-2 text-sm font-medium text-[#0d837f]">
-                    Updated on {new Date(selectedNotice.updatedAt || selectedNotice.createdAt || "").toLocaleDateString("en-NP", {
+                    Updated on {new Date(localizedNotice?.updatedAt || localizedNotice?.createdAt || "").toLocaleDateString("en-NP", {
                       year: "numeric",
                       month: "long",
                       day: "numeric",
@@ -156,10 +182,10 @@ export function ActiveNoticePopup() {
                   </p>
                 ) : null}
 
-                {selectedNotice.imageUrl ? (
+                {localizedNotice?.imageUrl ? (
                   <div className="relative mt-4 h-52 w-full overflow-hidden rounded-xl border border-[#e4edf1] bg-[#f8fbfd] sm:h-64">
                     <Image
-                      src={selectedNotice.imageUrl}
+                      src={localizedNotice.imageUrl}
                       alt={selectedTitle}
                       fill
                       sizes="(max-width: 768px) 100vw, 640px"
@@ -168,10 +194,10 @@ export function ActiveNoticePopup() {
                   </div>
                 ) : null}
 
-                {hasRichTextContent(selectedNotice.text) ? (
+                {hasRichTextContent(localizedNotice?.text || "") ? (
                   <div
                     className="rich-text-content mt-4 text-sm leading-7 text-slate-700 sm:text-base"
-                    dangerouslySetInnerHTML={{ __html: selectedNotice.text }}
+                    dangerouslySetInnerHTML={{ __html: localizedNotice?.text || "" }}
                   />
                 ) : null}
 

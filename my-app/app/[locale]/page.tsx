@@ -9,8 +9,10 @@ import ContactHome from '@/components/ContactHome';
 import { MessageFromCeoSection } from '@/components/public/MessageFromCeoSection';
 import { getContactDetails } from '@/services/contact-service';
 import { CompanyStatsSection } from '@/components/CompanyStatsSection';
+import { getTranslations } from "next-intl/server";
 
 export default async function Home() {
+  const t = await getTranslations("Home");
   const aboutCompanyInfo = await getAboutCompanyInfo();
   const messageFromCeo = await getMessageFromCeo();
   const rawContactDetails = await getContactDetails();
@@ -18,7 +20,11 @@ export default async function Home() {
   const aboutCompanyInfoPublic = aboutCompanyInfo
     ? {
         heading: aboutCompanyInfo.heading,
+        "heading-en": aboutCompanyInfo["heading-en"],
+        "heading-ne": aboutCompanyInfo["heading-ne"],
         description: aboutCompanyInfo.description,
+        "description-en": aboutCompanyInfo["description-en"],
+        "description-ne": aboutCompanyInfo["description-ne"],
         imageUrl: aboutCompanyInfo.imageUrl,
         imagePublicId: aboutCompanyInfo.imagePublicId,
       }
@@ -27,7 +33,11 @@ export default async function Home() {
   const messageFromCeoPublic = messageFromCeo
     ? {
         heading: messageFromCeo.heading,
+        "heading-en": messageFromCeo["heading-en"],
+        "heading-ne": messageFromCeo["heading-ne"],
         description: messageFromCeo.description,
+        "description-en": messageFromCeo["description-en"],
+        "description-ne": messageFromCeo["description-ne"],
         imageUrl: messageFromCeo.imageUrl,
         imagePublicId: messageFromCeo.imagePublicId,
       }
@@ -66,7 +76,7 @@ export default async function Home() {
       <main className="flex-1 w-full pt-12 pb-20 sm:pt-16 sm:pb-24 lg:pt-20 lg:pb-32">
         <MessageFromCeoSection
           messageFromCeo={messageFromCeoPublic}
-          buttonLabel="Full Message"
+          buttonLabel={t("full_message")}
           buttonHref="/message-from-ceo"
         />
         <CompanyStatsSection />

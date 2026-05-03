@@ -9,7 +9,11 @@ import { hasRichTextContent } from "@/lib/rich-text";
 function createEmptyForm(): Omit<AboutCompanyInfo, "_id" | "createdAt" | "updatedAt"> {
   return {
     heading: "",
+    "heading-en": "",
+    "heading-ne": "",
     description: "",
+    "description-en": "",
+    "description-ne": "",
     imageUrl: "",
     imagePublicId: "",
   };
@@ -85,9 +89,16 @@ export default function AboutCompanyInfoManagement() {
   }, [fetchItems]);
 
   const handleSave = async () => {
+    const headingEn = formData["heading-en"].trim() || formData.heading.trim();
+    const headingNe = formData["heading-ne"].trim() || headingEn;
+    const descriptionEn = formData["description-en"].trim() || formData.description.trim();
+    const descriptionNe = formData["description-ne"].trim() || descriptionEn;
+
     if (
-      !formData.heading.trim() ||
-      !hasRichTextContent(formData.description) ||
+      !headingEn ||
+      !headingNe ||
+      !hasRichTextContent(descriptionEn) ||
+      !hasRichTextContent(descriptionNe) ||
       !formData.imageUrl.trim() ||
       !formData.imagePublicId.trim()
     ) {
@@ -104,7 +115,15 @@ export default function AboutCompanyInfoManagement() {
       const response = await fetch(url, {
         method,
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({
+          ...formData,
+          heading: headingEn,
+          "heading-en": headingEn,
+          "heading-ne": headingNe,
+          description: descriptionEn,
+          "description-en": descriptionEn,
+          "description-ne": descriptionNe,
+        }),
       });
 
       if (!response.ok) {
@@ -125,7 +144,11 @@ export default function AboutCompanyInfoManagement() {
     setEditingId(item._id?.toString() || null);
     setFormData({
       heading: item.heading,
+      "heading-en": item["heading-en"] || item.heading,
+      "heading-ne": item["heading-ne"] || item.heading,
       description: item.description,
+      "description-en": item["description-en"] || item.description,
+      "description-ne": item["description-ne"] || item.description,
       imageUrl: item.imageUrl,
       imagePublicId: item.imagePublicId,
     });
@@ -180,12 +203,16 @@ export default function AboutCompanyInfoManagement() {
 
           <div className="space-y-4">
             <div>
-              <label className="mb-1 block text-sm font-medium">Heading</label>
+              <label className="mb-1 block text-sm font-medium">Heading (English)</label>
               <input
                 type="text"
-                value={formData.heading}
+                value={formData["heading-en"]}
                 onChange={(e) =>
-                  setFormData((prev) => ({ ...prev, heading: e.target.value }))
+                  setFormData((prev) => ({
+                    ...prev,
+                    heading: e.target.value,
+                    "heading-en": e.target.value,
+                  }))
                 }
                 className="w-full rounded-lg border border-gray-300 px-3 py-2"
                 placeholder="About the company"
@@ -193,13 +220,45 @@ export default function AboutCompanyInfoManagement() {
             </div>
 
             <div>
-              <RichTextEditor
-                label="Description"
-                value={formData.description}
+              <label className="mb-1 block text-sm font-medium">Heading (Nepali)</label>
+              <input
+                type="text"
+                value={formData["heading-ne"]}
                 onChange={(e) =>
-                  setFormData((prev) => ({ ...prev, description: e }))
+                  setFormData((prev) => ({
+                    ...prev,
+                    "heading-ne": e.target.value,
+                  }))
+                }
+                className="w-full rounded-lg border border-gray-300 px-3 py-2"
+                placeholder="कम्पनीको बारेमा"
+              />
+            </div>
+
+            <div>
+              <RichTextEditor
+                label="Description (English)"
+                value={formData["description-en"]}
+                onChange={(e) =>
+                  setFormData((prev) => ({
+                    ...prev,
+                    description: e,
+                    "description-en": e,
+                  }))
                 }
                 placeholder="Write the about-company description here"
+                helperText="Use bold, italic, lists, quotes, and links to format the content."
+              />
+            </div>
+
+            <div>
+              <RichTextEditor
+                label="Description (Nepali)"
+                value={formData["description-ne"]}
+                onChange={(e) =>
+                  setFormData((prev) => ({ ...prev, "description-ne": e }))
+                }
+                placeholder="कम्पनीको बारेमा नेपालीमा लेख्नुहोस्"
                 helperText="Use bold, italic, lists, quotes, and links to format the content."
               />
             </div>
@@ -267,6 +326,9 @@ export default function AboutCompanyInfoManagement() {
                     />
                   ) : null}
                   <h3 className="text-lg font-semibold text-gray-900">{item.heading}</h3>
+                  {item["heading-ne"] ? (
+                    <p className="text-sm text-gray-500">{item["heading-ne"]}</p>
+                  ) : null}
                   <div
                     className="rich-text-content mt-2 max-h-32 overflow-hidden text-sm text-gray-600"
                     dangerouslySetInnerHTML={{ __html: item.description }}

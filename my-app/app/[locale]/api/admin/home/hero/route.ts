@@ -45,7 +45,12 @@ export async function POST(request: NextRequest) {
 
     const data = (await request.json()) as Omit<HeroSection, "_id">;
 
-    if (!data.title || !Array.isArray(data.slides) || data.slides.length === 0) {
+    const hasTitle =
+      Boolean(data.title) ||
+      Boolean(data["title-en"]) ||
+      Boolean(data["title-ne"]);
+
+    if (!hasTitle || !Array.isArray(data.slides) || data.slides.length === 0) {
       return NextResponse.json(
         { error: "At least one slide is required" },
         { status: 400 },

@@ -11,9 +11,12 @@ import {
 import { hasRichTextContent } from "@/lib/rich-text";
 
 function hasRequiredFields(data: Partial<MessageFromCeo>) {
+  const heading = data.heading?.trim() || data["heading-en"]?.trim() || data["heading-ne"]?.trim() || "";
+  const description = data.description?.trim() || data["description-en"]?.trim() || data["description-ne"]?.trim() || "";
+
   return Boolean(
-    data.heading?.trim() &&
-      hasRichTextContent(data.description) &&
+    heading &&
+      hasRichTextContent(description) &&
       data.imageUrl?.trim() &&
       data.imagePublicId?.trim(),
   );
@@ -64,8 +67,12 @@ export async function POST(request: NextRequest) {
     }
 
     const message = await createMessageFromCeo({
-      heading: data.heading?.trim() || "",
-      description: data.description?.trim() || "",
+      heading: data.heading?.trim() || data["heading-en"]?.trim() || "",
+      "heading-en": data["heading-en"]?.trim() || data.heading?.trim() || "",
+      "heading-ne": data["heading-ne"]?.trim() || data.heading?.trim() || data["heading-en"]?.trim() || "",
+      description: data.description?.trim() || data["description-en"]?.trim() || "",
+      "description-en": data["description-en"]?.trim() || data.description?.trim() || "",
+      "description-ne": data["description-ne"]?.trim() || data.description?.trim() || data["description-en"]?.trim() || "",
       imageUrl: data.imageUrl?.trim() || "",
       imagePublicId: data.imagePublicId?.trim() || "",
     });
@@ -114,8 +121,12 @@ export async function PUT(request: NextRequest) {
     }
 
     const message = await updateMessageFromCeo(id, {
-      heading: body.heading?.trim(),
-      description: body.description?.trim(),
+      heading: body.heading?.trim() || body["heading-en"]?.trim(),
+      "heading-en": body["heading-en"]?.trim() || body.heading?.trim(),
+      "heading-ne": body["heading-ne"]?.trim() || body.heading?.trim() || body["heading-en"]?.trim(),
+      description: body.description?.trim() || body["description-en"]?.trim(),
+      "description-en": body["description-en"]?.trim() || body.description?.trim(),
+      "description-ne": body["description-ne"]?.trim() || body.description?.trim() || body["description-en"]?.trim(),
       imageUrl: body.imageUrl?.trim(),
       imagePublicId: body.imagePublicId?.trim(),
     });
