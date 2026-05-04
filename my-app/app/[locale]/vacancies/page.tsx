@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useParams, useRouter } from "next/navigation";
 import { PublicPageShell } from "@/components/public/PublicPageShell";
 
 type CompetitionTab = "open" | "internal";
@@ -152,6 +153,9 @@ export default function VacanciesPage(): React.JSX.Element {
       v.type.toLowerCase().includes(filterType.toLowerCase())
   );
 
+  const params = useParams();
+  const router = useRouter();
+
   return (
     <PublicPageShell
       imageUrl="/banner/banner.jpg"
@@ -228,48 +232,68 @@ export default function VacanciesPage(): React.JSX.Element {
             </thead>
 
             <tbody>
-              {filtered.length === 0 ? (
-                <tr>
-                  <td colSpan={9} className="px-6 py-10 text-center text-slate-500">
-                    No vacancies found.
-                  </td>
-                </tr>
-              ) : (
-                filtered.map((v) => (
-                  <tr key={v.id} className="border-b border-[#eef4f7] transition hover:bg-[#f9fcfe]">
-                    <td className="px-4 py-4 text-slate-700 whitespace-nowrap">{v.advertisementNo}</td>
-                    <td className="px-4 py-4 font-medium text-[#123451]">{v.position}</td>
-                    <td className="px-4 py-4">
-                      <DateCell bs={v.publishedDateBS} ad={v.publishedDateAD} />
-                    </td>
-                    <td className="px-4 py-4">
-                      <DateCell bs={v.deadlineBS} ad={v.deadlineAD} />
-                    </td>
-                    <td className="px-4 py-4">
-                      <DateCell bs={v.doubleFeeDeadlineBS} ad={v.doubleFeeDeadlineAD} />
-                    </td>
-                    <td className="px-4 py-4 text-slate-600">{v.type}</td>
-                    <td className="px-4 py-4 text-slate-600">{v.inclusive}</td>
-                    <td className="px-4 py-4 text-center font-medium text-slate-700">{v.numberOfPosts}</td>
-                    <td className="px-4 py-4">
-                      <div className="flex flex-col gap-2">
-                        <Link
-                          href={`/vacancies/${v.id}/apply`}
-                          className="inline-flex items-center justify-center bg-[#0d837f] px-4 py-1.5 text-xs font-semibold text-white transition hover:bg-[#08716e] whitespace-nowrap"
-                        >
-                          Login to Apply
-                        </Link>
-                        <Link
-                          href={`/vacancies/${v.id}`}
-                          className="inline-flex items-center justify-center bg-[#0a6b68] px-4 py-1.5 text-xs font-semibold text-white transition hover:bg-[#085856] whitespace-nowrap"
-                        >
-                          View Details
-                        </Link>
-                      </div>
-                    </td>
-                  </tr>
-                ))
-              )}
+              {
+                (filtered.length === 0)
+                  ? (
+                    <tr>
+                      <td colSpan={9} className="px-6 py-10 text-center text-slate-500">
+                        No vacancies found.
+                      </td>
+                    </tr>
+                  )
+                  : filtered.map((v) => (
+                    <tr key={v.id} className="border-b border-[#eef4f7] transition hover:bg-[#f9fcfe]">
+                      <td className="px-4 py-4 text-slate-700 whitespace-nowrap">{v.advertisementNo}</td>
+                      <td className="px-4 py-4 font-medium text-[#123451]">{v.position}</td>
+                      <td className="px-4 py-4">
+                        <DateCell bs={v.publishedDateBS} ad={v.publishedDateAD} />
+                      </td>
+                      <td className="px-4 py-4">
+                        <DateCell bs={v.deadlineBS} ad={v.deadlineAD} />
+                      </td>
+                      <td className="px-4 py-4">
+                        <DateCell bs={v.doubleFeeDeadlineBS} ad={v.doubleFeeDeadlineAD} />
+                      </td>
+                      <td className="px-4 py-4 text-slate-600">{v.type}</td>
+                      <td className="px-4 py-4 text-slate-600">{v.inclusive}</td>
+                      <td className="px-4 py-4 text-center font-medium text-slate-700">{v.numberOfPosts}</td>
+                      <td className="px-4 py-4">
+                        <div className="flex flex-col gap-2">
+                          <button
+                            onClick={async () => {
+                              const id = v.id;
+                              if (!id) return;
+
+                              try {
+                                const res = await fetch("/api/auth/me");
+                                if (res.ok) {
+                                  router.push(`/${params.locale}/vacancies/${id}/apply`);
+                                } else {
+                                  const next = `/vacancies/${id}/apply`;
+                                  router.push(`/${params.locale}/login?next=${encodeURIComponent(next)}`);
+                                }
+                              } catch (e) {
+                                console.error(e);
+                                const next = `/vacancies/${id}/apply`;
+                                router.push(`/${params.locale}/login?next=${encodeURIComponent(next)}`);
+                              }
+                            }}
+                            className="inline-flex items-center justify-center bg-[#0d837f] px-4 py-1.5 text-xs font-semibold text-white transition hover:bg-[#08716e] whitespace-nowrap"
+                          >
+                            Login to Apply
+                          </button>
+
+                          <Link
+                            href={`/${params.locale}/vacancies/${v.id}`}
+                            className="inline-flex items-center justify-center bg-[#0a6b68] px-4 py-1.5 text-xs font-semibold text-white transition hover:bg-[#085856] whitespace-nowrap"
+                          >
+                            View Details
+                          </Link>
+                        </div>
+                      </td>
+                    </tr>
+                  ))
+              }
             </tbody>
           </table>
         </div>
