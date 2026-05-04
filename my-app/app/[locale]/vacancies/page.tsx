@@ -3,7 +3,6 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
-import { PublicPageShell } from "@/components/public/PublicPageShell";
 
 type CompetitionTab = "open" | "internal";
 
@@ -157,20 +156,14 @@ export default function VacanciesPage(): React.JSX.Element {
   const router = useRouter();
 
   return (
-    <PublicPageShell
-      imageUrl="/banner/banner.jpg"
-      eyebrow="Careers"
-      title="Open Positions"
-      description="Browse current openings and find the role that matches your skills and experience."
-    >
-      <section className="bg-white p-6 sm:p-8">
-        {/* Page heading */}
-        <div className="mb-6">
-          <h1 className="text-2xl font-bold text-[#123451]">Vacancy Listings</h1>
-          <p className="text-slate-500">Manage and review all published job openings</p>
-        </div>
+    <section className="rounded-lg border border-[#d6e6ed] bg-white shadow-sm">
+      <div className="border-b border-[#d6e6ed] px-6 py-5 sm:px-8">
+        <p className="text-sm font-semibold uppercase tracking-wide text-[#0d837f]">Careers</p>
+        <h1 className="mt-1 text-2xl font-bold text-[#123451]">Open Positions</h1>
+        <p className="mt-1 text-slate-500">Browse current openings and find the role that matches your skills and experience.</p>
+      </div>
 
-        {/* Tabs */}
+      <div className="px-6 py-6 sm:px-8">
         <div className="flex border-b border-[#d6e6ed]">
           {(["open", "internal"] as CompetitionTab[]).map((tab) => (
             <button
@@ -187,9 +180,8 @@ export default function VacanciesPage(): React.JSX.Element {
           ))}
         </div>
 
-        {/* Table */}
         <div className="overflow-x-auto">
-          <table className="w-full border-collapse text-sm">
+          <table className="min-w-362.5 w-full border-collapse text-sm">
             <thead>
               <tr className="border-b border-[#d6e6ed] bg-white text-left">
                 <th className="px-4 py-3 font-semibold text-slate-700 whitespace-nowrap">Advertisement No.</th>
@@ -200,10 +192,9 @@ export default function VacanciesPage(): React.JSX.Element {
                 <th className="px-4 py-3 font-semibold text-slate-700">Type</th>
                 <th className="px-4 py-3 font-semibold text-slate-700 whitespace-nowrap">Open / Inclusive</th>
                 <th className="px-4 py-3 font-semibold text-slate-700 whitespace-nowrap">No. of Posts</th>
-                <th className="px-4 py-3 font-semibold text-slate-700">Action</th>
+                <th className="sticky right-0 z-10 bg-white px-4 py-3 font-semibold text-slate-700 shadow-[-8px_0_12px_rgba(255,255,255,0.92)]">Action</th>
               </tr>
 
-              {/* Per-column filter row */}
               <tr className="border-b border-[#d6e6ed] bg-[#fafafa]">
                 <td className="px-3 py-2">
                   <input type="text" placeholder="Filter..." value={filterAdNo} onChange={(e) => setFilterAdNo(e.target.value)} className="w-full border border-[#cfdfe6] px-2 py-1 text-xs outline-none focus:border-[#0d837f]" />
@@ -227,7 +218,7 @@ export default function VacanciesPage(): React.JSX.Element {
                 <td className="px-3 py-2">
                   <input type="text" placeholder="Filter..." className="w-full border border-[#cfdfe6] px-2 py-1 text-xs outline-none focus:border-[#0d837f]" readOnly />
                 </td>
-                <td className="px-3 py-2" />
+                <td className="sticky right-0 z-10 bg-[#fafafa] px-3 py-2 shadow-[-8px_0_12px_rgba(250,250,250,0.92)]" />
               </tr>
             </thead>
 
@@ -257,8 +248,8 @@ export default function VacanciesPage(): React.JSX.Element {
                       <td className="px-4 py-4 text-slate-600">{v.type}</td>
                       <td className="px-4 py-4 text-slate-600">{v.inclusive}</td>
                       <td className="px-4 py-4 text-center font-medium text-slate-700">{v.numberOfPosts}</td>
-                      <td className="px-4 py-4">
-                        <div className="flex flex-col gap-2">
+                      <td className="sticky right-0 z-10 bg-white px-4 py-4 shadow-[-8px_0_12px_rgba(255,255,255,0.92)]">
+                        <div className="flex min-w-35 flex-col gap-2">
                           <button
                             onClick={async () => {
                               const id = v.id;
@@ -278,14 +269,14 @@ export default function VacanciesPage(): React.JSX.Element {
                                 router.push(`/${params.locale}/login?next=${encodeURIComponent(next)}`);
                               }
                             }}
-                            className="inline-flex items-center justify-center bg-[#0d837f] px-4 py-1.5 text-xs font-semibold text-white transition hover:bg-[#08716e] whitespace-nowrap"
+                            className="inline-flex items-center justify-center rounded bg-[#0d837f] px-4 py-1.5 text-xs font-semibold text-white transition hover:bg-[#08716e] whitespace-nowrap"
                           >
                             Login to Apply
                           </button>
 
                           <Link
                             href={`/${params.locale}/vacancies/${v.id}`}
-                            className="inline-flex items-center justify-center bg-[#0a6b68] px-4 py-1.5 text-xs font-semibold text-white transition hover:bg-[#085856] whitespace-nowrap"
+                            className="inline-flex items-center justify-center rounded bg-[#0a6b68] px-4 py-1.5 text-xs font-semibold text-white transition hover:bg-[#085856] whitespace-nowrap"
                           >
                             View Details
                           </Link>
@@ -297,7 +288,7 @@ export default function VacanciesPage(): React.JSX.Element {
             </tbody>
           </table>
         </div>
-      </section>
-    </PublicPageShell>
+      </div>
+    </section>
   );
 }

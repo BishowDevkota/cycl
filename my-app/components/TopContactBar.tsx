@@ -83,6 +83,9 @@ export function TopContactBar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [contact, setContact] = useState<PublicContactDetails | null>(null);
 
+  const pathSegments = pathname.split("/").filter(Boolean);
+  const isVacancyRoute = pathSegments[1] === "vacancies";
+
   const currentLocale = pathname.split("/")[1] || "en";
 
   const handleLanguageChange = (newLocale: string) => {
@@ -122,6 +125,10 @@ export function TopContactBar() {
 
   const isNavItemActive = (item: NavItem) =>
     isActiveRoute(item.href) || Boolean(item.children?.some((child) => isActiveRoute(child.href)));
+
+  if (isVacancyRoute) {
+    return null;
+  }
 
   return (
     <>

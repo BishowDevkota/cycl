@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Vacancy } from "@/services/vacancy-service";
 import DynamicForm from "@/components/DynamicForm";
+import VacancyShell from "@/components/vacancy/VacancyShell";
 
 interface VacancyDetailPageProps {
   params: Promise<{
@@ -134,70 +135,69 @@ export default function VacancyDetailPage({
   }
 
   return (
-    <div className="max-w-3xl mx-auto space-y-8">
-      {error && (
-        <div className="p-4 bg-red-100 text-red-700 rounded">
-          {error}
-        </div>
-      )}
-
-      {/* Job Header */}
-      <div className="bg-white rounded-lg shadow p-8">
-        <div className="mb-4">
-          <Link
-            href="/vacancies"
-            className="text-blue-600 hover:underline text-sm"
-          >
-            ← Back to Vacancies
-          </Link>
-        </div>
-
-        <h1 className="text-4xl font-bold mb-2">{vacancy.title}</h1>
-        <p className="text-xl text-gray-600 mb-4">
-          {vacancy.department} • {vacancy.location}
-        </p>
-
-        <div className="flex flex-wrap gap-3 mb-6">
-          {vacancy.salary && (
-            <span className="px-4 py-2 bg-green-100 text-green-800 rounded-full font-medium">
-              {vacancy.salary}
-            </span>
-          )}
-          {vacancy.experience && (
-            <span className="px-4 py-2 bg-blue-100 text-blue-800 rounded-full font-medium">
-              {vacancy.experience}
-            </span>
-          )}
-          {vacancy.applicationDeadline && (
-            <span className="px-4 py-2 bg-orange-100 text-orange-800 rounded-full font-medium">
-              Deadline:{" "}
-              {new Date(vacancy.applicationDeadline).toLocaleDateString()}
-            </span>
-          )}
-        </div>
-
-        <h2 className="text-xl font-semibold mb-3">About this role</h2>
-        <p className="text-gray-700 leading-relaxed whitespace-pre-wrap">
-          {vacancy.description}
-        </p>
-      </div>
-
-      {/* Application Form */}
-      <div className="bg-white rounded-lg shadow p-8">
-        <h2 className="text-2xl font-bold mb-6">Apply for this position</h2>
-
-        {vacancy.formFields && vacancy.formFields.length > 0 ? (
-          <DynamicForm
-            fields={vacancy.formFields}
-            onSubmit={handleSubmitApplication}
-            loading={submitting}
-          />
-        ) : (
-          <p className="text-gray-600">
-            No application form fields configured for this job.
-          </p>
+    <VacancyShell>
+      <div className="space-y-8">
+        {error && (
+          <div className="rounded bg-red-100 p-4 text-red-700">
+            {error}
+          </div>
         )}
+
+        <div className="rounded-lg border border-[#d6e6ed] bg-white p-8 shadow-sm">
+          <div className="mb-4">
+            <Link
+              href="/vacancies"
+              className="text-sm text-blue-600 hover:underline"
+            >
+              ← Back to Vacancies
+            </Link>
+          </div>
+
+          <h1 className="mb-2 text-4xl font-bold text-[#123451]">{vacancy.title}</h1>
+          <p className="mb-4 text-xl text-gray-600">
+            {vacancy.department} • {vacancy.location}
+          </p>
+
+          <div className="mb-6 flex flex-wrap gap-3">
+            {vacancy.salary && (
+              <span className="rounded-full bg-green-100 px-4 py-2 font-medium text-green-800">
+                {vacancy.salary}
+              </span>
+            )}
+            {vacancy.experience && (
+              <span className="rounded-full bg-blue-100 px-4 py-2 font-medium text-blue-800">
+                {vacancy.experience}
+              </span>
+            )}
+            {vacancy.applicationDeadline && (
+              <span className="rounded-full bg-orange-100 px-4 py-2 font-medium text-orange-800">
+                Deadline: {new Date(vacancy.applicationDeadline).toLocaleDateString()}
+              </span>
+            )}
+          </div>
+
+          <h2 className="mb-3 text-xl font-semibold text-[#123451]">About this role</h2>
+          <p className="whitespace-pre-wrap leading-relaxed text-gray-700">
+            {vacancy.description}
+          </p>
+        </div>
+
+        <div className="rounded-lg border border-[#d6e6ed] bg-white p-8 shadow-sm">
+          <h2 className="mb-6 text-2xl font-bold text-[#123451]">Apply for this position</h2>
+
+          {vacancy.formFields && vacancy.formFields.length > 0 ? (
+            <DynamicForm
+              fields={vacancy.formFields}
+              onSubmit={handleSubmitApplication}
+              loading={submitting}
+            />
+          ) : (
+            <p className="text-gray-600">
+              No application form fields configured for this job.
+            </p>
+          )}
+        </div>
       </div>
-    </div>
+    </VacancyShell>
   );
 }

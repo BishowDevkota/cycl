@@ -1,8 +1,13 @@
 "use client";
 import { useEffect, useRef } from "react";
+import { usePathname } from "next/navigation";
 import "../app/globals.css";
 
 export default function BottomMarquee() {
+  const pathname = usePathname();
+  const pathSegments = pathname.split("/").filter(Boolean);
+  const isVacancyRoute = pathSegments[1] === "vacancies";
+
   const content =
     " 📢 Welcome to CYC Nepal Laghubitta Bittiya Sanstha Ltd. • 124 Branch Offices Nationwide • Loan & Saving Services • Empowering Communities Through Microfinance • Visit Us at Sabhagriha Chowk, Pokhara • Call: 061-590894 ";
 
@@ -79,6 +84,10 @@ export default function BottomMarquee() {
       console.error("BottomMarquee measurement error:", err);
     }
   }, []);
+
+  if (isVacancyRoute) {
+    return null;
+  }
 
   return (
     <div className="marquee-container fixed bottom-0 left-0 w-full bg-[#016f81] text-white overflow-hidden z-50">

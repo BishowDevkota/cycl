@@ -1,10 +1,15 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
 import { ChevronUp } from "lucide-react";
 
 export default function GoToTopButton() {
+  const pathname = usePathname();
   const [showButton, setShowButton] = useState(false);
+
+  const pathSegments = pathname.split("/").filter(Boolean);
+  const isVacancyRoute = pathSegments[1] === "vacancies";
 
   useEffect(() => {
     const handleScroll = () => {
@@ -23,6 +28,10 @@ export default function GoToTopButton() {
       behavior: "smooth",
     });
   };
+
+  if (isVacancyRoute) {
+    return null;
+  }
 
   if (!showButton) return null;
 
