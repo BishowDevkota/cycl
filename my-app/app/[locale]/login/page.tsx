@@ -1,11 +1,13 @@
 "use client";
 
 import { useState, FormEvent } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useParams, useSearchParams } from "next/navigation";
 import Link from "next/link";
 
 export default function LoginPage(): React.JSX.Element {
   const router = useRouter();
+  const params = useParams();
+  const searchParams = useSearchParams();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -45,8 +47,13 @@ export default function LoginPage(): React.JSX.Element {
         return;
       }
 
-      // Redirect to vacancies page
-      router.push("/vacancies");
+      // Redirect to next page or vacancies
+      const next = searchParams.get("next");
+      if (next) {
+        router.push(`/${params.locale}${next}`);
+      } else {
+        router.push(`/${params.locale}/vacancies`);
+      }
     } catch (err) {
       setError("An error occurred");
       console.error(err);
