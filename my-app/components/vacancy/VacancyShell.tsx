@@ -4,17 +4,15 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 import { useEffect, useMemo, useState } from "react";
 import { usePathname, useParams, useRouter } from "next/navigation";
+import { VacancyLanguageProvider, useVacancyLanguage } from "./VacancyLanguageContext";
 
 type UserInfo = {
   fullName?: string;
   email?: string;
 };
 
-type VacancyShellProps = {
-  children: ReactNode;
-};
-
-export default function VacancyShell({ children }: VacancyShellProps) {
+function VacancyShellContent({ children }: { children: ReactNode }) {
+  const { language, setLanguage } = useVacancyLanguage();
   const params = useParams();
   const pathname = usePathname();
   const router = useRouter();
@@ -221,6 +219,29 @@ export default function VacancyShell({ children }: VacancyShellProps) {
               </div>
 
               <div className="relative flex items-center gap-3">
+                <div className="flex items-center gap-2 border-r border-white/20 pr-3 mr-3">
+                  <button
+                    onClick={() => setLanguage("en")}
+                    className={`transition-all font-semibold text-sm ${
+                      language === "en"
+                        ? "text-white underline underline-offset-2"
+                        : "text-white/60 hover:text-white/90"
+                    }`}
+                  >
+                    EN
+                  </button>
+                  <span className="text-white/40">|</span>
+                  <button
+                    onClick={() => setLanguage("ne")}
+                    className={`transition-all font-semibold text-sm ${
+                      language === "ne"
+                        ? "text-white underline underline-offset-2"
+                        : "text-white/60 hover:text-white/90"
+                    }`}
+                  >
+                    नेपाली
+                  </button>
+                </div>
                 <button
                   type="button"
                   onClick={() => setProfileMenuOpen((value) => !value)}
@@ -276,5 +297,13 @@ export default function VacancyShell({ children }: VacancyShellProps) {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function VacancyShell({ children }: { children: ReactNode }) {
+  return (
+    <VacancyLanguageProvider>
+      <VacancyShellContent>{children}</VacancyShellContent>
+    </VacancyLanguageProvider>
   );
 }

@@ -88,10 +88,10 @@ export default function MessageFromCeoManagement() {
   };
 
   const handleSave = async () => {
-    const headingEn = formData["heading-en"].trim() || formData.heading.trim();
-    const headingNe = formData["heading-ne"].trim() || headingEn;
-    const descriptionEn = formData["description-en"].trim() || formData.description.trim();
-    const descriptionNe = formData["description-ne"].trim() || descriptionEn;
+    const headingEn = (formData["heading-en"] || formData.heading || "").trim();
+    const headingNe = (formData["heading-ne"] || "").trim() || headingEn;
+    const descriptionEn = (formData["description-en"] || formData.description || "").trim();
+    const descriptionNe = (formData["description-ne"] || "").trim() || descriptionEn;
 
     if (
       !headingEn ||
@@ -237,7 +237,7 @@ export default function MessageFromCeoManagement() {
             <div>
               <RichTextEditor
                 label="Description (English)"
-                value={formData["description-en"]}
+                value={formData["description-en"] || ""}
                 onChange={(e) =>
                   setFormData((prev) => ({
                     ...prev,
@@ -253,7 +253,7 @@ export default function MessageFromCeoManagement() {
             <div>
               <RichTextEditor
                 label="Description (Nepali)"
-                value={formData["description-ne"]}
+                value={formData["description-ne"] || ""}
                 onChange={(e) =>
                   setFormData((prev) => ({ ...prev, "description-ne": e }))
                 }

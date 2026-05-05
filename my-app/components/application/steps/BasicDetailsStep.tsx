@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useVacancyLanguage } from "@/components/vacancy/VacancyLanguageContext";
 
 interface BasicDetailsStepProps {
   formData: any;
@@ -13,7 +14,9 @@ export default function BasicDetailsStep({
   onUpdate,
   vacancyId,
 }: BasicDetailsStepProps) {
+  const { t } = useVacancyLanguage();
   const [localData, setLocalData] = useState(formData.personalDetails || {});
+  const [errors, setErrors] = useState<Record<string, string>>({});
 
   useEffect(() => {
     setLocalData(formData.personalDetails || {});
@@ -24,53 +27,67 @@ export default function BasicDetailsStep({
     const updated = { ...localData, [name]: value };
     setLocalData(updated);
     onUpdate("personalDetails", updated);
+
+    // Validate Nepali fields - required to be filled
+    const newErrors = { ...errors };
+    if (
+      name === "firstNameNepali" ||
+      name === "lastNameNepali"
+    ) {
+      if (!value.trim()) {
+        newErrors[name] = t("vacancy.required");
+      } else {
+        delete newErrors[name];
+      }
+    }
+    setErrors(newErrors);
   };
 
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-2xl font-bold text-[#123451] mb-6">Personal Detail</h2>
+        <h2 className="text-2xl font-bold text-[#123451] mb-6">{t("vacancy.personalDetail")}</h2>
 
         {/* Name (In English) */}
         <div className="mb-6 pb-6 border-b border-[#d6e6ed]">
-          <h3 className="font-semibold text-gray-800 mb-4">Name (In English)</h3>
+          <h3 className="font-semibold text-gray-800 mb-4">{t("vacancy.nameEnglish")}</h3>
           <div className="grid grid-cols-3 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                First Name <span className="text-red-500">*</span>
+                {t("vacancy.firstName")} <span className="text-red-500">*</span>
               </label>
               <input
                 type="text"
                 name="firstName"
                 value={localData.firstName || ""}
                 onChange={handleChange}
-                placeholder="First name"
+                placeholder={t("vacancy.firstName")}
                 className="w-full px-3 py-2 border border-[#cfdfe6] rounded outline-none focus:border-[#0d837f] focus:ring-1 focus:ring-[#0d837f]"
               />
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Middle Name
+                {t("vacancy.middleName")}
               </label>
               <input
                 type="text"
                 name="middleName"
                 value={localData.middleName || ""}
                 onChange={handleChange}
-                placeholder="Middle name"
+                placeholder={t("vacancy.middleName")}
                 className="w-full px-3 py-2 border border-[#cfdfe6] rounded outline-none focus:border-[#0d837f] focus:ring-1 focus:ring-[#0d837f]"
               />
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Last Name <span className="text-red-500">*</span>
+                {t("vacancy.lastName")} <span className="text-red-500">*</span>
               </label>
               <input
                 type="text"
                 name="lastName"
                 value={localData.lastName || ""}
                 onChange={handleChange}
-                placeholder="Last name"
+                placeholder={t("vacancy.lastName")}
                 className="w-full px-3 py-2 border border-[#cfdfe6] rounded outline-none focus:border-[#0d837f] focus:ring-1 focus:ring-[#0d837f]"
               />
             </div>
@@ -79,46 +96,57 @@ export default function BasicDetailsStep({
 
         {/* Name (In Nepali) */}
         <div className="mb-6 pb-6 border-b border-[#d6e6ed]">
-          <h3 className="font-semibold text-gray-800 mb-4">Name (In Nepali)</h3>
+          <h3 className="font-semibold text-gray-800 mb-4">{t("vacancy.nameNepali")}</h3>
+          <p className="text-xs text-indigo-600 mb-3">* {t("vacancy.required")}</p>
           <div className="grid grid-cols-3 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                First Name (Preeti Unicode) <span className="text-red-500">*</span>
+                {t("vacancy.firstNamePreeti")} <span className="text-red-500">*</span>
               </label>
               <input
                 type="text"
                 name="firstNameNepali"
                 value={localData.firstNameNepali || ""}
                 onChange={handleChange}
-                placeholder="First name in Nepali"
-                className="w-full px-3 py-2 border border-[#cfdfe6] rounded outline-none focus:border-[#0d837f] focus:ring-1 focus:ring-[#0d837f]"
+                placeholder={t("vacancy.firstNamePreeti")}
+                className={`w-full px-3 py-2 border rounded outline-none focus:border-[#0d837f] focus:ring-1 focus:ring-[#0d837f] ${
+                  errors.firstNameNepali ? "border-red-500" : "border-[#cfdfe6]"
+                }`}
               />
+              {errors.firstNameNepali && (
+                <p className="text-xs text-red-500 mt-1">{errors.firstNameNepali}</p>
+              )}
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Middle Name (Preeti Unicode)
+                {t("vacancy.middleNamePreeti")}
               </label>
               <input
                 type="text"
                 name="middleNameNepali"
                 value={localData.middleNameNepali || ""}
                 onChange={handleChange}
-                placeholder="Middle name in Nepali"
+                placeholder={t("vacancy.middleNamePreeti")}
                 className="w-full px-3 py-2 border border-[#cfdfe6] rounded outline-none focus:border-[#0d837f] focus:ring-1 focus:ring-[#0d837f]"
               />
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Last Name (Preeti Unicode) <span className="text-red-500">*</span>
+                {t("vacancy.lastNamePreeti")} <span className="text-red-500">*</span>
               </label>
               <input
                 type="text"
                 name="lastNameNepali"
                 value={localData.lastNameNepali || ""}
                 onChange={handleChange}
-                placeholder="Last name in Nepali"
-                className="w-full px-3 py-2 border border-[#cfdfe6] rounded outline-none focus:border-[#0d837f] focus:ring-1 focus:ring-[#0d837f]"
+                placeholder={t("vacancy.lastNamePreeti")}
+                className={`w-full px-3 py-2 border rounded outline-none focus:border-[#0d837f] focus:ring-1 focus:ring-[#0d837f] ${
+                  errors.lastNameNepali ? "border-red-500" : "border-[#cfdfe6]"
+                }`}
               />
+              {errors.lastNameNepali && (
+                <p className="text-xs text-red-500 mt-1">{errors.lastNameNepali}</p>
+              )}
             </div>
           </div>
         </div>

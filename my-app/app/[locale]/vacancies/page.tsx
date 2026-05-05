@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
+import { useVacancyLanguage } from "@/components/vacancy/VacancyLanguageContext";
 
 type CompetitionTab = "open" | "internal";
 
@@ -126,6 +127,7 @@ function DateCell({ bs, ad }: { bs: string; ad: string }) {
 }
 
 export default function VacanciesPage(): React.JSX.Element {
+  const { t } = useVacancyLanguage();
   const [activeTab, setActiveTab] = useState<CompetitionTab>("open");
   const [filterAdNo, setFilterAdNo] = useState("");
   const [filterPosition, setFilterPosition] = useState("");
@@ -158,9 +160,9 @@ export default function VacanciesPage(): React.JSX.Element {
   return (
     <section className="rounded-lg border border-[#d6e6ed] bg-white shadow-sm">
       <div className="border-b border-[#d6e6ed] px-6 py-5 sm:px-8">
-        <p className="text-sm font-semibold uppercase tracking-wide text-[#0d837f]">Careers</p>
-        <h1 className="mt-1 text-2xl font-bold text-[#123451]">Open Positions</h1>
-        <p className="mt-1 text-slate-500">Browse current openings and find the role that matches your skills and experience.</p>
+        <p className="text-sm font-semibold uppercase tracking-wide text-[#0d837f]">{t("vacancy.careers")}</p>
+        <h1 className="mt-1 text-2xl font-bold text-[#123451]">{t("vacancy.title")}</h1>
+        <p className="mt-1 text-slate-500">{t("vacancy.description")}</p>
       </div>
 
       <div className="px-6 py-6 sm:px-8">
@@ -175,7 +177,7 @@ export default function VacanciesPage(): React.JSX.Element {
                   : "bg-[#f5f0e8] text-slate-600 hover:text-[#0d837f]"
               }`}
             >
-              {tab === "open" ? "Open Competition" : "Internal Competition"}
+              {tab === "open" ? t("vacancy.openCompetition") : t("vacancy.internalCompetition")}
             </button>
           ))}
         </div>
@@ -184,39 +186,39 @@ export default function VacanciesPage(): React.JSX.Element {
           <table className="min-w-362.5 w-full border-collapse text-sm">
             <thead>
               <tr className="border-b border-[#d6e6ed] bg-white text-left">
-                <th className="px-4 py-3 font-semibold text-slate-700 whitespace-nowrap">Advertisement No.</th>
-                <th className="px-4 py-3 font-semibold text-slate-700">Position</th>
-                <th className="px-4 py-3 font-semibold text-slate-700 whitespace-nowrap">Published Date</th>
-                <th className="px-4 py-3 font-semibold text-slate-700 whitespace-nowrap">Deadline</th>
-                <th className="px-4 py-3 font-semibold text-slate-700 whitespace-nowrap">Double Fee Deadline</th>
-                <th className="px-4 py-3 font-semibold text-slate-700">Type</th>
-                <th className="px-4 py-3 font-semibold text-slate-700 whitespace-nowrap">Open / Inclusive</th>
-                <th className="px-4 py-3 font-semibold text-slate-700 whitespace-nowrap">No. of Posts</th>
-                <th className="sticky right-0 z-10 bg-white px-4 py-3 font-semibold text-slate-700 shadow-[-8px_0_12px_rgba(255,255,255,0.92)]">Action</th>
+                <th className="px-4 py-3 font-semibold text-slate-700 whitespace-nowrap">{t("vacancy.advertisementNo")}</th>
+                <th className="px-4 py-3 font-semibold text-slate-700">{t("vacancy.position")}</th>
+                <th className="px-4 py-3 font-semibold text-slate-700 whitespace-nowrap">{t("vacancy.publishedDate")}</th>
+                <th className="px-4 py-3 font-semibold text-slate-700 whitespace-nowrap">{t("vacancy.deadline")}</th>
+                <th className="px-4 py-3 font-semibold text-slate-700 whitespace-nowrap">{t("vacancy.doubleFeeDeadline")}</th>
+                <th className="px-4 py-3 font-semibold text-slate-700">{t("vacancy.type")}</th>
+                <th className="px-4 py-3 font-semibold text-slate-700 whitespace-nowrap">{t("vacancy.openInclusive")}</th>
+                <th className="px-4 py-3 font-semibold text-slate-700 whitespace-nowrap">{t("vacancy.noOfPosts")}</th>
+                <th className="sticky right-0 z-10 bg-white px-4 py-3 font-semibold text-slate-700 shadow-[-8px_0_12px_rgba(255,255,255,0.92)]">{t("vacancy.action")}</th>
               </tr>
 
               <tr className="border-b border-[#d6e6ed] bg-[#fafafa]">
                 <td className="px-3 py-2">
-                  <input type="text" placeholder="Filter..." value={filterAdNo} onChange={(e) => setFilterAdNo(e.target.value)} className="w-full border border-[#cfdfe6] px-2 py-1 text-xs outline-none focus:border-[#0d837f]" />
+                  <input type="text" placeholder={t("vacancy.filter")} value={filterAdNo} onChange={(e) => setFilterAdNo(e.target.value)} className="w-full border border-[#cfdfe6] px-2 py-1 text-xs outline-none focus:border-[#0d837f]" />
                 </td>
                 <td className="px-3 py-2">
-                  <input type="text" placeholder="Filter..." value={filterPosition} onChange={(e) => setFilterPosition(e.target.value)} className="w-full border border-[#cfdfe6] px-2 py-1 text-xs outline-none focus:border-[#0d837f]" />
+                  <input type="text" placeholder={t("vacancy.filter")} value={filterPosition} onChange={(e) => setFilterPosition(e.target.value)} className="w-full border border-[#cfdfe6] px-2 py-1 text-xs outline-none focus:border-[#0d837f]" />
                 </td>
                 <td className="px-3 py-2">
-                  <input type="text" placeholder="Filter..." value={filterPublished} onChange={(e) => setFilterPublished(e.target.value)} className="w-full border border-[#cfdfe6] px-2 py-1 text-xs outline-none focus:border-[#0d837f]" />
+                  <input type="text" placeholder={t("vacancy.filter")} value={filterPublished} onChange={(e) => setFilterPublished(e.target.value)} className="w-full border border-[#cfdfe6] px-2 py-1 text-xs outline-none focus:border-[#0d837f]" />
                 </td>
                 <td className="px-3 py-2">
-                  <input type="text" placeholder="Filter..." value={filterDeadline} onChange={(e) => setFilterDeadline(e.target.value)} className="w-full border border-[#cfdfe6] px-2 py-1 text-xs outline-none focus:border-[#0d837f]" />
+                  <input type="text" placeholder={t("vacancy.filter")} value={filterDeadline} onChange={(e) => setFilterDeadline(e.target.value)} className="w-full border border-[#cfdfe6] px-2 py-1 text-xs outline-none focus:border-[#0d837f]" />
                 </td>
                 <td className="px-3 py-2">
-                  <input type="text" placeholder="Filter..." value={filterDoubleFee} onChange={(e) => setFilterDoubleFee(e.target.value)} className="w-full border border-[#cfdfe6] px-2 py-1 text-xs outline-none focus:border-[#0d837f]" />
+                  <input type="text" placeholder={t("vacancy.filter")} value={filterDoubleFee} onChange={(e) => setFilterDoubleFee(e.target.value)} className="w-full border border-[#cfdfe6] px-2 py-1 text-xs outline-none focus:border-[#0d837f]" />
                 </td>
                 <td className="px-3 py-2">
-                  <input type="text" placeholder="Filt..." value={filterType} onChange={(e) => setFilterType(e.target.value)} className="w-20 border border-[#cfdfe6] px-2 py-1 text-xs outline-none focus:border-[#0d837f]" />
+                  <input type="text" placeholder={t("vacancy.filter")} value={filterType} onChange={(e) => setFilterType(e.target.value)} className="w-20 border border-[#cfdfe6] px-2 py-1 text-xs outline-none focus:border-[#0d837f]" />
                 </td>
                 <td className="px-3 py-2" />
                 <td className="px-3 py-2">
-                  <input type="text" placeholder="Filter..." className="w-full border border-[#cfdfe6] px-2 py-1 text-xs outline-none focus:border-[#0d837f]" readOnly />
+                  <input type="text" placeholder={t("vacancy.filter")} className="w-full border border-[#cfdfe6] px-2 py-1 text-xs outline-none focus:border-[#0d837f]" readOnly />
                 </td>
                 <td className="sticky right-0 z-10 bg-[#fafafa] px-3 py-2 shadow-[-8px_0_12px_rgba(250,250,250,0.92)]" />
               </tr>
@@ -228,7 +230,7 @@ export default function VacanciesPage(): React.JSX.Element {
                   ? (
                     <tr>
                       <td colSpan={9} className="px-6 py-10 text-center text-slate-500">
-                        No vacancies found.
+                        {t("vacancy.noVacancies")}
                       </td>
                     </tr>
                   )
@@ -271,14 +273,14 @@ export default function VacanciesPage(): React.JSX.Element {
                             }}
                             className="inline-flex items-center justify-center rounded bg-[#0d837f] px-4 py-1.5 text-xs font-semibold text-white transition hover:bg-[#08716e] whitespace-nowrap"
                           >
-                            Login to Apply
+                            {t("vacancy.loginToApply")}
                           </button>
 
                           <Link
                             href={`/${params.locale}/vacancies/${v.id}`}
                             className="inline-flex items-center justify-center rounded bg-[#0a6b68] px-4 py-1.5 text-xs font-semibold text-white transition hover:bg-[#085856] whitespace-nowrap"
                           >
-                            View Details
+                            {t("vacancy.viewDetails")}
                           </Link>
                         </div>
                       </td>

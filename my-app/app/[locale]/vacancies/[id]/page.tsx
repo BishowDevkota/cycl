@@ -6,6 +6,7 @@ import Link from "next/link";
 import { Vacancy } from "@/services/vacancy-service";
 import DynamicForm from "@/components/DynamicForm";
 import VacancyShell from "@/components/vacancy/VacancyShell";
+import { useVacancyLanguage } from "@/components/vacancy/VacancyLanguageContext";
 
 interface VacancyDetailPageProps {
   params: Promise<{
@@ -16,6 +17,7 @@ interface VacancyDetailPageProps {
 export default function VacancyDetailPage({
   params,
 }: VacancyDetailPageProps): React.JSX.Element {
+  const { t } = useVacancyLanguage();
   const router = useRouter();
   const [vacancy, setVacancy] = useState<Vacancy | null>(null);
   const [loading, setLoading] = useState(true);
@@ -149,7 +151,7 @@ export default function VacancyDetailPage({
               href="/vacancies"
               className="text-sm text-blue-600 hover:underline"
             >
-              ← Back to Vacancies
+              ← {t("vacancy.backToVacancies")}
             </Link>
           </div>
 
@@ -176,14 +178,14 @@ export default function VacancyDetailPage({
             )}
           </div>
 
-          <h2 className="mb-3 text-xl font-semibold text-[#123451]">About this role</h2>
+          <h2 className="mb-3 text-xl font-semibold text-[#123451]">{t("vacancy.aboutRole")}</h2>
           <p className="whitespace-pre-wrap leading-relaxed text-gray-700">
             {vacancy.description}
           </p>
         </div>
 
         <div className="rounded-lg border border-[#d6e6ed] bg-white p-8 shadow-sm">
-          <h2 className="mb-6 text-2xl font-bold text-[#123451]">Apply for this position</h2>
+          <h2 className="mb-6 text-2xl font-bold text-[#123451]">{t("vacancy.applyPosition")}</h2>
 
           {vacancy.formFields && vacancy.formFields.length > 0 ? (
             <DynamicForm
