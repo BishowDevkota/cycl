@@ -46,7 +46,7 @@ export default function NewsPage() {
             return (
               <article
                 key={item.id}
-                className="flex flex-col h-96 bg-teal-deep shadow-md text-white overflow-hidden transition duration-200 hover:-translate-y-0.5 hover:shadow-lg hover:brightness-75"
+                className="flex flex-col h-96 bg-teal-mid shadow-md text-white overflow-hidden transition duration-200 hover:-translate-y-0.5 hover:shadow-lg hover:brightness-75"
               >
                 <ImgBanner src={item.image} alt={item.title} />
                 <div className="flex flex-col flex-1 px-4 pt-4 pb-4">
@@ -61,7 +61,7 @@ export default function NewsPage() {
                     <span className="text-xs text-white/80">{date}</span>
                     <a
                       href={`/news/${encodeFileName(item.id)}`}
-                      className="inline-flex items-center gap-2 bg-white px-3 py-1.5 text-xs font-semibold text-teal-deep transition hover:brightness-110"
+                      className="inline-flex items-center gap-2 bg-white px-4 py-1 text-base font-semibold text-teal-deep transition hover:brightness-110"
                     >
                       Read
                     </a>

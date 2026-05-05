@@ -48,7 +48,7 @@ export default function NoticesPage() {
           {notices.map((item) => (
             <article
               key={item.id}
-              className="flex flex-col overflow-hidden bg-teal-deep text-white shadow-md transition duration-200 hover:-translate-y-0.5 hover:shadow-lg hover:brightness-75"
+              className="flex flex-col overflow-hidden bg-teal-mid text-white shadow-md transition duration-200 hover:-translate-y-0.5 hover:shadow-lg hover:brightness-75"
             >
               <BulletinBanner
                 src={resolveNoticeImage(item.id)}

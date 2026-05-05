@@ -24,7 +24,7 @@ export default function AdminHomePage() {
         </div>
       </section>
 
-      <aside className="border border-[#0d837f] bg-teal-deep p-6 text-white">
+      <aside className="border border-[#0d837f] bg-teal-mid p-6 text-white">
         <p className="text-sm font-semibold uppercase tracking-[0.24em] text-white/70">Current setup</p>
         <ul className="mt-4 space-y-3 text-sm leading-6 text-white/90">
           <li>Sidebar navigation for homepage sections and vacancies</li>

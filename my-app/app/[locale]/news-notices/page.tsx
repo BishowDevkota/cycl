@@ -34,7 +34,7 @@ export default function NewsNoticesPage() {
             </div>
             <div className="mt-4 space-y-3">
               {latestNews.map((item) => (
-                <div key={item.id} className=" transform hover:-translate-y-1 duration-200 ease-out bg-teal-deep p-4">
+                <div key={item.id} className=" transform hover:-translate-y-1 duration-200 ease-out bg-teal-mid p-4">
                   <p className="text-xs font-semibold uppercase tracking-[0.16em] text-white">
                     {new Date(item.publishedAt).toLocaleDateString("en-NP", {
                       year: "numeric",
@@ -65,7 +65,7 @@ export default function NewsNoticesPage() {
             </div>
             <div className="mt-4 space-y-3">
               {latestNotices.map((item) => (
-                <div key={item.id} className="border border-[#dfeaf0] bg-teal-deep p-4  transform hover:-translate-y-1 duration-200 ease-out">
+                <div key={item.id} className="border border-[#dfeaf0] bg-teal-mid p-4  transform hover:-translate-y-1 duration-200 ease-out">
                   <p className="text-xs font-semibold uppercase tracking-[0.16em] text-white">
                     {new Date(item.publishedAt).toLocaleDateString("en-NP", {
                       year: "numeric",

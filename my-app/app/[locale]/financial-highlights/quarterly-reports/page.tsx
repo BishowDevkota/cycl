@@ -130,7 +130,7 @@ export default function QuarterlyReportsPage() {
               return (
                 <article
                   key={report.file}
-                  className="flex flex-col bg-teal-deep shadow-md text-white overflow-hidden transition duration-200 hover:-translate-y-0.5 hover:shadow-lg hover:brightness-75"
+                  className="flex flex-col bg-teal-mid shadow-md text-white overflow-hidden transition duration-200 hover:-translate-y-0.5 hover:shadow-lg hover:brightness-75"
                 >
                   <PdfIconBanner label={report.label} ext={report.ext} />
 

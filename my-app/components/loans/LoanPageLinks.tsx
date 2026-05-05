@@ -69,7 +69,7 @@ export function LoanPageLinks({ currentPage }: LoanPageLinksProps) {
               aria-current={isCurrent ? "page" : undefined}
               className={` shadow-[0_4px_10px_rgba(12,49,72,0.1)] p-5 transition ${
                 isCurrent
-                  ? "border-[#0d837f]/40 bg-[#0d837f]"
+                  ? "border-[#0d837f]/40 bg-teal-mid"
                   : "border-[#d7e6ee] bg-[#f9fcfe] hover:-translate-y-1 hover:border-[#0d837f]/40"
               }`}
             >
