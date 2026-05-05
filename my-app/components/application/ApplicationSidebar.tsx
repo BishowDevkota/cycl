@@ -18,22 +18,22 @@ export default function ApplicationSidebar({
 
   const menuItems = [
     {
-      label: "Dashboard",
+      label: "ड्यासबोर्ड",
       href: `/${params.locale}/dashboard`,
       icon: "🏠",
     },
     {
-      label: "My Applications",
+      label: "मेरो आवेदनहरू",
       href: `/${params.locale}/dashboard/applications`,
       icon: "📋",
     },
     {
-      label: "Vacancies",
+      label: "रिक्तिहरू",
       href: `/${params.locale}/vacancies`,
       icon: "💼",
     },
     {
-      label: "Profile",
+      label: "प्रोफाइल",
       href: `/${params.locale}/dashboard/profile`,
       icon: "👤",
     },
@@ -43,7 +43,7 @@ export default function ApplicationSidebar({
     <aside className="w-64 bg-white border-r border-[#d6e6ed] min-h-screen flex flex-col">
       {/* Logo / Header */}
       <div className="bg-[#0d837f] text-white p-6">
-        <h2 className="text-xl font-bold">Candidate Section</h2>
+        <h2 className="text-xl font-bold">उम्मेदवार खण्ड</h2>
       </div>
 
       {/* User Info */}
@@ -72,7 +72,7 @@ export default function ApplicationSidebar({
           onClick={onLogout}
           className="w-full px-4 py-2 bg-[#0d837f] text-white rounded font-medium hover:bg-[#08716e] transition-colors"
         >
-          Logout
+          लगआउट
         </button>
       </div>
     </aside>

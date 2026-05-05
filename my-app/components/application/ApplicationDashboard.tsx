@@ -49,7 +49,7 @@ export default function ApplicationDashboard() {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-gray-100">
-        <p className="text-lg text-gray-600">Loading...</p>
+        <p className="text-lg text-gray-600">लोड हुँदैछ...</p>
       </div>
     );
   }
@@ -73,9 +73,9 @@ export default function ApplicationDashboard() {
         <header className="bg-[#0d837f] text-white shadow-md p-6">
           <div className="flex justify-between items-center">
             <div>
-              <h1 className="text-3xl font-bold">Candidate Dashboard</h1>
+              <h1 className="text-3xl font-bold">उम्मेदवार ड्यासबोर्ड</h1>
               <p className="text-[#e0f2f1] mt-1">
-                Manage your job applications
+                आफ्नो आवेदनहरू व्यवस्थापन गर्नुहोस्
               </p>
             </div>
             <div className="text-right">
@@ -97,7 +97,7 @@ export default function ApplicationDashboard() {
                     : "border-transparent text-gray-600 hover:text-[#0d837f]"
                 }`}
               >
-                My Applications
+                मेरा आवेदनहरू
               </button>
               <button
                 onClick={() => setActiveTab("redraft")}
@@ -107,7 +107,7 @@ export default function ApplicationDashboard() {
                     : "border-transparent text-gray-600 hover:text-[#0d837f]"
                 }`}
               >
-                Redraft Applications
+                पुनः तयार आवेदनहरू
               </button>
             </div>
           </div>

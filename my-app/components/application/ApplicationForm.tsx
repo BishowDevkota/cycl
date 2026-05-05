@@ -1,7 +1,8 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
+import { useVacancyLanguage } from "@/components/vacancy/VacancyLanguageContext";
 import BasicDetailsStep from "./steps/BasicDetailsStep";
 import ContactDetailsStep from "./steps/ContactDetailsStep";
 import EducationStep from "./steps/EducationStep";
@@ -22,7 +23,9 @@ export default function ApplicationForm() {
   const params = useParams();
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { t } = useVacancyLanguage();
   const vacancyId = params.id as string;
+  const stepContainerRef = useRef<HTMLDivElement | null>(null);
 
   const [currentStep, setCurrentStep] = useState(0);
   const [formData, setFormData] = useState<FormData>({
@@ -34,15 +37,16 @@ export default function ApplicationForm() {
   });
   const [jobDetails, setJobDetails] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [stepError, setStepError] = useState("");
 
   const steps = [
-    { label: "Basic", component: BasicDetailsStep },
-    { label: "Contact", component: ContactDetailsStep },
-    { label: "Education", component: EducationStep },
-    { label: "Experience", component: ExperienceStep },
-    { label: "Document", component: DocumentStep },
-    { label: "Preview", component: PreviewStep },
-    { label: "Submit", component: SubmitStep },
+    { label: "आधारभूत", component: BasicDetailsStep },
+    { label: "सम्पर्क", component: ContactDetailsStep },
+    { label: "शिक्षा", component: EducationStep },
+    { label: "अनुभव", component: ExperienceStep },
+    { label: "कागजात", component: DocumentStep },
+    { label: "पूर्वावलोकन", component: PreviewStep },
+    { label: "बुझाउनुहोस्", component: SubmitStep },
   ];
 
   useEffect(() => {
@@ -63,11 +67,113 @@ export default function ApplicationForm() {
     fetchJobDetails();
   }, [vacancyId]);
 
+  const validateCurrentStep = () => {
+    if (currentStep === 0) {
+      const personalDetails = formData.personalDetails || {};
+      const requiredFields = [
+        "firstName",
+        "middleName",
+        "lastName",
+        "firstNameNepali",
+        "middleNameNepali",
+        "lastNameNepali",
+        "dobBS",
+        "dobAD",
+        "gender",
+        "citizenshipNumber",
+        "issuedDistrict",
+        "issuedDate",
+      ];
+
+      return requiredFields.every((field) => String(personalDetails[field] || "").trim().length > 0);
+    }
+
+    if (currentStep === 1) {
+      const contactDetails = formData.contactDetails || {};
+      const requiredFields = [
+        "permState",
+        "permDistrict",
+        "permLocalLevelType",
+        "permMunicipality",
+        "permWard",
+        "permTole",
+        "permStreetName",
+        "permHouseNo",
+        "permPhone",
+        "permMunicipalityNepali",
+        "permToleNepali",
+        "permStreetNameNepali",
+        "tempState",
+        "tempDistrict",
+        "tempLocalLevelType",
+        "tempMunicipality",
+        "tempWard",
+        "tempTole",
+        "tempStreetName",
+        "tempHouseNo",
+        "tempPhone",
+        "tempMunicipalityNepali",
+        "tempToleNepali",
+        "tempStreetNameNepali",
+        "mobile",
+        "email",
+      ];
+
+      return requiredFields.every((field) => String(contactDetails[field] || "").trim().length > 0);
+    }
+
+    if (currentStep === 2) {
+      const educationEntries = formData.education || [];
+      return (
+        educationEntries.length > 0 &&
+        educationEntries.every((education) =>
+          ["university", "institution", "degree", "faculty", "universityNepali", "institutionNepali", "degreeNepali"].every(
+            (field) => String(education[field] || "").trim().length > 0
+          )
+        )
+      );
+    }
+
+    if (currentStep === 3) {
+      const experienceEntries = formData.experience || [];
+      return (
+        experienceEntries.length > 0 &&
+        experienceEntries.every((experience) =>
+          ["organization", "department", "position", "serviceFrom", "serviceTo", "organizationNepali", "departmentNepali", "positionNepali"].every(
+            (field) => String(experience[field] || "").trim().length > 0
+          )
+        )
+      );
+    }
+
+    if (currentStep === 4) {
+      const documents = formData.documents || {};
+      return Boolean(documents.photo && documents.cv);
+    }
+
+    return true;
+  };
+
   const handleStepChange = (stepIndex: number) => {
+    if (stepIndex > currentStep) {
+      return;
+    }
+
+    setStepError("");
     setCurrentStep(stepIndex);
   };
 
   const handleNext = () => {
+    if (!validateCurrentStep()) {
+      setStepError("कृपया यस चरणका सबै अनिवार्य विवरण भर्नुहोस्।");
+      const firstInvalidField = stepContainerRef.current?.querySelector("input:invalid, select:invalid, textarea:invalid");
+      if (firstInvalidField instanceof HTMLElement) {
+        firstInvalidField.reportValidity();
+      }
+      return;
+    }
+
+    setStepError("");
     if (currentStep < steps.length - 1) {
       setCurrentStep(currentStep + 1);
     }
@@ -101,7 +207,7 @@ export default function ApplicationForm() {
       {/* Header */}
       <header className="bg-[#0d837f] text-white shadow-md p-6">
         <div className="max-w-6xl mx-auto">
-          <h1 className="text-3xl font-bold">Online Application Form</h1>
+          <h1 className="text-3xl font-bold">अनलाइन आवेदन फाराम</h1>
           <p className="text-[#e0f2f1] mt-1">{jobDetails?.title}</p>
         </div>
       </header>
@@ -133,11 +239,19 @@ export default function ApplicationForm() {
       {/* Content */}
       <div className="max-w-6xl mx-auto px-6 py-8">
         <div className="bg-white rounded-lg shadow-md p-8">
-          <CurrentStepComponent
-            formData={formData}
-            onUpdate={handleUpdateFormData}
-            vacancyId={vacancyId}
-          />
+          {stepError && (
+            <div className="mb-6 rounded border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+              {stepError}
+            </div>
+          )}
+
+          <div ref={stepContainerRef}>
+            <CurrentStepComponent
+              formData={formData}
+              onUpdate={handleUpdateFormData}
+              vacancyId={vacancyId}
+            />
+          </div>
 
           {/* Navigation */}
           <div className="flex justify-between gap-4 mt-8 pt-6 border-t border-[#d6e6ed]">
@@ -150,7 +264,7 @@ export default function ApplicationForm() {
                   : "bg-[#0a6b68] text-white hover:bg-[#085856]"
               }`}
             >
-              ← Back
+              ← पछाडि
             </button>
 
             {currentStep < steps.length - 1 ? (
@@ -158,14 +272,14 @@ export default function ApplicationForm() {
                 onClick={handleNext}
                 className="px-6 py-2 bg-[#0d837f] text-white rounded font-medium hover:bg-[#08716e] transition"
               >
-                Next →
+                अर्को →
               </button>
             ) : (
               <button
                 onClick={handleNext}
                 className="px-6 py-2 bg-green-600 text-white rounded font-medium hover:bg-green-700 transition"
               >
-                Submit Application
+                आवेदन बुझाउनुहोस्
               </button>
             )}
           </div>

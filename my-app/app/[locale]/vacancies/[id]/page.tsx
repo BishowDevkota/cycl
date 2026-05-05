@@ -41,14 +41,14 @@ export default function VacancyDetailPage({
       try {
         const response = await fetch(`/api/vacancies/${id}`);
         if (!response.ok) {
-          setError("Failed to load vacancy");
+          setError("रिक्ति लोड गर्न सकिएन");
           return;
         }
         const data = await response.json();
         setVacancy(data);
       } catch (err) {
         console.error(err);
-        setError("An error occurred");
+        setError("कुनै त्रुटि भयो");
       } finally {
         setLoading(false);
       }
@@ -71,7 +71,7 @@ export default function VacancyDetailPage({
 
       if (!response.ok) {
         setError(
-          data.error || "Failed to submit application"
+          data.error || "आवेदन बुझाउन सकिएन"
         );
         setSubmitting(false);
         return;
@@ -80,7 +80,7 @@ export default function VacancyDetailPage({
       setSubmitted(true);
     } catch (err) {
       console.error(err);
-      setError("An error occurred while submitting");
+      setError("आवेदन बुझाउने क्रममा त्रुटि भयो");
       setSubmitting(false);
     }
   };
@@ -88,7 +88,7 @@ export default function VacancyDetailPage({
   if (loading) {
     return (
       <div className="text-center py-12">
-        <p className="text-lg text-gray-600">Loading job details...</p>
+        <p className="text-lg text-gray-600">पद विवरण लोड हुँदैछ...</p>
       </div>
     );
   }
@@ -104,7 +104,7 @@ export default function VacancyDetailPage({
   if (!vacancy) {
     return (
       <div className="text-center py-12 text-gray-500">
-        <p>Job not found</p>
+        <p>पद फेला परेन</p>
       </div>
     );
   }
@@ -114,22 +114,20 @@ export default function VacancyDetailPage({
       <div className="max-w-3xl mx-auto">
         <div className="bg-green-50 border border-green-200 rounded-lg p-8 text-center">
           <h2 className="text-2xl font-bold text-green-800 mb-2">
-            Application Submitted!
+            आवेदन बुझाइयो!
           </h2>
           <p className="text-green-700 mb-4">
-            Thank you for your application. You will receive a confirmation
-            email shortly.
+            तपाईंको आवेदनका लागि धन्यवाद। चाँडै नै तपाईंले पुष्टि इमेल प्राप्त गर्नुहुनेछ।
           </p>
           <p className="text-gray-600 mb-6">
-            The company will review your application and get in touch with you
-            very soon.
+            संस्थाले तपाईंको आवेदन समीक्षा गरी छिट्टै सम्पर्क गर्नेछ।
           </p>
 
           <Link
             href="/vacancies"
             className="px-6 py-2 bg-green-600 text-white rounded hover:bg-green-700"
           >
-            Back to Vacancies
+            रिक्ति सूचीमा फर्किनुहोस्
           </Link>
         </div>
       </div>
@@ -195,7 +193,7 @@ export default function VacancyDetailPage({
             />
           ) : (
             <p className="text-gray-600">
-              No application form fields configured for this job.
+              यो पदका लागि कुनै आवेदन फाराम क्षेत्र कन्फिगर गरिएको छैन।
             </p>
           )}
         </div>
