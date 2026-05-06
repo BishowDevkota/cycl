@@ -65,13 +65,28 @@ export default function SubmitStep({
     setError("");
 
     try {
+      const payload = new FormData();
+
+      // Attach structured JSON fields
+      payload.append("personalDetails", JSON.stringify(formData.personalDetails || {}));
+      payload.append("contactDetails", JSON.stringify(formData.contactDetails || {}));
+      payload.append("education", JSON.stringify(formData.education || []));
+      payload.append("experience", JSON.stringify(formData.experience || []));
+      payload.append("submitData", JSON.stringify(submitData || {}));
+
+      // Attach files if present
+      const docs = formData.documents || {};
+      if (docs.photo instanceof File) {
+        payload.append("photo", docs.photo);
+      }
+      if (docs.cv instanceof File) {
+        payload.append("cv", docs.cv);
+      }
+
       const response = await fetch(`/api/vacancies/${vacancyId}/apply`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          ...formData,
-          submitData,
-        }),
+        // NOTE: Do not set Content-Type for FormData — browser sets it
+        body: payload,
       });
 
       if (!response.ok) {

@@ -14,6 +14,7 @@ export default function DocumentStep({
   vacancyId,
 }: DocumentStepProps) {
   const [localData, setLocalData] = useState(formData.documents || {});
+  const [photoPreview, setPhotoPreview] = useState<string | null>(null);
 
   useEffect(() => {
     setLocalData(formData.documents || {});
@@ -27,6 +28,11 @@ export default function DocumentStep({
     };
     setLocalData(updated);
     onUpdate("documents", updated);
+    // If photo selected, create preview URL
+    if (field === "photo" && file) {
+      const url = URL.createObjectURL(file);
+      setPhotoPreview(url);
+    }
   };
 
   return (
@@ -43,10 +49,17 @@ export default function DocumentStep({
             accept="image/*"
             onChange={(e) => handleFileChange("photo", e.target.files)}
             className="block w-full text-sm text-gray-600"
+            aria-label="photo-file-input"
           />
           <p className="text-xs text-gray-600 mt-1">
             केवल इमेज ढाँचा अपलोड गर्नुहोस्: .jpg, .jpeg, .png (अधिकतम: 200 KB)
           </p>
+          {localData.photo && (
+            <p className="mt-2 text-sm text-gray-700">Selected: {localData.photo.name}</p>
+          )}
+          {photoPreview && (
+            <img src={photoPreview} alt="photo preview" className="mt-3 w-28 h-28 object-cover rounded" />
+          )}
         </div>
 
         <div>
@@ -58,10 +71,14 @@ export default function DocumentStep({
             accept=".pdf,.doc,.docx"
             onChange={(e) => handleFileChange("cv", e.target.files)}
             className="block w-full text-sm text-gray-600"
+            aria-label="cv-file-input"
           />
           <p className="text-xs text-gray-600 mt-1">
             केवल .pdf, .doc, .docx फाइल अपलोड गर्नुहोस् (अधिकतम: 300 KB)
           </p>
+          {localData.cv && (
+            <p className="mt-2 text-sm text-gray-700">Selected: {localData.cv.name}</p>
+          )}
         </div>
       </div>
     </div>

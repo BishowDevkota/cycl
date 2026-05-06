@@ -17,6 +17,7 @@ export default function EducationStep({
   const { t } = useVacancyLanguage();
   const [educations, setEducations] = useState(formData.education || []);
   const [showForm, setShowForm] = useState(false);
+  const [currentEditingId, setCurrentEditingId] = useState<number | null>(null);
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   const addEducation = () => {
@@ -35,10 +36,12 @@ export default function EducationStep({
     };
     const updated = [...educations, newEducation];
     setEducations(updated);
+    setCurrentEditingId(newEducation.id);
+    setShowForm(true);
     onUpdate("education", updated);
   };
 
-  const updateEducation = (id: number, field: string, value: string) => {
+  const updateEducation = (id: number, field: string, value: string | File | null) => {
     const updated = educations.map((edu: any) =>
       edu.id === id ? { ...edu, [field]: value } : edu
     );
@@ -48,7 +51,7 @@ export default function EducationStep({
     // Validate Nepali fields
     const nepaliFields = ["universityNepali", "institutionNepali", "degreeNepali"];
     const newErrors = { ...errors };
-    if (nepaliFields.includes(field)) {
+    if (nepaliFields.includes(field) && typeof value === "string") {
       const key = `edu_${id}_${field}`;
       if (!value.trim()) {
         newErrors[key] = t("vacancy.required");
@@ -103,12 +106,14 @@ export default function EducationStep({
         )}
 
         <div className="mb-6">
-          <button
-            onClick={() => setShowForm(!showForm)}
-            className="px-4 py-2 bg-[#0d837f] text-white rounded font-medium hover:bg-[#08716e] transition"
-          >
-            {t("vacancy.addEducation")}
-          </button>
+          {!showForm && (
+            <button
+              onClick={addEducation}
+              className="px-4 py-2 bg-[#0d837f] text-white rounded font-medium hover:bg-[#08716e] transition"
+            >
+              {t("vacancy.addEducation")}
+            </button>
+          )}
         </div>
 
         {showForm && (
@@ -122,11 +127,12 @@ export default function EducationStep({
                   </label>
                   <input
                     type="text"
+                    value={educations.find(e => e.id === currentEditingId)?.university || ""}
                     placeholder={t("vacancy.university")}
                     className="w-full px-3 py-2 border border-[#cfdfe6] rounded outline-none focus:border-[#0d837f]"
                     onChange={(e) => {
-                      if (educations.length > 0) {
-                        updateEducation(educations[educations.length - 1].id, "university", e.target.value);
+                      if (currentEditingId) {
+                        updateEducation(currentEditingId, "university", e.target.value);
                       }
                     }}
                   />
@@ -137,11 +143,12 @@ export default function EducationStep({
                   </label>
                   <input
                     type="text"
+                    value={educations.find(e => e.id === currentEditingId)?.institution || ""}
                     placeholder={t("vacancy.institution")}
                     className="w-full px-3 py-2 border border-[#cfdfe6] rounded outline-none focus:border-[#0d837f]"
                     onChange={(e) => {
-                      if (educations.length > 0) {
-                        updateEducation(educations[educations.length - 1].id, "institution", e.target.value);
+                      if (currentEditingId) {
+                        updateEducation(currentEditingId, "institution", e.target.value);
                       }
                     }}
                   />
@@ -154,11 +161,12 @@ export default function EducationStep({
                   </label>
                   <input
                     type="text"
+                    value={educations.find(e => e.id === currentEditingId)?.degree || ""}
                     placeholder={t("vacancy.degree")}
                     className="w-full px-3 py-2 border border-[#cfdfe6] rounded outline-none focus:border-[#0d837f]"
                     onChange={(e) => {
-                      if (educations.length > 0) {
-                        updateEducation(educations[educations.length - 1].id, "degree", e.target.value);
+                      if (currentEditingId) {
+                        updateEducation(currentEditingId, "degree", e.target.value);
                       }
                     }}
                   />
@@ -169,11 +177,12 @@ export default function EducationStep({
                   </label>
                   <input
                     type="text"
+                    value={educations.find(e => e.id === currentEditingId)?.faculty || ""}
                     placeholder={t("vacancy.faculty")}
                     className="w-full px-3 py-2 border border-[#cfdfe6] rounded outline-none focus:border-[#0d837f]"
                     onChange={(e) => {
-                      if (educations.length > 0) {
-                        updateEducation(educations[educations.length - 1].id, "faculty", e.target.value);
+                      if (currentEditingId) {
+                        updateEducation(currentEditingId, "faculty", e.target.value);
                       }
                     }}
                   />
@@ -181,7 +190,7 @@ export default function EducationStep({
               </div>
             </div>
 
-            {educations.length > 0 && (
+            {currentEditingId && (
               <div className="border-t border-[#d6e6ed] pt-4 mt-4">
                 {/* Nepali Education Section */}
                 <h4 className="font-semibold mb-2 text-indigo-600">{t("vacancy.educationNepali")}</h4>
@@ -193,21 +202,22 @@ export default function EducationStep({
                     </label>
                     <input
                       type="text"
+                      value={educations.find(e => e.id === currentEditingId)?.universityNepali || ""}
                       placeholder={t("vacancy.universityNepali")}
                       className={`w-full px-3 py-2 border rounded outline-none focus:border-[#0d837f] ${
-                        errors[`edu_${educations[educations.length - 1]?.id}_universityNepali`]
+                        errors[`edu_${currentEditingId}_universityNepali`]
                           ? "border-red-500"
                           : "border-[#cfdfe6]"
                       }`}
                       onChange={(e) => {
-                        if (educations.length > 0) {
-                          updateEducation(educations[educations.length - 1].id, "universityNepali", e.target.value);
+                        if (currentEditingId) {
+                          updateEducation(currentEditingId, "universityNepali", e.target.value);
                         }
                       }}
                     />
-                    {errors[`edu_${educations[educations.length - 1]?.id}_universityNepali`] && (
+                    {errors[`edu_${currentEditingId}_universityNepali`] && (
                       <p className="text-xs text-red-500 mt-1">
-                        {errors[`edu_${educations[educations.length - 1]?.id}_universityNepali`]}
+                        {errors[`edu_${currentEditingId}_universityNepali`]}
                       </p>
                     )}
                   </div>
@@ -217,21 +227,22 @@ export default function EducationStep({
                     </label>
                     <input
                       type="text"
+                      value={educations.find(e => e.id === currentEditingId)?.institutionNepali || ""}
                       placeholder={t("vacancy.institutionNepali")}
                       className={`w-full px-3 py-2 border rounded outline-none focus:border-[#0d837f] ${
-                        errors[`edu_${educations[educations.length - 1]?.id}_institutionNepali`]
+                        errors[`edu_${currentEditingId}_institutionNepali`]
                           ? "border-red-500"
                           : "border-[#cfdfe6]"
                       }`}
                       onChange={(e) => {
-                        if (educations.length > 0) {
-                          updateEducation(educations[educations.length - 1].id, "institutionNepali", e.target.value);
+                        if (currentEditingId) {
+                          updateEducation(currentEditingId, "institutionNepali", e.target.value);
                         }
                       }}
                     />
-                    {errors[`edu_${educations[educations.length - 1]?.id}_institutionNepali`] && (
+                    {errors[`edu_${currentEditingId}_institutionNepali`] && (
                       <p className="text-xs text-red-500 mt-1">
-                        {errors[`edu_${educations[educations.length - 1]?.id}_institutionNepali`]}
+                        {errors[`edu_${currentEditingId}_institutionNepali`]}
                       </p>
                     )}
                   </div>
@@ -243,36 +254,69 @@ export default function EducationStep({
                     </label>
                     <input
                       type="text"
+                      value={educations.find(e => e.id === currentEditingId)?.degreeNepali || ""}
                       placeholder={t("vacancy.degreeNepali")}
                       className={`w-full px-3 py-2 border rounded outline-none focus:border-[#0d837f] ${
-                        errors[`edu_${educations[educations.length - 1]?.id}_degreeNepali`]
+                        errors[`edu_${currentEditingId}_degreeNepali`]
                           ? "border-red-500"
                           : "border-[#cfdfe6]"
                       }`}
                       onChange={(e) => {
-                        if (educations.length > 0) {
-                          updateEducation(educations[educations.length - 1].id, "degreeNepali", e.target.value);
+                        if (currentEditingId) {
+                          updateEducation(currentEditingId, "degreeNepali", e.target.value);
                         }
                       }}
                     />
-                    {errors[`edu_${educations[educations.length - 1]?.id}_degreeNepali`] && (
+                    {errors[`edu_${currentEditingId}_degreeNepali`] && (
                       <p className="text-xs text-red-500 mt-1">
-                        {errors[`edu_${educations[educations.length - 1]?.id}_degreeNepali`]}
+                        {errors[`edu_${currentEditingId}_degreeNepali`]}
                       </p>
                     )}
                   </div>
+                </div>
+
+                {/* Degree Document Upload */}
+                <div className="border-t border-[#d6e6ed] pt-4 mt-4">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Upload Degree Document (PDF, JPG, PNG)
+                  </label>
+                  <input
+                    type="file"
+                    accept="application/pdf,image/jpeg,image/png"
+                    className="w-full px-3 py-2 border border-[#cfdfe6] rounded outline-none focus:border-[#0d837f] focus:ring-1 focus:ring-[#0d837f]"
+                    onChange={(e) => {
+                      if (currentEditingId && e.target.files && e.target.files[0]) {
+                        updateEducation(currentEditingId, "degreeDocument", e.target.files[0]);
+                      }
+                    }}
+                  />
+                  {educations.find(e => e.id === currentEditingId)?.degreeDocument && (
+                    <p className="text-xs text-green-600 mt-1">
+                      ✓ File selected: {(educations.find(e => e.id === currentEditingId)?.degreeDocument as File)?.name}
+                    </p>
+                  )}
                 </div>
               </div>
             )}
 
             <button
               onClick={() => {
-                setShowForm(false);
+                addEducation();
                 setErrors({});
               }}
-              className="px-4 py-2 bg-gray-400 text-white rounded font-medium hover:bg-gray-500 transition"
+              className="px-4 py-2 bg-[#17a2b8] text-white rounded font-medium hover:bg-[#138496] transition mr-2"
             >
-              Done
+              {t("vacancy.addMoreEducation") || "Add Another"}
+            </button>
+            <button
+              onClick={() => {
+                setShowForm(false);
+                setCurrentEditingId(null);
+                setErrors({});
+              }}
+              className="px-4 py-2 bg-[#0d837f] text-white rounded font-medium hover:bg-[#08716e] transition mt-4"
+            >
+              {t("vacancy.done")}
             </button>
           </div>
         )}

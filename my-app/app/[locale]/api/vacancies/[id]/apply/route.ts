@@ -93,66 +93,158 @@ export async function POST(
     const responses: ApplicationResponse[] = [];
     const uploadedFiles: { publicId: string; fieldId: string }[] = [];
 
-    // Process form fields
-    for (const field of vacancy.formFields) {
-      const fieldValue = formData.get(field.id);
+    // If the client sent our structured application payload (JSON parts + files), handle that first
+    if (formData.has("personalDetails") || formData.has("submitData")) {
+      try {
+        const personal = JSON.parse(formData.get("personalDetails")?.toString() || "{}");
+        const contact = JSON.parse(formData.get("contactDetails")?.toString() || "{}");
+        const education = JSON.parse(formData.get("education")?.toString() || "[]");
+        const experience = JSON.parse(formData.get("experience")?.toString() || "[]");
+        const submit = JSON.parse(formData.get("submitData")?.toString() || "{}");
 
-      if (field.required && !fieldValue) {
-        return NextResponse.json(
-          { error: `${field.label} is required` },
-          { status: 400 },
-        );
-      }
+        responses.push({
+          fieldId: "personalDetails",
+          fieldLabel: "Personal Details",
+          fieldType: "text",
+          value: JSON.stringify(personal),
+        });
 
-      if (field.type === "pdf") {
-        // Handle PDF file upload
-        const file = formData.get(field.id) as File | null;
-        if (file && file.size > 0) {
-          try {
-            const buffer = await file.arrayBuffer();
-            const { public_id, secure_url } = await uploadApplicationFileToCloudinary(
-              Buffer.from(buffer),
-              file.name,
-              "pdf",
-              vacancyId,
-            );
+        responses.push({
+          fieldId: "contactDetails",
+          fieldLabel: "Contact Details",
+          fieldType: "text",
+          value: JSON.stringify(contact),
+        });
 
-            responses.push({
-              fieldId: field.id,
-              fieldLabel: field.label,
-              fieldType: "pdf",
-              value: public_id,
-              fileUrl: secure_url,
-            });
+        responses.push({
+          fieldId: "education",
+          fieldLabel: "Education",
+          fieldType: "text",
+          value: JSON.stringify(education),
+        });
 
-            uploadedFiles.push({ publicId: public_id, fieldId: field.id });
-          } catch (error) {
-            console.error("Failed to upload PDF:", error);
-            return NextResponse.json(
-              { error: `Failed to upload ${field.label}` },
-              { status: 500 },
-            );
-          }
+        responses.push({
+          fieldId: "experience",
+          fieldLabel: "Experience",
+          fieldType: "text",
+          value: JSON.stringify(experience),
+        });
+
+        responses.push({
+          fieldId: "submitData",
+          fieldLabel: "Submit Data",
+          fieldType: "text",
+          value: JSON.stringify(submit),
+        });
+
+        // Handle files (photo, cv) if present
+        const photo = formData.get("photo") as File | null;
+        if (photo && photo.size > 0) {
+          const buffer = await photo.arrayBuffer();
+          const { public_id, secure_url } = await uploadApplicationFileToCloudinary(
+            Buffer.from(buffer),
+            photo.name,
+            "image",
+            vacancyId,
+          );
+
+          responses.push({
+            fieldId: "photo",
+            fieldLabel: "Photo",
+            fieldType: "pdf",
+            value: public_id,
+            fileUrl: secure_url,
+          });
+
+          uploadedFiles.push({ publicId: public_id, fieldId: "photo" });
         }
-      } else {
-        // Handle other field types
-        if (fieldValue) {
-          if (field.type === "checkbox") {
-            // Checkbox values come as array or single value
-            const checkboxValues = formData.getAll(field.id) as string[];
-            responses.push({
-              fieldId: field.id,
-              fieldLabel: field.label,
-              fieldType: field.type,
-              value: checkboxValues.length > 1 ? checkboxValues : fieldValue.toString(),
-            });
-          } else {
-            responses.push({
-              fieldId: field.id,
-              fieldLabel: field.label,
-              fieldType: field.type,
-              value: fieldValue.toString(),
-            });
+
+        const cv = formData.get("cv") as File | null;
+        if (cv && cv.size > 0) {
+          const buffer = await cv.arrayBuffer();
+          const { public_id, secure_url } = await uploadApplicationFileToCloudinary(
+            Buffer.from(buffer),
+            cv.name,
+            "pdf",
+            vacancyId,
+          );
+
+          responses.push({
+            fieldId: "cv",
+            fieldLabel: "CV",
+            fieldType: "pdf",
+            value: public_id,
+            fileUrl: secure_url,
+          });
+
+          uploadedFiles.push({ publicId: public_id, fieldId: "cv" });
+        }
+      } catch (err) {
+        console.error("Failed to parse structured application form data:", err);
+        return NextResponse.json({ error: "Invalid application data" }, { status: 400 });
+      }
+    } else {
+      // Process form fields (legacy vacancy.formFields flow)
+      for (const field of vacancy.formFields) {
+        const fieldValue = formData.get(field.id);
+
+        if (field.required && !fieldValue) {
+          return NextResponse.json(
+            { error: `${field.label} is required` },
+            { status: 400 },
+          );
+        }
+
+        if (field.type === "pdf") {
+          // Handle PDF file upload
+          const file = formData.get(field.id) as File | null;
+          if (file && file.size > 0) {
+            try {
+              const buffer = await file.arrayBuffer();
+              const { public_id, secure_url } = await uploadApplicationFileToCloudinary(
+                Buffer.from(buffer),
+                file.name,
+                "pdf",
+                vacancyId,
+              );
+
+              responses.push({
+                fieldId: field.id,
+                fieldLabel: field.label,
+                fieldType: "pdf",
+                value: public_id,
+                fileUrl: secure_url,
+              });
+
+              uploadedFiles.push({ publicId: public_id, fieldId: field.id });
+            } catch (error) {
+              console.error("Failed to upload PDF:", error);
+              return NextResponse.json(
+                { error: `Failed to upload ${field.label}` },
+                { status: 500 },
+              );
+            }
+          }
+        } else {
+          // Handle other field types
+          if (fieldValue) {
+            if (field.type === "checkbox") {
+              // Checkbox values come as array or single value
+              const checkboxValues = formData.getAll(field.id) as string[];
+              responses.push({
+                fieldId: field.id,
+                fieldLabel: field.label,
+                fieldType: field.type,
+                value: checkboxValues.length > 1 ? checkboxValues : fieldValue.toString(),
+              });
+            } else {
+              responses.push({
+                fieldId: field.id,
+                fieldLabel: field.label,
+                fieldType: field.type,
+                value: fieldValue.toString(),
+              });
+            }
           }
         }
       }

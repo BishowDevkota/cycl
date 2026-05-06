@@ -72,10 +72,8 @@ export default function ApplicationForm() {
       const personalDetails = formData.personalDetails || {};
       const requiredFields = [
         "firstName",
-        "middleName",
         "lastName",
         "firstNameNepali",
-        "middleNameNepali",
         "lastNameNepali",
         "dobBS",
         "dobAD",
@@ -127,7 +125,7 @@ export default function ApplicationForm() {
       return (
         educationEntries.length > 0 &&
         educationEntries.every((education) =>
-          ["university", "institution", "degree", "faculty", "universityNepali", "institutionNepali", "degreeNepali"].every(
+          ["university", "institution", "degree", "universityNepali", "institutionNepali", "degreeNepali"].every(
             (field) => String(education[field] || "").trim().length > 0
           )
         )
@@ -148,7 +146,9 @@ export default function ApplicationForm() {
 
     if (currentStep === 4) {
       const documents = formData.documents || {};
-      return Boolean(documents.photo && documents.cv);
+      const hasPhoto = !!documents.photo && (documents.photo instanceof File || typeof documents.photo.name === "string");
+      const hasCv = !!documents.cv && (documents.cv instanceof File || typeof documents.cv.name === "string");
+      return Boolean(hasPhoto && hasCv);
     }
 
     return true;

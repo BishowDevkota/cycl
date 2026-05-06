@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useVacancyLanguage } from "@/components/vacancy/VacancyLanguageContext";
+import { provincesDistricts, getDistrictsByProvince } from "@/lib/provinces-districts";
 
 interface ContactDetailsStepProps {
   formData: any;
@@ -18,6 +19,17 @@ export default function ContactDetailsStep({
   const [localData, setLocalData] = useState(formData.contactDetails || {});
   const [sameAsPermenant, setSameAsPermenant] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [permDistricts, setPermDistricts] = useState<string[]>([]);
+  const [tempDistricts, setTempDistricts] = useState<string[]>([]);
+
+  useEffect(() => {
+    if (localData.permState) {
+      setPermDistricts(getDistrictsByProvince(localData.permState));
+    }
+    if (localData.tempState) {
+      setTempDistricts(getDistrictsByProvince(localData.tempState));
+    }
+  }, [localData.permState, localData.tempState]);
 
   useEffect(() => {
     setLocalData(formData.contactDetails || {});
@@ -26,6 +38,12 @@ export default function ContactDetailsStep({
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     const updated = { ...localData, [name]: value };
+    if (name === "permState") {
+      updated.permDistrict = "";
+    }
+    if (name === "tempState") {
+      updated.tempDistrict = "";
+    }
     setLocalData(updated);
     onUpdate("contactDetails", updated);
 
@@ -95,7 +113,11 @@ export default function ContactDetailsStep({
                   className="w-full px-3 py-2 border border-[#cfdfe6] rounded outline-none focus:border-[#0d837f] focus:ring-1 focus:ring-[#0d837f]"
                 >
                   <option value="">Select State</option>
-                  <option value="gandaki">Gandaki Pradesh (Province No. 4)</option>
+                  {provincesDistricts.map((province) => (
+                    <option key={province.id} value={province.id}>
+                      {province.name}
+                    </option>
+                  ))}
                 </select>
               </div>
               <div>
@@ -107,9 +129,14 @@ export default function ContactDetailsStep({
                   value={localData.permDistrict || ""}
                   onChange={handleChange}
                   className="w-full px-3 py-2 border border-[#cfdfe6] rounded outline-none focus:border-[#0d837f] focus:ring-1 focus:ring-[#0d837f]"
+                  disabled={!localData.permState}
                 >
                   <option value="">Select District</option>
-                  <option value="gorkha">Gorkha</option>
+                  {permDistricts.map((district) => (
+                    <option key={district} value={district}>
+                      {district}
+                    </option>
+                  ))}
                 </select>
               </div>
               <div>
@@ -308,7 +335,11 @@ export default function ContactDetailsStep({
                   className="w-full px-3 py-2 border border-[#cfdfe6] rounded outline-none focus:border-[#0d837f] focus:ring-1 focus:ring-[#0d837f]"
                 >
                   <option value="">Select State</option>
-                  <option value="gandaki">Gandaki Pradesh (Province No. 4)</option>
+                  {provincesDistricts.map((province) => (
+                    <option key={province.id} value={province.id}>
+                      {province.name}
+                    </option>
+                  ))}
                 </select>
               </div>
               <div>
@@ -320,9 +351,14 @@ export default function ContactDetailsStep({
                   value={localData.tempDistrict || ""}
                   onChange={handleChange}
                   className="w-full px-3 py-2 border border-[#cfdfe6] rounded outline-none focus:border-[#0d837f] focus:ring-1 focus:ring-[#0d837f]"
+                  disabled={!localData.tempState}
                 >
                   <option value="">Select District</option>
-                  <option value="gorkha">Gorkha</option>
+                  {tempDistricts.map((district) => (
+                    <option key={district} value={district}>
+                      {district}
+                    </option>
+                  ))}
                 </select>
               </div>
               <div>
