@@ -1,25 +1,30 @@
 import { ObjectId } from "mongodb";
 import { getDb } from "@/lib/mongodb";
 
-export interface FormField {
-  id: string;
-  label: string;
-  type: "text" | "email" | "phone" | "textarea" | "select" | "checkbox" | "pdf";
-  required: boolean;
-  placeholder?: string;
-  options?: string[]; // for select type
+export type VacancyType = "open_competition" | "internal_competition";
+
+export interface AgeRestriction {
+  minAge?: number;
+  maxAge?: number;
+}
+
+export interface ExperienceRestriction {
+  minYears?: number;
 }
 
 export interface Vacancy {
   _id?: ObjectId;
-  title: string;
-  description: string;
+  titleEn: string;
+  titleNp: string;
+  descriptionEn: string;
+  descriptionNp: string;
   department: string;
   location: string;
   salary?: string;
-  experience?: string;
+  vacancyType: VacancyType; // "open_competition" or "internal_competition"
   applicationDeadline?: Date;
-  formFields: FormField[]; // dynamic form fields defined by admin
+  ageRestriction: AgeRestriction; // min and max age requirements
+  experienceRestriction: ExperienceRestriction; // minimum years of experience required
   isActive: boolean;
   createdAt: Date;
   updatedAt: Date;
@@ -115,7 +120,3 @@ export async function deleteVacancy(id: string | ObjectId): Promise<boolean> {
   return result.deletedCount > 0;
 }
 
-export async function getVacancyFormFields(vacancyId: string | ObjectId): Promise<FormField[]> {
-  const vacancy = await getVacancyById(vacancyId);
-  return vacancy?.formFields || [];
-}

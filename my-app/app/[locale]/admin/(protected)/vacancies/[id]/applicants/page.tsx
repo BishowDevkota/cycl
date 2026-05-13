@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { FormField } from "@/services/vacancy-service";
 
 interface ApplicantTableRow {
   id: string;
@@ -24,7 +23,7 @@ export default function ApplicantsPage({
   params,
 }: ApplicantsPageProps): React.JSX.Element {
   const [applicants, setApplicants] = useState<ApplicantTableRow[]>([]);
-  const [formFields, setFormFields] = useState<FormField[]>([]);
+  const [formFields, setFormFields] = useState<any[]>([]);
   const [vacancyTitle, setVacancyTitle] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -51,7 +50,7 @@ export default function ApplicantsPage({
         const data = await response.json();
         setApplicants(data.applications || []);
         setFormFields(data.formFields || []);
-        setVacancyTitle(data.vacancy?.title || "");
+        setVacancyTitle(data.vacancy?.titleEn || data.vacancy?.titleNp || "");
       } catch (err) {
         console.error(err);
         setError("An error occurred");

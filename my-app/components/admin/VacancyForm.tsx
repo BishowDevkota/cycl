@@ -2,8 +2,22 @@
 
 import { useState, FormEvent } from "react";
 import { useRouter } from "next/navigation";
-import { Vacancy, FormField } from "@/services/vacancy-service";
-import FormFieldBuilder from "./FormFieldBuilder";
+import { Vacancy, VacancyType } from "@/services/vacancy-service";
+
+type VacancyFormState = {
+  titleEn: string;
+  titleNp: string;
+  descriptionEn: string;
+  descriptionNp: string;
+  department: string;
+  location: string;
+  salary: string;
+  applicationDeadline: string;
+  vacancyType: VacancyType;
+  minAge: string;
+  maxAge: string;
+  minExperienceYears: string;
+};
 
 interface VacancyFormProps {
   initialData?: Vacancy;
@@ -18,21 +32,22 @@ export default function VacancyForm({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  const [formData, setFormData] = useState({
-    title: initialData?.title || "",
-    description: initialData?.description || "",
+  const [formData, setFormData] = useState<VacancyFormState>({
+    titleEn: (initialData as any)?.titleEn || "",
+    titleNp: (initialData as any)?.titleNp || "",
+    descriptionEn: (initialData as any)?.descriptionEn || "",
+    descriptionNp: (initialData as any)?.descriptionNp || "",
     department: initialData?.department || "",
     location: initialData?.location || "",
     salary: initialData?.salary || "",
-    experience: initialData?.experience || "",
     applicationDeadline: initialData?.applicationDeadline
       ? new Date(initialData.applicationDeadline).toISOString().split("T")[0]
       : "",
+    vacancyType: (initialData?.vacancyType || "open_competition") as VacancyType,
+    minAge: initialData?.ageRestriction?.minAge?.toString() || "",
+    maxAge: initialData?.ageRestriction?.maxAge?.toString() || "",
+    minExperienceYears: initialData?.experienceRestriction?.minYears?.toString() || "",
   });
-
-  const [formFields, setFormFields] = useState<FormField[]>(
-    initialData?.formFields || []
-  );
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -46,24 +61,42 @@ export default function VacancyForm({
     setError("");
     setLoading(true);
 
-    if (!formData.title || !formData.description || !formData.department || !formData.location) {
+    if (
+      !formData.titleEn ||
+      !formData.titleNp ||
+      !formData.descriptionEn ||
+      !formData.descriptionNp ||
+      !formData.department ||
+      !formData.location
+    ) {
       setError("Please fill in all required fields.");
-      setLoading(false);
-      return;
-    }
-    if (formFields.length === 0) {
-      setError("Please add at least one form field.");
       setLoading(false);
       return;
     }
 
     try {
       const payload = {
-        ...formData,
-        formFields,
+        titleEn: formData.titleEn,
+        titleNp: formData.titleNp,
+        descriptionEn: formData.descriptionEn,
+        descriptionNp: formData.descriptionNp,
+        department: formData.department,
+        location: formData.location,
+        salary: formData.salary || undefined,
+        vacancyType: formData.vacancyType,
         applicationDeadline: formData.applicationDeadline
           ? new Date(formData.applicationDeadline)
-          : null,
+          : undefined,
+        ageRestriction: {
+          minAge: formData.minAge ? Number.parseInt(formData.minAge, 10) : undefined,
+          maxAge: formData.maxAge ? Number.parseInt(formData.maxAge, 10) : undefined,
+        },
+        experienceRestriction: {
+          minYears: formData.minExperienceYears
+            ? Number.parseInt(formData.minExperienceYears, 10)
+            : undefined,
+        },
+        isActive: true,
       };
 
       const method = isEditing ? "PUT" : "POST";
@@ -134,11 +167,22 @@ export default function VacancyForm({
       <div className="grid w-full grid-cols-1 gap-4 md:grid-cols-2">
         <div className={fieldCard}>
           <label className="mb-3 block text-sm font-medium text-slate-800">
-            Job Title <span className="text-red-500">*</span>
+            Job Title (English) <span className="text-red-500">*</span>
           </label>
           <input
-            type="text" name="title" value={formData.title}
+            type="text" name="titleEn" value={formData.titleEn}
             onChange={handleInputChange} placeholder="e.g., Senior Developer"
+            className={inputCls}
+          />
+        </div>
+
+        <div className={fieldCard}>
+          <label className="mb-3 block text-sm font-medium text-slate-800">
+            Job Title (Nepali) <span className="text-red-500">*</span>
+          </label>
+          <input
+            type="text" name="titleNp" value={formData.titleNp}
+            onChange={handleInputChange} placeholder="e.g., वरिष्ठ विकासकर्ता"
             className={inputCls}
           />
         </div>
@@ -179,18 +223,6 @@ export default function VacancyForm({
 
         <div className={fieldCard}>
           <label className="mb-3 block text-sm font-medium text-slate-800">
-            Experience{" "}
-            <span className="text-xs font-normal text-gray-400">(optional)</span>
-          </label>
-          <input
-            type="text" name="experience" value={formData.experience}
-            onChange={handleInputChange} placeholder="e.g., 2+ years"
-            className={inputCls}
-          />
-        </div>
-
-        <div className={fieldCard}>
-          <label className="mb-3 block text-sm font-medium text-slate-800">
             Application Deadline{" "}
             <span className="text-xs font-normal text-gray-400">(optional)</span>
           </label>
@@ -212,10 +244,10 @@ export default function VacancyForm({
 
       <div className={`${fieldCard} w-full`}>
         <label className="mb-3 block text-sm font-medium text-slate-800">
-          Full Description <span className="text-red-500">*</span>
+          Full Description (English) <span className="text-red-500">*</span>
         </label>
         <textarea
-          name="description" value={formData.description}
+          name="descriptionEn" value={formData.descriptionEn}
           onChange={handleInputChange}
           placeholder="Describe responsibilities, requirements, and benefits…"
           rows={7}
@@ -223,15 +255,120 @@ export default function VacancyForm({
         />
       </div>
 
-      {/* ── Section: Form Fields ── */}
+      <div className={`${fieldCard} w-full`}>
+        <label className="mb-3 block text-sm font-medium text-slate-800">
+          Full Description (Nepali) <span className="text-red-500">*</span>
+        </label>
+        <textarea
+          name="descriptionNp" value={formData.descriptionNp}
+          onChange={handleInputChange}
+          placeholder="जिम्मेवारीहरू, आवश्यकताहरू र सुविधाहरू वर्णन गर्नुहोस्…"
+          rows={7}
+          className={inputCls + " resize-y"}
+        />
+      </div>
+
+      {/* ── Section: Vacancy Details ── */}
       <div className="w-full bg-white px-6 py-3 shadow-sm ring-1 ring-black/5 border-l-4 border-teal-mid">
         <p className="text-xs font-semibold uppercase tracking-[0.14em] text-teal-mid">
-          Application Form Fields
+          Vacancy Details
         </p>
       </div>
 
-      <div className="w-full bg-white p-5 shadow-sm ring-1 ring-black/5">
-        <FormFieldBuilder fields={formFields} onChange={setFormFields} />
+      <div className="grid w-full grid-cols-1 gap-4 md:grid-cols-2">
+        <div className={fieldCard}>
+          <label className="mb-3 block text-sm font-medium text-slate-800">
+            Vacancy Type <span className="text-red-500">*</span>
+          </label>
+          <select
+            name="vacancyType"
+            value={formData.vacancyType}
+            onChange={(e) =>
+              setFormData((prev) => ({
+                ...prev,
+                vacancyType: e.target.value as VacancyType,
+              }))
+            }
+            className={inputCls}
+          >
+            <option value="open_competition">Open Competition</option>
+            <option value="internal_competition">Internal Competition</option>
+          </select>
+        </div>
+
+        <div className={fieldCard}>
+          <label className="mb-3 block text-sm font-medium text-slate-800">
+            Application Deadline{" "}
+            <span className="text-xs font-normal text-gray-400">(optional)</span>
+          </label>
+          <input
+            type="date"
+            name="applicationDeadline"
+            value={formData.applicationDeadline}
+            onChange={handleInputChange}
+            className={inputCls}
+          />
+        </div>
+      </div>
+
+      {/* ── Section: Eligibility Restrictions ── */}
+      <div className="w-full bg-white px-6 py-3 shadow-sm ring-1 ring-black/5 border-l-4 border-teal-mid">
+        <p className="text-xs font-semibold uppercase tracking-[0.14em] text-teal-mid">
+          Eligibility Restrictions
+        </p>
+      </div>
+
+      <div className="grid w-full grid-cols-1 gap-4 md:grid-cols-3">
+        <div className={fieldCard}>
+          <label className="mb-3 block text-sm font-medium text-slate-800">
+            Minimum Age{" "}
+            <span className="text-xs font-normal text-gray-400">(optional)</span>
+          </label>
+          <input
+            type="number"
+            name="minAge"
+            value={formData.minAge}
+            onChange={handleInputChange}
+            placeholder="e.g., 18"
+            min="0"
+            max="100"
+            className={inputCls}
+          />
+        </div>
+
+        <div className={fieldCard}>
+          <label className="mb-3 block text-sm font-medium text-slate-800">
+            Maximum Age{" "}
+            <span className="text-xs font-normal text-gray-400">(optional)</span>
+          </label>
+          <input
+            type="number"
+            name="maxAge"
+            value={formData.maxAge}
+            onChange={handleInputChange}
+            placeholder="e.g., 65"
+            min="0"
+            max="100"
+            className={inputCls}
+          />
+        </div>
+
+        <div className={fieldCard}>
+          <label className="mb-3 block text-sm font-medium text-slate-800">
+            Minimum Experience (Years){" "}
+            <span className="text-xs font-normal text-gray-400">(optional)</span>
+          </label>
+          <input
+            type="number"
+            name="minExperienceYears"
+            value={formData.minExperienceYears}
+            onChange={handleInputChange}
+            placeholder="e.g., 3"
+            min="0"
+            max="60"
+            className={inputCls}
+          />
+        </div>
       </div>
 
       {/* ── Actions ── */}
@@ -241,11 +378,19 @@ export default function VacancyForm({
           onClick={() => {
             if (confirm("Clear all fields?")) {
               setFormData({
-                title: "", description: "", department: "",
-                location: "", salary: "", experience: "",
+                titleEn: "",
+                titleNp: "",
+                descriptionEn: "",
+                descriptionNp: "",
+                department: "",
+                location: "",
+                salary: "",
                 applicationDeadline: "",
-              });
-              setFormFields([]);
+                vacancyType: "open_competition",
+                minAge: "",
+                maxAge: "",
+                minExperienceYears: "",
+              } as any);
             }
           }}
           className="border border-teal-mid bg-white px-5 py-2 text-sm font-medium text-teal-mid transition hover:bg-teal-mid/8"

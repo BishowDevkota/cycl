@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 import Link from "next/link";
 import { Vacancy } from "@/services/vacancy-service";
 import DynamicForm from "@/components/DynamicForm";
@@ -19,6 +20,7 @@ export default function VacancyDetailPage({
 }: VacancyDetailPageProps): React.JSX.Element {
   const { t } = useVacancyLanguage();
   const router = useRouter();
+    const routeParams = useParams();
   const [vacancy, setVacancy] = useState<Vacancy | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -153,7 +155,9 @@ export default function VacancyDetailPage({
             </Link>
           </div>
 
-          <h1 className="mb-2 text-4xl font-bold text-[#123451]">{vacancy.title}</h1>
+          <h1 className="mb-2 text-4xl font-bold text-[#123451]">
+            {routeParams.locale === "en" ? vacancy.titleEn : vacancy.titleNp}
+          </h1>
           <p className="mb-4 text-xl text-gray-600">
             {vacancy.department} • {vacancy.location}
           </p>
@@ -175,27 +179,44 @@ export default function VacancyDetailPage({
               </span>
             )}
           </div>
+            <div className="mb-6 flex flex-wrap gap-3">
+              <span className="rounded-full bg-purple-100 px-4 py-2 font-medium text-purple-800">
+                {vacancy.vacancyType === "open_competition" ? "Open Competition" : "Internal Competition"}
+              </span>
+              {vacancy.ageRestriction?.minAge && (
+                <span className="rounded-full bg-yellow-100 px-4 py-2 font-medium text-yellow-800">
+                  Age: {vacancy.ageRestriction.minAge} - {vacancy.ageRestriction.maxAge || "No limit"}
+                </span>
+              )}
+              {vacancy.experienceRestriction?.minYears && (
+                <span className="rounded-full bg-indigo-100 px-4 py-2 font-medium text-indigo-800">
+                  Min Experience: {vacancy.experienceRestriction.minYears} years
+                </span>
+              )}
+              {vacancy.applicationDeadline && (
+                <span className="rounded-full bg-orange-100 px-4 py-2 font-medium text-orange-800">
+                  Deadline: {new Date(vacancy.applicationDeadline).toLocaleDateString()}
+                </span>
+              )}
+            </div>
 
           <h2 className="mb-3 text-xl font-semibold text-[#123451]">{t("vacancy.aboutRole")}</h2>
           <p className="whitespace-pre-wrap leading-relaxed text-gray-700">
-            {vacancy.description}
+            {routeParams.locale === "en" ? vacancy.descriptionEn : vacancy.descriptionNp}
           </p>
         </div>
 
         <div className="rounded-lg border border-[#d6e6ed] bg-white p-8 shadow-sm">
-          <h2 className="mb-6 text-2xl font-bold text-[#123451]">{t("vacancy.applyPosition")}</h2>
-
-          {vacancy.formFields && vacancy.formFields.length > 0 ? (
-            <DynamicForm
-              fields={vacancy.formFields}
-              onSubmit={handleSubmitApplication}
-              loading={submitting}
-            />
-          ) : (
-            <p className="text-gray-600">
-              यो पदका लागि कुनै आवेदन फाराम क्षेत्र कन्फिगर गरिएको छैन।
-            </p>
-          )}
+          <h2 className="mb-6 text-2xl font-bold text-[#123451]">Ready to Apply?</h2>
+          <p className="mb-6 text-gray-700">
+            Click the button below to proceed with your application. You'll be able to fill in all your details, education, experience, and upload required documents.
+          </p>
+          <Link
+            href={`/${routeParams.locale as string}/vacancies/${id}/apply`}
+            className="inline-block rounded-lg bg-[#0d837f] px-6 py-3 font-semibold text-white transition hover:bg-[#08716e]"
+          >
+            Start Application
+          </Link>
         </div>
       </div>
     </VacancyShell>

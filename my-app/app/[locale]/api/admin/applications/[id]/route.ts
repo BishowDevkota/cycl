@@ -82,7 +82,8 @@ export async function GET(
     return NextResponse.json(
       {
         application: applicationWithFileUrls,
-        vacancyTitle: vacancy.title,
+        vacancyTitleEn: vacancy.titleEn,
+        vacancyTitleNp: vacancy.titleNp,
       },
       { status: 200 },
     );

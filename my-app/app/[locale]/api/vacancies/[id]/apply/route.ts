@@ -9,7 +9,7 @@ import {
   getUserApplicationForVacancy,
   ApplicationResponse,
 } from "@/services/vacancy-application-service";
-import { generateApplicationThankYouPDF } from "@/lib/pdf";
+import { generateApplicationAdmitCardPDF } from "@/lib/pdf";
 import { uploadPDFToCloudinary, uploadApplicationFileToCloudinary } from "@/lib/cloudinary";
 
 interface RouteParams {
@@ -88,15 +88,68 @@ export async function POST(
       );
     }
 
-    // Get form data
     const formData = await request.formData();
-    const responses: ApplicationResponse[] = [];
-    const uploadedFiles: { publicId: string; fieldId: string }[] = [];
+      const responses: ApplicationResponse[] = [];
+      const uploadedFiles: { publicId: string; fieldId: string }[] = [];
+    
+      // Validate eligibility restrictions
+      const applicantPersonal = JSON.parse(formData.get("personalDetails")?.toString() || "{}");
+    
+      // Check age restrictions
+      if (vacancy.ageRestriction?.minAge || vacancy.ageRestriction?.maxAge) {
+        const dobAD = applicantPersonal.dobAD;
+        if (dobAD) {
+          const birthDate = new Date(dobAD);
+          const today = new Date();
+          let age = today.getFullYear() - birthDate.getFullYear();
+          const monthDiff = today.getMonth() - birthDate.getMonth();
+        
+          if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+            age--;
+          }
+        
+          if (vacancy.ageRestriction.minAge && age < vacancy.ageRestriction.minAge) {
+            return NextResponse.json(
+              { error: `You must be at least ${vacancy.ageRestriction.minAge} years old to apply for this position` },
+              { status: 400 },
+            );
+          }
+        
+          if (vacancy.ageRestriction.maxAge && age > vacancy.ageRestriction.maxAge) {
+            return NextResponse.json(
+              { error: `You must be no older than ${vacancy.ageRestriction.maxAge} years old to apply for this position` },
+              { status: 400 },
+            );
+          }
+        }
+      }
+    
+      // Check experience restrictions
+      if (vacancy.experienceRestriction?.minYears) {
+        const experience = JSON.parse(formData.get("experience")?.toString() || "[]");
+        let totalYears = 0;
+      
+        for (const exp of experience) {
+          if (exp.serviceFrom && exp.serviceTo) {
+            const fromDate = new Date(exp.serviceFrom);
+            const toDate = new Date(exp.serviceTo);
+            const yearsInJob = (toDate.getTime() - fromDate.getTime()) / (1000 * 60 * 60 * 24 * 365.25);
+            totalYears += yearsInJob;
+          }
+        }
+      
+        if (totalYears < vacancy.experienceRestriction.minYears) {
+          return NextResponse.json(
+            { error: `You must have at least ${vacancy.experienceRestriction.minYears} years of experience to apply for this position` },
+            { status: 400 },
+          );
+        }
+      }
 
     // If the client sent our structured application payload (JSON parts + files), handle that first
     if (formData.has("personalDetails") || formData.has("submitData")) {
       try {
-        const personal = JSON.parse(formData.get("personalDetails")?.toString() || "{}");
+        const structuredPersonal = JSON.parse(formData.get("personalDetails")?.toString() || "{}");
         const contact = JSON.parse(formData.get("contactDetails")?.toString() || "{}");
         const education = JSON.parse(formData.get("education")?.toString() || "[]");
         const experience = JSON.parse(formData.get("experience")?.toString() || "[]");
@@ -106,7 +159,7 @@ export async function POST(
           fieldId: "personalDetails",
           fieldLabel: "Personal Details",
           fieldType: "text",
-          value: JSON.stringify(personal),
+          value: JSON.stringify(structuredPersonal),
         });
 
         responses.push({
@@ -116,6 +169,7 @@ export async function POST(
           value: JSON.stringify(contact),
         });
 
+        // Store education entries as submitted (no document attachments)
         responses.push({
           fieldId: "education",
           fieldLabel: "Education",
@@ -184,70 +238,11 @@ export async function POST(
         return NextResponse.json({ error: "Invalid application data" }, { status: 400 });
       }
     } else {
-      // Process form fields (legacy vacancy.formFields flow)
-      for (const field of vacancy.formFields) {
-        const fieldValue = formData.get(field.id);
-
-        if (field.required && !fieldValue) {
-          return NextResponse.json(
-            { error: `${field.label} is required` },
-            { status: 400 },
-          );
-        }
-
-        if (field.type === "pdf") {
-          // Handle PDF file upload
-          const file = formData.get(field.id) as File | null;
-          if (file && file.size > 0) {
-            try {
-              const buffer = await file.arrayBuffer();
-              const { public_id, secure_url } = await uploadApplicationFileToCloudinary(
-                Buffer.from(buffer),
-                file.name,
-                "pdf",
-                vacancyId,
-              );
-
-              responses.push({
-                fieldId: field.id,
-                fieldLabel: field.label,
-                fieldType: "pdf",
-                value: public_id,
-                fileUrl: secure_url,
-              });
-
-              uploadedFiles.push({ publicId: public_id, fieldId: field.id });
-            } catch (error) {
-              console.error("Failed to upload PDF:", error);
-              return NextResponse.json(
-                { error: `Failed to upload ${field.label}` },
-                { status: 500 },
-              );
-            }
-          }
-        } else {
-          // Handle other field types
-          if (fieldValue) {
-            if (field.type === "checkbox") {
-              // Checkbox values come as array or single value
-              const checkboxValues = formData.getAll(field.id) as string[];
-              responses.push({
-                fieldId: field.id,
-                fieldLabel: field.label,
-                fieldType: field.type,
-                value: checkboxValues.length > 1 ? checkboxValues : fieldValue.toString(),
-              });
-            } else {
-              responses.push({
-                fieldId: field.id,
-                fieldLabel: field.label,
-                fieldType: field.type,
-                value: fieldValue.toString(),
-              });
-            }
-          }
-        }
-      }
+      // Legacy dynamic formFields are no longer supported. Expect structured payload.
+      return NextResponse.json(
+        { error: "Unsupported application format. Please use the standard application form." },
+        { status: 400 },
+      );
     }
 
     // Create application record
@@ -261,19 +256,53 @@ export async function POST(
       status: "submitted",
     });
 
-    // Generate thank you PDF
+    const getResponseValue = (fieldId: string): string | undefined => {
+      const response = responses.find((item) => item.fieldId === fieldId);
+      if (!response || typeof response.value !== "string") {
+        return undefined;
+      }
+
+      return response.value;
+    };
+
+    const parseJsonObject = (value?: string): Record<string, any> => {
+      if (!value) {
+        return {};
+      }
+
+      try {
+        return JSON.parse(value);
+      } catch {
+        return {};
+      }
+    };
+
+    // Generate admit card PDF
     try {
-      const pdfBuffer = await generateApplicationThankYouPDF({
-        fullName: user.fullName,
-        email: user.email,
-        phone: user.phone,
-        jobTitle: vacancy.title,
+      const personalDetails = parseJsonObject(getResponseValue("personalDetails"));
+      const contactDetails = parseJsonObject(getResponseValue("contactDetails"));
+      const photoResponse = responses.find((item) => item.fieldId === "photo");
+
+      const candidateName = [personalDetails.firstName, personalDetails.lastName]
+        .filter((value: unknown) => typeof value === "string" && value.trim().length > 0)
+        .join(" ");
+
+      const pdfBuffer = await generateApplicationAdmitCardPDF({
+        applicationId: application._id?.toString() || "",
+        fullName: candidateName || user.fullName,
+        email: contactDetails.email || user.email,
+        phone: contactDetails.mobile || user.phone,
+        jobTitle: vacancy.titleEn || vacancy.titleNp || "",
+        appliedDate: application.createdAt,
+        citizenshipNumber: personalDetails.citizenshipNumber,
+        dobAD: personalDetails.dobAD,
+        photoUrl: photoResponse?.fileUrl,
       });
 
       const { public_id } = await uploadPDFToCloudinary(
         pdfBuffer,
-        `thank-you-${application._id?.toString()}.pdf`,
-        "application-thank-you",
+        `admit-card-${application._id?.toString()}.pdf`,
+        "application-admit-cards",
       );
 
       // Update application with PDF reference
@@ -282,8 +311,8 @@ export async function POST(
         { pdfCloudinaryPublicId: public_id },
       );
     } catch (error) {
-      console.error("Failed to generate or upload thank you PDF:", error);
-      // Continue anyway - application is created, PDF generation is just bonus
+      console.error("Failed to generate or upload admit card PDF:", error);
+      // Continue anyway - application is created even if admit card generation fails
     }
 
     return NextResponse.json(

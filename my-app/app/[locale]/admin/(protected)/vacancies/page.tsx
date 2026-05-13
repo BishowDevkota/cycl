@@ -1,10 +1,13 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useParams } from "next/navigation";
 import Link from "next/link";
 import { Vacancy } from "@/services/vacancy-service";
 
 export default function AdminVacanciesPage(): React.JSX.Element {
+  const params = useParams();
+  const locale = typeof params.locale === "string" ? params.locale : "ne";
   const [vacancies, setVacancies] = useState<Vacancy[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -96,7 +99,7 @@ export default function AdminVacanciesPage(): React.JSX.Element {
             >
               <div className="mb-3 flex items-start justify-between border-l-4 border-[#f5ad4a] pl-4">
                 <div className="flex-1">
-                  <h3 className="text-xl font-semibold text-[#123451]">{vacancy.title}</h3>
+                  <h3 className="text-xl font-semibold text-[#123451]">{locale === "en" ? vacancy.titleEn : vacancy.titleNp}</h3>
                   <p className="text-slate-600">
                     {vacancy.department} • {vacancy.location}
                   </p>
@@ -113,7 +116,7 @@ export default function AdminVacanciesPage(): React.JSX.Element {
               </div>
 
               <p className="mb-4 line-clamp-2 text-slate-700">
-                {vacancy.description}
+                {locale === "en" ? vacancy.descriptionEn : vacancy.descriptionNp}
               </p>
 
               <div className="flex justify-end gap-2">

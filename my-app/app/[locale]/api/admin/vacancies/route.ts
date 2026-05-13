@@ -1,11 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { verifyAdminSession, ADMIN_SESSION_COOKIE } from "@/lib/admin-session";
-import {
-  createVacancy,
-  getAllVacancies,
-  FormField,
-} from "@/services/vacancy-service";
+import { createVacancy, getAllVacancies, VacancyType } from "@/services/vacancy-service";
 import { ObjectId } from "mongodb";
 
 export async function GET(): Promise<NextResponse> {
@@ -78,59 +74,59 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
     const body = await request.json();
     const {
-      title,
-      description,
+      titleEn,
+      titleNp,
+      descriptionEn,
+      descriptionNp,
       department,
       location,
       salary,
-      experience,
+      vacancyType,
       applicationDeadline,
-      formFields,
+      ageRestriction,
+      experienceRestriction,
     } = body;
 
     // Validate required fields
-    if (!title || !description || !department || !location) {
+    if (!titleEn || !titleNp || !descriptionEn || !descriptionNp || !department || !location || !vacancyType) {
       return NextResponse.json(
         { error: "Missing required fields" },
         { status: 400 },
       );
     }
 
-    // Validate form fields
-    if (!Array.isArray(formFields)) {
+    // Validate vacancy type
+    if (!["open_competition", "internal_competition"].includes(vacancyType)) {
       return NextResponse.json(
-        { error: "formFields must be an array" },
+        { error: "Invalid vacancy type" },
         { status: 400 },
       );
     }
 
-    // Validate each form field
-    for (const field of formFields) {
-      if (!field.id || !field.label || !field.type) {
-        return NextResponse.json(
-          { error: "Each form field must have id, label, and type" },
-          { status: 400 },
-        );
-      }
-
-      const validTypes = ["text", "email", "phone", "textarea", "select", "checkbox", "pdf"];
-      if (!validTypes.includes(field.type)) {
-        return NextResponse.json(
-          { error: `Invalid field type: ${field.type}` },
-          { status: 400 },
-        );
+    // Validate age restrictions
+    if (ageRestriction) {
+      if (ageRestriction.minAge && ageRestriction.maxAge) {
+        if (ageRestriction.minAge > ageRestriction.maxAge) {
+          return NextResponse.json(
+            { error: "Minimum age cannot be greater than maximum age" },
+            { status: 400 },
+          );
+        }
       }
     }
 
     const vacancy = await createVacancy({
-      title,
-      description,
+      titleEn,
+      titleNp,
+      descriptionEn,
+      descriptionNp,
       department,
       location,
       salary: salary || undefined,
-      experience: experience || undefined,
+      vacancyType: vacancyType as VacancyType,
       applicationDeadline: applicationDeadline ? new Date(applicationDeadline) : undefined,
-      formFields: formFields as FormField[],
+      ageRestriction: ageRestriction || {},
+      experienceRestriction: experienceRestriction || {},
       isActive: true,
       createdBy: new ObjectId(session.sub),
     });

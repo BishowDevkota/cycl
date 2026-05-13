@@ -1,161 +1,96 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { useVacancyLanguage } from "@/components/vacancy/VacancyLanguageContext";
+import { Vacancy } from "@/services/vacancy-service";
 
 type CompetitionTab = "open" | "internal";
 
 interface VacancyRow {
   id: string;
-  advertisementNo: string;
+  title: string;
   position: string;
-  publishedDateBS: string;
   publishedDateAD: string;
-  deadlineBS: string;
-  deadlineAD: string;
-  doubleFeeDeadlineBS: string;
-  doubleFeeDeadlineAD: string;
+  deadlineAD?: string;
   type: string;
-  inclusive: string;
-  numberOfPosts: number;
   competitionType: CompetitionTab;
-}
-
-const VACANCIES: VacancyRow[] = [
-  {
-    id: "1",
-    advertisementNo: "01/2082/083",
-    position: "सहायक/उपप्रबन्धक (वित्त विभाग प्रमुख)",
-    publishedDateBS: "2083-01-14",
-    publishedDateAD: "27/04/2026",
-    deadlineBS: "2083-01-28",
-    deadlineAD: "11/05/2026",
-    doubleFeeDeadlineBS: "2083-01-28",
-    doubleFeeDeadlineAD: "11/05/2026",
-    type: "खुला",
-    inclusive: "खुला",
-    numberOfPosts: 1,
-    competitionType: "open",
-  },
-  {
-    id: "2",
-    advertisementNo: "02/2082/083",
-    position: "सहायक प्रबन्धक (स्थानान्तरण तथा सुपरिवेक्षण विभाग प्रमुख)",
-    publishedDateBS: "2083-01-14",
-    publishedDateAD: "27/04/2026",
-    deadlineBS: "2083-01-28",
-    deadlineAD: "11/05/2026",
-    doubleFeeDeadlineBS: "2083-01-28",
-    doubleFeeDeadlineAD: "11/05/2026",
-    type: "खुला",
-    inclusive: "खुला",
-    numberOfPosts: 1,
-    competitionType: "open",
-  },
-  {
-    id: "3",
-    advertisementNo: "03/2082/083",
-    position: "सहायक प्रबन्धक (योजना तथा अनुसन्धान विभाग प्रमुख)",
-    publishedDateBS: "2083-01-14",
-    publishedDateAD: "27/04/2026",
-    deadlineBS: "2083-01-28",
-    deadlineAD: "11/05/2026",
-    doubleFeeDeadlineBS: "2083-01-28",
-    doubleFeeDeadlineAD: "11/05/2026",
-    type: "खुला",
-    inclusive: "खुला",
-    numberOfPosts: 1,
-    competitionType: "open",
-  },
-  {
-    id: "4",
-    advertisementNo: "04/2082/083",
-    position: "वरिष्ठ अधिकृत (विभाग/प्रदेश/क्लस्टर)",
-    publishedDateBS: "2083-01-13",
-    publishedDateAD: "26/04/2026",
-    deadlineBS: "2083-01-27",
-    deadlineAD: "10/05/2026",
-    doubleFeeDeadlineBS: "2083-01-27",
-    doubleFeeDeadlineAD: "10/05/2026",
-    type: "खुला",
-    inclusive: "खुला",
-    numberOfPosts: 2,
-    competitionType: "open",
-  },
-  {
-    id: "5",
-    advertisementNo: "05/2082/083",
-    position: "अधिकृत (प्रदेश/क्लस्टर/शाखा प्रमुख)",
-    publishedDateBS: "2083-01-14",
-    publishedDateAD: "27/04/2026",
-    deadlineBS: "2083-01-28",
-    deadlineAD: "11/05/2026",
-    doubleFeeDeadlineBS: "2083-01-28",
-    doubleFeeDeadlineAD: "11/05/2026",
-    type: "खुला",
-    inclusive: "खुला",
-    numberOfPosts: 5,
-    competitionType: "open",
-  },
-  {
-    id: "6",
-    advertisementNo: "06/2082/083",
-    position: "कनिष्ठ अधिकृत (शाखा प्रमुख)",
-    publishedDateBS: "2083-01-14",
-    publishedDateAD: "27/04/2026",
-    deadlineBS: "2083-01-28",
-    deadlineAD: "11/05/2026",
-    doubleFeeDeadlineBS: "2083-01-28",
-    doubleFeeDeadlineAD: "11/05/2026",
-    type: "खुला",
-    inclusive: "खुला",
-    numberOfPosts: 10,
-    competitionType: "open",
-  },
-];
-
-function DateCell({ bs, ad }: { bs: string; ad: string }) {
-  return (
-    <span className="whitespace-nowrap text-slate-600">
-      {bs}
-      <br />
-      <span className="text-slate-400 text-xs">({ad})</span>
-    </span>
-  );
 }
 
 export default function VacanciesPage(): React.JSX.Element {
   const { t } = useVacancyLanguage();
+  const params = useParams();
   const [activeTab, setActiveTab] = useState<CompetitionTab>("open");
-  const [filterAdNo, setFilterAdNo] = useState("");
+  const [vacancies, setVacancies] = useState<Vacancy[]>([]);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [filterPosition, setFilterPosition] = useState("");
   const [filterPublished, setFilterPublished] = useState("");
   const [filterDeadline, setFilterDeadline] = useState("");
-  const [filterDoubleFee, setFilterDoubleFee] = useState("");
   const [filterType, setFilterType] = useState("");
-
-  const tabVacancies = VACANCIES.filter((v) => v.competitionType === activeTab);
-
-  const filtered = tabVacancies.filter(
-    (v) =>
-      v.advertisementNo.toLowerCase().includes(filterAdNo.toLowerCase()) &&
-      v.position.toLowerCase().includes(filterPosition.toLowerCase()) &&
-      (v.publishedDateBS + v.publishedDateAD)
-        .toLowerCase()
-        .includes(filterPublished.toLowerCase()) &&
-      (v.deadlineBS + v.deadlineAD)
-        .toLowerCase()
-        .includes(filterDeadline.toLowerCase()) &&
-      (v.doubleFeeDeadlineBS + v.doubleFeeDeadlineAD)
-        .toLowerCase()
-        .includes(filterDoubleFee.toLowerCase()) &&
-      v.type.toLowerCase().includes(filterType.toLowerCase())
-  );
-
-  const params = useParams();
   const router = useRouter();
+
+  useEffect(() => {
+    let mounted = true;
+    (async () => {
+      try {
+        const res = await fetch("/api/vacancies");
+        if (!res.ok) return;
+        const data: Vacancy[] = await res.json();
+        if (mounted) setVacancies(data);
+      } catch (e) {
+        console.error("Failed to load vacancies", e);
+      }
+    })();
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
+  useEffect(() => {
+    const checkSession = async () => {
+      try {
+        const response = await fetch("/api/auth/me");
+        setIsLoggedIn(response.ok);
+      } catch {
+        setIsLoggedIn(false);
+      }
+    };
+
+    void checkSession();
+  }, []);
+
+  const locale = typeof params.locale === "string" ? params.locale : "ne";
+
+  const tabVacancies: VacancyRow[] = vacancies
+    .map((vacancy) => ({
+      id: String(vacancy._id || ""),
+      title: locale === "en" ? vacancy.titleEn : vacancy.titleNp,
+      position: locale === "en" ? vacancy.titleEn : vacancy.titleNp,
+      publishedDateAD: new Date(vacancy.createdAt).toLocaleDateString(),
+      deadlineAD: vacancy.applicationDeadline
+        ? new Date(vacancy.applicationDeadline).toLocaleDateString()
+        : undefined,
+      type: vacancy.vacancyType === "open_competition" ? t("vacancy.openCompetition") : t("vacancy.internalCompetition"),
+      competitionType: vacancy.vacancyType === "open_competition" ? "open" : "internal",
+    } as VacancyRow))
+    .filter((vacancy) => vacancy.competitionType === activeTab);
+
+  const filtered = tabVacancies.filter((vacancy) => {
+    if (filterPosition && !vacancy.position.toLowerCase().includes(filterPosition.toLowerCase())) {
+      return false;
+    }
+    if (filterPublished && !vacancy.publishedDateAD.toLowerCase().includes(filterPublished.toLowerCase())) {
+      return false;
+    }
+    if (filterDeadline && !(vacancy.deadlineAD || "").toLowerCase().includes(filterDeadline.toLowerCase())) {
+      return false;
+    }
+    if (filterType && !vacancy.type.toLowerCase().includes(filterType.toLowerCase())) {
+      return false;
+    }
+    return true;
+  });
 
   return (
     <section className="rounded-lg border border-[#d6e6ed] bg-white shadow-sm">
@@ -186,21 +121,14 @@ export default function VacanciesPage(): React.JSX.Element {
           <table className="min-w-362.5 w-full border-collapse text-sm">
             <thead>
               <tr className="border-b border-[#d6e6ed] bg-white text-left">
-                <th className="px-4 py-3 font-semibold text-slate-700 whitespace-nowrap">{t("vacancy.advertisementNo")}</th>
                 <th className="px-4 py-3 font-semibold text-slate-700">{t("vacancy.position")}</th>
                 <th className="px-4 py-3 font-semibold text-slate-700 whitespace-nowrap">{t("vacancy.publishedDate")}</th>
                 <th className="px-4 py-3 font-semibold text-slate-700 whitespace-nowrap">{t("vacancy.deadline")}</th>
-                <th className="px-4 py-3 font-semibold text-slate-700 whitespace-nowrap">{t("vacancy.doubleFeeDeadline")}</th>
                 <th className="px-4 py-3 font-semibold text-slate-700">{t("vacancy.type")}</th>
-                <th className="px-4 py-3 font-semibold text-slate-700 whitespace-nowrap">{t("vacancy.openInclusive")}</th>
-                <th className="px-4 py-3 font-semibold text-slate-700 whitespace-nowrap">{t("vacancy.noOfPosts")}</th>
                 <th className="sticky right-0 z-10 bg-white px-4 py-3 font-semibold text-slate-700 shadow-[-8px_0_12px_rgba(255,255,255,0.92)]">{t("vacancy.action")}</th>
               </tr>
 
               <tr className="border-b border-[#d6e6ed] bg-[#fafafa]">
-                <td className="px-3 py-2">
-                  <input type="text" placeholder={t("vacancy.filter")} value={filterAdNo} onChange={(e) => setFilterAdNo(e.target.value)} className="w-full border border-[#cfdfe6] px-2 py-1 text-xs outline-none focus:border-[#0d837f]" />
-                </td>
                 <td className="px-3 py-2">
                   <input type="text" placeholder={t("vacancy.filter")} value={filterPosition} onChange={(e) => setFilterPosition(e.target.value)} className="w-full border border-[#cfdfe6] px-2 py-1 text-xs outline-none focus:border-[#0d837f]" />
                 </td>
@@ -211,14 +139,7 @@ export default function VacanciesPage(): React.JSX.Element {
                   <input type="text" placeholder={t("vacancy.filter")} value={filterDeadline} onChange={(e) => setFilterDeadline(e.target.value)} className="w-full border border-[#cfdfe6] px-2 py-1 text-xs outline-none focus:border-[#0d837f]" />
                 </td>
                 <td className="px-3 py-2">
-                  <input type="text" placeholder={t("vacancy.filter")} value={filterDoubleFee} onChange={(e) => setFilterDoubleFee(e.target.value)} className="w-full border border-[#cfdfe6] px-2 py-1 text-xs outline-none focus:border-[#0d837f]" />
-                </td>
-                <td className="px-3 py-2">
                   <input type="text" placeholder={t("vacancy.filter")} value={filterType} onChange={(e) => setFilterType(e.target.value)} className="w-20 border border-[#cfdfe6] px-2 py-1 text-xs outline-none focus:border-[#0d837f]" />
-                </td>
-                <td className="px-3 py-2" />
-                <td className="px-3 py-2">
-                  <input type="text" placeholder={t("vacancy.filter")} className="w-full border border-[#cfdfe6] px-2 py-1 text-xs outline-none focus:border-[#0d837f]" readOnly />
                 </td>
                 <td className="sticky right-0 z-10 bg-[#fafafa] px-3 py-2 shadow-[-8px_0_12px_rgba(250,250,250,0.92)]" />
               </tr>
@@ -226,66 +147,58 @@ export default function VacanciesPage(): React.JSX.Element {
 
             <tbody>
               {
-                (filtered.length === 0)
+                (tabVacancies.length === 0)
                   ? (
                     <tr>
-                      <td colSpan={9} className="px-6 py-10 text-center text-slate-500">
+                      <td colSpan={5} className="px-6 py-10 text-center text-slate-500">
                         {t("vacancy.noVacancies")}
                       </td>
                     </tr>
                   )
-                  : filtered.map((v) => (
-                    <tr key={v.id} className="border-b border-[#eef4f7] transition hover:bg-[#f9fcfe]">
-                      <td className="px-4 py-4 text-slate-700 whitespace-nowrap">{v.advertisementNo}</td>
-                      <td className="px-4 py-4 font-medium text-[#123451]">{v.position}</td>
-                      <td className="px-4 py-4">
-                        <DateCell bs={v.publishedDateBS} ad={v.publishedDateAD} />
-                      </td>
-                      <td className="px-4 py-4">
-                        <DateCell bs={v.deadlineBS} ad={v.deadlineAD} />
-                      </td>
-                      <td className="px-4 py-4">
-                        <DateCell bs={v.doubleFeeDeadlineBS} ad={v.doubleFeeDeadlineAD} />
-                      </td>
-                      <td className="px-4 py-4 text-slate-600">{v.type}</td>
-                      <td className="px-4 py-4 text-slate-600">{v.inclusive}</td>
-                      <td className="px-4 py-4 text-center font-medium text-slate-700">{v.numberOfPosts}</td>
-                      <td className="sticky right-0 z-10 bg-white px-4 py-4 shadow-[-8px_0_12px_rgba(255,255,255,0.92)]">
-                        <div className="flex min-w-35 flex-col gap-2">
-                          <button
-                            onClick={async () => {
-                              const id = v.id;
-                              if (!id) return;
+                  : filtered.map((vacancy) => (
+                      <tr key={vacancy.id} className="border-b border-[#eef4f7] transition hover:bg-[#f9fcfe]">
+                        <td className="px-4 py-4 font-medium text-[#123451]">{vacancy.title}</td>
+                        <td className="px-4 py-4">{vacancy.publishedDateAD}</td>
+                        <td className="px-4 py-4">{vacancy.deadlineAD || "-"}</td>
+                        <td className="px-4 py-4 text-slate-600">{vacancy.type}</td>
+                        <td className="sticky right-0 z-10 bg-white px-4 py-4 shadow-[-8px_0_12px_rgba(255,255,255,0.92)]">
+                          <div className="flex min-w-35 flex-col gap-2">
+                            {isLoggedIn ? (
+                              <Link
+                                href={`/${locale}/vacancies/${vacancy.id}/apply`}
+                                className="inline-flex items-center justify-center rounded bg-[#0d837f] px-4 py-1.5 text-xs font-semibold text-white transition hover:bg-[#08716e] whitespace-nowrap"
+                              >
+                                Apply Now
+                              </Link>
+                            ) : (
+                              <button
+                                onClick={() => {
+                                  const next = `/vacancies/${vacancy.id}/apply`;
+                                  router.push(`/${locale}/login?next=${encodeURIComponent(next)}`);
+                                }}
+                                className="inline-flex items-center justify-center rounded bg-[#0d837f] px-4 py-1.5 text-xs font-semibold text-white transition hover:bg-[#08716e] whitespace-nowrap"
+                              >
+                                {t("vacancy.loginToApply")}
+                              </button>
+                            )}
 
-                              try {
-                                const res = await fetch("/api/auth/me");
-                                if (res.ok) {
-                                  router.push(`/${params.locale}/vacancies/${id}/apply`);
-                                } else {
-                                  const next = `/vacancies/${id}/apply`;
-                                  router.push(`/${params.locale}/login?next=${encodeURIComponent(next)}`);
+                            <button
+                              onClick={() => {
+                                const next = `/vacancies/${vacancy.id}`;
+                                if (isLoggedIn) {
+                                  router.push(`/${locale}/vacancies/${vacancy.id}`);
+                                  return;
                                 }
-                              } catch (e) {
-                                console.error(e);
-                                const next = `/vacancies/${id}/apply`;
-                                router.push(`/${params.locale}/login?next=${encodeURIComponent(next)}`);
-                              }
-                            }}
-                            className="inline-flex items-center justify-center rounded bg-[#0d837f] px-4 py-1.5 text-xs font-semibold text-white transition hover:bg-[#08716e] whitespace-nowrap"
-                          >
-                            {t("vacancy.loginToApply")}
-                          </button>
-
-                          <Link
-                            href={`/${params.locale}/vacancies/${v.id}`}
-                            className="inline-flex items-center justify-center rounded bg-[#0a6b68] px-4 py-1.5 text-xs font-semibold text-white transition hover:bg-[#085856] whitespace-nowrap"
-                          >
-                            {t("vacancy.viewDetails")}
-                          </Link>
-                        </div>
-                      </td>
-                    </tr>
-                  ))
+                                router.push(`/${locale}/login?next=${encodeURIComponent(next)}`);
+                              }}
+                              className="inline-flex items-center justify-center rounded bg-[#0a6b68] px-4 py-1.5 text-xs font-semibold text-white transition hover:bg-[#085856] whitespace-nowrap"
+                            >
+                              {t("vacancy.viewDetails")}
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))
               }
             </tbody>
           </table>

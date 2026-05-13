@@ -89,15 +89,20 @@ export default function SubmitStep({
         body: payload,
       });
 
+      const data = await response.json();
+
       if (!response.ok) {
-        const data = await response.json();
         setError(data.error || "Failed to submit application");
         setLoading(false);
         return;
       }
 
       // Success - redirect to dashboard
-      router.push(`/${params.locale}/dashboard/applications`);
+      const submittedId = data.applicationId;
+      const target = submittedId
+        ? `/${params.locale}/dashboard/applications?applicationId=${submittedId}`
+        : `/${params.locale}/dashboard/applications`;
+      router.push(target);
     } catch (err) {
       console.error("Submit error:", err);
       setError("An error occurred while submitting");

@@ -86,11 +86,13 @@ export async function GET(
       {
         vacancyId,
         vacancy: {
-          title: vacancy.title,
-          description: vacancy.description,
+          titleEn: vacancy.titleEn,
+          titleNp: vacancy.titleNp,
+          descriptionEn: vacancy.descriptionEn,
+          descriptionNp: vacancy.descriptionNp,
         },
         totalApplications: applications.length,
-        formFields: vacancy.formFields,
+        formFields: [],
         applications: tableData,
       },
       { status: 200 },

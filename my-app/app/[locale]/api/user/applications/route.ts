@@ -4,6 +4,18 @@ import { verifyUserSession, USER_SESSION_COOKIE } from "@/lib/user-session";
 import { getApplicationsByUserId } from "@/services/vacancy-application-service";
 import { getVacancyById } from "@/services/vacancy-service";
 
+function parseJsonObject(value: unknown): Record<string, any> {
+  if (typeof value !== "string") {
+    return {};
+  }
+
+  try {
+    return JSON.parse(value);
+  } catch {
+    return {};
+  }
+}
+
 export async function GET(_request: NextRequest): Promise<NextResponse> {
   try {
     // Verify user is logged in
@@ -32,17 +44,41 @@ export async function GET(_request: NextRequest): Promise<NextResponse> {
     const enrichedApplications = await Promise.all(
       applications.map(async (app) => {
         const vacancy = await getVacancyById(app.vacancyId);
+        const personalDetailsResponse = app.responses.find(
+          (response) => response.fieldId === "personalDetails",
+        );
+        const contactDetailsResponse = app.responses.find(
+          (response) => response.fieldId === "contactDetails",
+        );
+        const photoResponse = app.responses.find((response) => response.fieldId === "photo");
+
+        const personalDetails = parseJsonObject(personalDetailsResponse?.value);
+        const contactDetails = parseJsonObject(contactDetailsResponse?.value);
+
+        const fullName = [personalDetails.firstName, personalDetails.lastName]
+          .filter((value: unknown) => typeof value === "string" && value.trim().length > 0)
+          .join(" ");
+
         return {
           _id: app._id?.toString(),
           vacancyId: app.vacancyId.toString(),
-          vacancyTitle: vacancy?.title || "Deleted Job",
+          vacancyTitle: vacancy?.titleEn || vacancy?.titleNp || "Deleted Job",
           status: app.status,
           createdAt: app.createdAt,
+          hasAdmitCardPdf: Boolean(app.pdfCloudinaryPublicId),
+          admitCard: {
+            fullName: fullName || app.userFullName,
+            email: contactDetails.email || app.userEmail,
+            phone: contactDetails.mobile || app.userPhone,
+            citizenshipNumber: personalDetails.citizenshipNumber || "",
+            dobAD: personalDetails.dobAD || "",
+            photoUrl: photoResponse?.fileUrl || "",
+          },
         };
       }),
     );
 
-    return NextResponse.json(enrichedApplications, { status: 200 });
+    return NextResponse.json({ applications: enrichedApplications }, { status: 200 });
   } catch (error) {
     console.error("Error fetching user applications:", error);
     return NextResponse.json(

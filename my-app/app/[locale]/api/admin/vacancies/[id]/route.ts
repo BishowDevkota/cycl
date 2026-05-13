@@ -6,7 +6,6 @@ import {
   getVacancyById,
   updateVacancy,
   deleteVacancy,
-  FormField,
 } from "@/services/vacancy-service";
 import {
   getApplicationsByVacancyId,
@@ -120,56 +119,45 @@ export async function PUT(
 
     const body = await request.json();
     const {
-      title,
-      description,
+      titleEn,
+      titleNp,
+      descriptionEn,
+      descriptionNp,
       department,
       location,
       salary,
-      experience,
+      vacancyType,
       applicationDeadline,
-      formFields,
+      ageRestriction,
+      experienceRestriction,
       isActive,
     } = body;
 
-    // Validate form fields if provided
-    if (formFields && !Array.isArray(formFields)) {
-      return NextResponse.json(
-        { error: "formFields must be an array" },
-        { status: 400 },
-      );
-    }
-
-    if (formFields) {
-      for (const field of formFields) {
-        if (!field.id || !field.label || !field.type) {
+    // Validate age restrictions
+    if (ageRestriction) {
+      if (ageRestriction.minAge && ageRestriction.maxAge) {
+        if (ageRestriction.minAge > ageRestriction.maxAge) {
           return NextResponse.json(
-            { error: "Each form field must have id, label, and type" },
+            { error: "Minimum age cannot be greater than maximum age" },
             { status: 400 },
           );
         }
       }
     }
 
-    const updates: {
-      title?: string;
-      description?: string;
-      department?: string;
-      location?: string;
-      salary?: string;
-      experience?: string;
-      applicationDeadline?: Date;
-      formFields?: FormField[];
-      isActive?: boolean;
-    } = {};
+    const updates: any = {};
 
-    if (title) updates.title = title;
-    if (description) updates.description = description;
+    if (titleEn) updates.titleEn = titleEn;
+    if (titleNp) updates.titleNp = titleNp;
+    if (descriptionEn) updates.descriptionEn = descriptionEn;
+    if (descriptionNp) updates.descriptionNp = descriptionNp;
     if (department) updates.department = department;
     if (location) updates.location = location;
     if (salary) updates.salary = salary;
-    if (experience) updates.experience = experience;
+    if (vacancyType) updates.vacancyType = vacancyType;
     if (applicationDeadline) updates.applicationDeadline = new Date(applicationDeadline);
-    if (formFields) updates.formFields = formFields;
+    if (ageRestriction) updates.ageRestriction = ageRestriction;
+    if (experienceRestriction) updates.experienceRestriction = experienceRestriction;
     if (typeof isActive === "boolean") updates.isActive = isActive;
 
     const updatedVacancy = await updateVacancy(id, updates);
