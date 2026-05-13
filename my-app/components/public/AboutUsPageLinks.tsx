@@ -1,5 +1,8 @@
+"use client";
+
 import Link from "next/link";
 import { SectionHeading } from "@/components/public/SectionHeading";
+import { useTranslations } from "next-intl";
 
 type AboutUsPageKey =
   | "introduction"
@@ -11,54 +14,55 @@ type AboutUsPageLinksProps = {
   currentPage: AboutUsPageKey;
 };
 
+// Map keys to your hrefs and the specific translation keys in your JSON
 const pages: Array<{
   key: AboutUsPageKey;
-  label: string;
   href: string;
-  description: string;
+  labelKey: string;
+  descKey: string;
 }> = [
   {
     key: "introduction",
-    label: "Introduction",
     href: "/about-us",
-    description:
-      "Institutional profile, mission, vision, and strategic focus areas.",
+    labelKey: "card_intro_title",
+    descKey: "card_intro_desc",
   },
   {
     key: "chairman-message",
-    label: "Chairman Message",
     href: "/about-us/chairman-message",
-    description:
-      "Chairman perspective on governance, inclusion, and long-term growth.",
+    labelKey: "card_chairman_title",
+    descKey: "card_chairman_desc",
   },
   {
     key: "board-of-directors",
-    label: "Board of Directors",
     href: "/about-us/board-of-directors",
-    description:
-      "Profiles of board members guiding policy and institutional oversight.",
+    labelKey: "card_board_title",
+    descKey: "card_board_desc",
   },
   {
     key: "management-team",
-    label: "Management Team",
     href: "/about-us/management-team",
-    description:
-      "Operational leadership responsible for execution and service quality.",
+    labelKey: "card_management_title",
+    descKey: "card_management_desc",
   },
 ];
 
 export function AboutUsPageLinks({ currentPage }: AboutUsPageLinksProps) {
+  // Using the "management-team.explore_section" scope from your JSON
+  const t = useTranslations("management-team.explore_section");
+
   return (
-    <section className="mt-8 rounded-3xl  bg-white p-6  sm:p-8">
+    <section className="mt-8 rounded-3xl bg-white p-6 sm:p-8">
       <SectionHeading
-        eyebrow="About Us Pages"
-        title="Explore All Four About Us Pages"
+        eyebrow={t("eyebrow")}
+        title={t("title")}
         description={
           <>
-            Navigate between <span className="font-bold text-[18px]">Introduction</span>,{' '}
-            <span className="font-bold text-[18px]">Chairman Message</span>,{' '}
-            <span className="font-bold text-[18px]">Board of Directors</span>, and{' '}
-            <span className="font-bold text-[18px]">Management Team</span> pages.
+            {/* Using the static description from JSON or formatting it for the spans */}
+            Navigate between <span className="font-bold text-[18px]">{t("card_intro_title")}</span>,{' '}
+            <span className="font-bold text-[18px]">{t("card_chairman_title")}</span>,{' '}
+            <span className="font-bold text-[18px]">{t("card_board_title")}</span>, and{' '}
+            <span className="font-bold text-[18px]">{t("card_management_title")}</span> pages.
           </>
         }
       />
@@ -72,20 +76,22 @@ export function AboutUsPageLinks({ currentPage }: AboutUsPageLinksProps) {
               key={page.key}
               href={page.href}
               aria-current={isCurrent ? 'page' : undefined}
-              className={` shadow-[0_4px_10px_rgba(12,49,72,0.1)] p-5 transition ${
+              className={`shadow-[0_4px_10px_rgba(12,49,72,0.1)] p-5 transition ${
                 isCurrent
-                  ? 'border-[#0d837f]/40 bg-teal-mid'
+                  ? 'border-[#0d837f]/40 bg-[#0d837f] text-white' // Assuming bg-teal-mid or hex from image
                   : 'border-[#d7e6ee] bg-[#f9fcfe] hover:-translate-y-1 hover:border-[#0d837f]/40'
               }`}
             >
-              <h3 className={`text-lg font-semibold text-[#123451] ${isCurrent ? 'text-white' : ''}`}>{page.label}</h3>
-              <p className={`mt-2 text-[16px] leading-6 text-slate-600 ${isCurrent ? 'text-white' : ''}`}>{page.description}</p>
+              <h3 className={`text-lg font-semibold ${isCurrent ? 'text-white' : 'text-[#123451]'}`}>
+                {t(page.labelKey as any)}
+              </h3>
+              <p className={`mt-2 text-[16px] leading-6 ${isCurrent ? 'text-white/90' : 'text-slate-600'}`}>
+                {t(page.descKey as any)}
+              </p>
               <span
-                className={`mt-4 inline-flex rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-[0.08em] ${
-                  isCurrent ? 'bg-white text-[#0d837f]' : 'bg-white text-[#0d837f]'
-                }`}
+                className="mt-4 inline-flex rounded-full bg-white px-3 py-1 text-xs font-semibold uppercase tracking-[0.08em] text-[#0d837f]"
               >
-                {isCurrent ? 'Current' : 'Open'}
+                {isCurrent ? t("btn_current") : t("btn_open")}
               </span>
             </Link>
           );

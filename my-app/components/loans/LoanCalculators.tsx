@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { useMemo, useState } from "react";
 
 function formatNpr(value: number) {
@@ -16,6 +17,9 @@ type LoanCalculatorsProps = {
 };
 
 export function LoanCalculators({ mode = "both" }: LoanCalculatorsProps) {
+  // Use useTranslations for Client Components
+  const t = useTranslations("emi-calculator");
+
   const [principal, setPrincipal] = useState("500000");
   const [annualRate, setAnnualRate] = useState("13.25");
   const [tenureMonths, setTenureMonths] = useState("36");
@@ -97,25 +101,31 @@ export function LoanCalculators({ mode = "both" }: LoanCalculatorsProps) {
       }
     >
       {showEmiCalculator ? (
-        <article className=" bg-white p-5 sm:p-6">
-          <h3 className="text-[18px] font-semibold text-[#123451]">EMI Calculator</h3>
+        <article className="bg-white p-5 sm:p-6">
+          <h3 className="text-[18px] font-semibold text-[#123451]">
+            {t("calculator_card_title")}
+          </h3>
           <p className="mt-2 text-[16px] leading-6 text-slate-600">
-            Calculate monthly installment based on principal, annual rate, and tenure.
+            {t("calculator_card_subtitle")}
           </p>
 
           <div className="mt-5 space-y-4">
             <label className="block">
-              <span className="mb-1.5 block text-sm font-medium text-slate-700">Principal (NPR)</span>
+              <span className="mb-1.5 block text-sm font-medium text-slate-700">
+                {t("label_principal")}
+              </span>
               <input
                 type="number"
                 value={principal}
                 onChange={(event) => setPrincipal(event.target.value)}
-                className="w-full  border border-[#c9dce5] px-3 py-2.5 text-sm text-slate-800 outline-none transition focus:border-[#0d837f] focus:ring-2 focus:ring-[#0d837f]/20"
+                className="w-full border border-[#c9dce5] px-3 py-2.5 text-sm text-slate-800 outline-none transition focus:border-[#0d837f] focus:ring-2 focus:ring-[#0d837f]/20"
               />
             </label>
 
             <label className="block">
-              <span className="mb-1.5 block text-sm font-medium text-slate-700">Annual Interest Rate (%)</span>
+              <span className="mb-1.5 block text-sm font-medium text-slate-700">
+                {t("label_interest_rate")}
+              </span>
               <input
                 type="number"
                 step="0.01"
@@ -126,7 +136,9 @@ export function LoanCalculators({ mode = "both" }: LoanCalculatorsProps) {
             </label>
 
             <label className="block">
-              <span className="mb-1.5 block text-sm font-medium text-slate-700">Tenure (months)</span>
+              <span className="mb-1.5 block text-sm font-medium text-slate-700">
+                {t("label_tenure")}
+              </span>
               <input
                 type="number"
                 value={tenureMonths}
@@ -140,17 +152,28 @@ export function LoanCalculators({ mode = "both" }: LoanCalculatorsProps) {
             {emiResult ? (
               <div className="space-y-2 text-sm text-slate-700">
                 <p>
-                  Monthly EMI: <span className="font-semibold text-[#123451]">{formatNpr(emiResult.emi)}</span>
+                  {t("result_monthly_emi")}:{" "}
+                  <span className="font-semibold text-[#123451]">
+                    {formatNpr(emiResult.emi)}
+                  </span>
                 </p>
                 <p>
-                  Total Interest: <span className="font-semibold text-[#123451]">{formatNpr(emiResult.totalInterest)}</span>
+                  {t("result_total_interest")}:{" "}
+                  <span className="font-semibold text-[#123451]">
+                    {formatNpr(emiResult.totalInterest)}
+                  </span>
                 </p>
                 <p>
-                  Total Payment: <span className="font-semibold text-[#123451]">{formatNpr(emiResult.totalPayment)}</span>
+                  {t("result_total_payment")}:{" "}
+                  <span className="font-semibold text-[#123451]">
+                    {formatNpr(emiResult.totalPayment)}
+                  </span>
                 </p>
               </div>
             ) : (
-              <p className="text-sm text-slate-600">Please enter valid values to calculate EMI.</p>
+              <p className="text-sm text-slate-600">
+                Please enter valid values to calculate EMI.
+              </p>
             )}
           </div>
         </article>
@@ -158,24 +181,31 @@ export function LoanCalculators({ mode = "both" }: LoanCalculatorsProps) {
 
       {showInterestCalculator ? (
         <article className="p-5 sm:p-6">
-          <h3 className="text-xl font-semibold text-[#123451]">Loan Interest Calculator</h3>
+          <h3 className="text-xl font-semibold text-[#123451]">
+            {t("interest_calculator_btn")}
+          </h3>
           <p className="mt-2 text-sm leading-6 text-slate-600">
-            Estimate total interest payable using simple interest for selected tenure.
+            {/* Using banner_description as a fallback/logical fit for interest explanation */}
+            {t("banner_description")}
           </p>
 
           <div className="mt-5 space-y-4">
             <label className="block">
-              <span className="mb-1.5 block text-sm font-medium text-slate-700">Principal (NPR)</span>
+              <span className="mb-1.5 block text-sm font-medium text-slate-700">
+                {t("label_principal")}
+              </span>
               <input
                 type="number"
                 value={interestPrincipal}
                 onChange={(event) => setInterestPrincipal(event.target.value)}
-                className="w-full  border border-[#c9dce5] px-3 py-2.5 text-sm text-slate-800 outline-none transition focus:border-[#0d837f] focus:ring-2 focus:ring-[#0d837f]/20"
+                className="w-full border border-[#c9dce5] px-3 py-2.5 text-sm text-slate-800 outline-none transition focus:border-[#0d837f] focus:ring-2 focus:ring-[#0d837f]/20"
               />
             </label>
 
             <label className="block">
-              <span className="mb-1.5 block text-sm font-medium text-slate-700">Annual Interest Rate (%)</span>
+              <span className="mb-1.5 block text-sm font-medium text-slate-700">
+                {t("label_interest_rate")}
+              </span>
               <input
                 type="number"
                 step="0.01"
@@ -186,7 +216,9 @@ export function LoanCalculators({ mode = "both" }: LoanCalculatorsProps) {
             </label>
 
             <label className="block">
-              <span className="mb-1.5 block text-sm font-medium text-slate-700">Tenure (months)</span>
+              <span className="mb-1.5 block text-sm font-medium text-slate-700">
+                {t("label_tenure")}
+              </span>
               <input
                 type="number"
                 value={interestTenureMonths}
@@ -200,13 +232,13 @@ export function LoanCalculators({ mode = "both" }: LoanCalculatorsProps) {
             {interestResult ? (
               <div className="space-y-2 text-sm text-slate-700">
                 <p>
-                  Total Interest Payable:{" "}
+                  {t("result_total_interest")}:{" "}
                   <span className="font-semibold text-[#123451]">
                     {formatNpr(interestResult.totalInterest)}
                   </span>
                 </p>
                 <p>
-                  Total Amount Payable:{" "}
+                  {t("result_total_payment")}:{" "}
                   <span className="font-semibold text-[#123451]">
                     {formatNpr(interestResult.totalPayable)}
                   </span>

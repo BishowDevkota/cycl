@@ -1,29 +1,30 @@
 import { PublicPageShell } from "@/components/public/PublicPageShell";
 import { SectionHeading } from "@/components/public/SectionHeading";
+import { getTranslations } from "next-intl/server";
 
 const BASE = "/financial%20highlights/Base%20rate";
 
-/** Files present in /public/financial highlights/Base rate/ */
-const FILES = [
-  { label: "Base Rate 1", file: "Base Rate 1.jpg" },
-  { label: "Base rate 6", file: "Base rate 6.jpg" },
-  { label: "Base-rate 5", file: "Base-rate 5.jpg" },
-  { label: "Base_Rate_80-81", file: "Base_Rate_80-81.jpg" },
-  { label: "Base_rate 7", file: "Base_rate 7.jpg" },
-  { label: "Base_rate-3", file: "Base_rate-3.jpg" },
-  { label: "Base_rate-Magh", file: "Base_rate-Magh.jpg" },
-  { label: "Intrest-Rate", file: "Intrest-Rate.pdf" },
-  { label: "Intrest-rate-chaitra", file: "Intrest-rate-chaitra.pdf" },
-  { label: "base rate 8", file: "base rate 8.jpg" },
-  { label: "base rate 9", file: "base rate 9.jpg" },
-  { label: "base-rate 2", file: "base-rate 2.jpg" },
+/** 
+ * Static mapping for actual filenames on disk. 
+ * Indices must match the order in your JSON data array.
+ */
+const FILE_PATHS = [
+  "Base Rate 1.jpg",
+  "Base rate 6.jpg",
+  "Base-rate 5.jpg",
+  "Base_Rate_80-81.jpg",
+  "Base_rate 7.jpg",
+  "Base_rate-3.jpg",
+  "Base_rate-Magh.jpg",
+  "Intrest-Rate.pdf",
+  "Intrest-rate-chaitra.pdf",
+  "base rate 8.jpg",
+  "base rate 9.jpg",
+  "base-rate 2.jpg",
 ];
 
 function encodeFileName(name: string): string {
-  return name
-    .split("")
-    .map((ch) => (ch === " " ? "%20" : ch))
-    .join("");
+  return name.split("").map((ch) => (ch === " " ? "%20" : ch)).join("");
 }
 
 function MediaBanner({ label, file }: { label: string; file: string }) {
@@ -44,53 +45,59 @@ function MediaBanner({ label, file }: { label: string; file: string }) {
   );
 }
 
-export default function BaseRatePage() {
+export default async function BaseRatePage() {
+  const t = await getTranslations("base_rate");
+
+  // Pull the localized report list from the JSON data array
+  const baseRateData = t.raw("documents_section.data") as Array<{
+    title: string;
+    format: string;
+  }>;
+
   return (
     <PublicPageShell
       imageUrl="/banner/banner.jpg"
-      eyebrow="Financial Highlights"
-      title="Base Rate"
-      description="Downloadable base rate schedules and published images grouped in the Base Rate folder."
+      eyebrow={t("banner.title")}
+      title={t("banner.title")}
+      description={t("banner.description")}
       actions={[
-        { label: "Back to Highlights", href: "/financial-highlights" },
-        { label: "View Annual Reports", href: "/financial-highlights/annual-reports" },
-        { label: "View Quarterly Reports", href: "/financial-highlights/quarterly-reports" },
+        { label: t("banner.btn_back"), href: "/financial-highlights" },
+        { label: t("banner.btn_annual"), href: "/financial-highlights/annual-reports" },
+        { label: t("banner.btn_quarterly"), href: "/financial-highlights/quarterly-reports" },
       ]}
     >
       <section className="bg-white p-6 sm:p-8">
         <SectionHeading
-          eyebrow="Attachments"
-          title="Base Rate Documents"
-          description="PDFs and image files published by the bank. Click to download or view the file."
+          eyebrow={t("documents_section.eyebrow")}
+          title={t("documents_section.title")}
+          description={t("documents_section.description")}
         />
 
         <div className="grid gap-8 sm:grid-cols-2 xl:grid-cols-3 mt-4">
-          {FILES.map(({ label, file }) => {
-            const extMatch = file.match(/\.([a-zA-Z0-9]+)$/);
-            const ext = extMatch ? extMatch[1].toLowerCase() : "";
-            const downloadUrl = `${BASE}/${encodeFileName(file)}`;
-            const downloadName = label + (ext ? `.${ext}` : "");
+          {baseRateData.map((item, index) => {
+            const fileName = FILE_PATHS[index];
+            const downloadUrl = `${BASE}/${encodeFileName(fileName)}`;
 
             return (
               <article
-                key={file}
-                className="flex flex-col bg-teal-mid shadow-md text-white overflow-hidden transition duration-200 hover:-translate-y-0.5 hover:shadow-lg hover:brightness-75"
+                key={fileName}
+                className="flex flex-col bg-[#0d837f] shadow-md text-white overflow-hidden transition duration-200 hover:-translate-y-0.5 hover:shadow-lg hover:brightness-95"
               >
-                <MediaBanner label={label} file={file} />
+                <MediaBanner label={item.title} file={fileName} />
 
                 <div className="flex flex-col flex-1 px-4 pt-4 pb-4">
                   <p className="text-xs font-bold uppercase tracking-widest text-white/70">
-                    {ext || "file"}
+                    {item.format}
                   </p>
                   <h3 className="mt-1 text-sm font-semibold text-white leading-snug">
-                    {label}
+                    {item.title}
                   </h3>
 
                   <div className="mt-auto pt-4">
                     <a
                       href={downloadUrl}
-                      download={downloadName}
-                      className="inline-flex items-center gap-2 bg-white px-3 py-1.5 text-xs font-semibold text-teal-deep transition hover:brightness-110"
+                      download={fileName}
+                      className="inline-flex items-center gap-2 bg-white px-3 py-1.5 text-xs font-semibold text-[#0d837f] transition hover:bg-gray-100"
                     >
                       <svg
                         viewBox="0 0 16 16"
@@ -106,16 +113,13 @@ export default function BaseRatePage() {
                           strokeLinejoin="round"
                         />
                         <line
-                          x1="3"
-                          y1="13"
-                          x2="13"
-                          y2="13"
+                          x1="3" y1="13" x2="13" y2="13"
                           stroke="currentColor"
                           strokeWidth="1.8"
                           strokeLinecap="round"
                         />
                       </svg>
-                      Download
+                      {t("documents_section.btn_download")}
                     </a>
                   </div>
                 </div>

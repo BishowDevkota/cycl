@@ -1,3 +1,4 @@
+import { getTranslations } from "next-intl/server";
 import Image from "next/image";
 
 type AboutUsPillarsProps = {
@@ -13,23 +14,24 @@ type PillarCard = {
   items?: string[];
 };
 
-export function AboutUsPillars({
+export async function AboutUsPillars({
   vision,
   mission,
   goals,
 }: AboutUsPillarsProps) {
+  const t = await getTranslations("about-us");
   const cards: PillarCard[] = [
     {
-      title: "Vision",
+      title: `${t("vision_title")}`,
       content: vision,
       imageUrl: "/aboutusPillars/vision.png",
     },
     {
-      title: "Mission",
+      title: `${t("mission_title")}`,
       content: mission,
       imageUrl: "/aboutusPillars/mission.png",
     },
-    { title: "Goals", items: goals, imageUrl: "/aboutusPillars/goals.png" },
+    { title: `${t("goals_title")}`, items: goals, imageUrl: "/aboutusPillars/goals.png" },
   ];
 
   return (

@@ -2,27 +2,29 @@ import { LoanCalculators } from "@/components/loans/LoanCalculators";
 import { LoanPageLinks } from "@/components/loans/LoanPageLinks";
 import { PublicPageShell } from "@/components/public/PublicPageShell";
 import { SectionHeading } from "@/components/public/SectionHeading";
+import { getTranslations } from "next-intl/server";
 
-export default function EmiCalculatorPage() {
+export default async function EmiCalculatorPage() {
+  const t = await getTranslations("emi-calculator");
   return (
     <PublicPageShell
     imageUrl="/banner/banner.jpg"
-      eyebrow="Loans"
-      title="EMI Calculator"
-      description="Second loan subpage for monthly installment estimation based on principal, rate, and tenure."
+      eyebrow={t("banner_title")}
+      title={t("banner_title")}
+      description={t("banner_description")}
       actions={[
-        { label: "Loan Categories", href: "/loans/loan-categories" },
+        { label: t("loan_categories_btn"), href: "/loans/loan-categories" },
         {
-          label: "Loan Interest Calculator",
+          label: t("interest_calculator_btn"),
           href: "/loans/loan-interest-calculator",
         },
       ]}
     >
       <section className="bg-white p-6 shadow-[0_20px_40px_rgba(13,44,62,0.08)] sm:p-8">
         <SectionHeading
-          eyebrow="EMI Calculator"
-          title="Monthly Installment Estimation"
-          description="Use this calculator to understand monthly obligations before selecting a loan product."
+          eyebrow={t("section_eyebrow")}
+          title={t("section_title")}
+          description={t("section_description")}
         />
 
         <LoanCalculators mode="emi" />

@@ -1,11 +1,14 @@
+"use client";
+
 import Link from "next/link";
 import { SectionHeading } from "@/components/public/SectionHeading";
+import { useTranslations } from "next-intl";
 
 type LoanPageKey =
   | "overview"
-  | "loan-categories"
+  | "categories"
   | "emi-calculator"
-  | "loan-interest-calculator";
+  | "interest-calculator";
 
 type LoanPageLinksProps = {
   currentPage: LoanPageKey;
@@ -13,49 +16,46 @@ type LoanPageLinksProps = {
 
 const pages: Array<{
   key: LoanPageKey;
-  label: string;
   href: string;
-  description: string;
+  labelKey: string;
+  descKey: string;
 }> = [
   {
     key: "overview",
-    label: "Loans Overview",
     href: "/loans",
-    description: "Parent page with loan highlights and quick navigation.",
+    labelKey: "card_overview_title",
+    descKey: "card_overview_text",
   },
   {
-    key: "loan-categories",
-    label: "Loan Categories",
+    key: "categories",
     href: "/loans/loan-categories",
-    description: "Loan type listing with interest rates.",
+    labelKey: "card_categories_title",
+    descKey: "card_categories_text",
   },
   {
     key: "emi-calculator",
-    label: "EMI Calculator",
     href: "/loans/emi-calculator",
-    description: "Estimate monthly EMI and total payment.",
+    labelKey: "card_emi_title",
+    descKey: "card_emi_text",
   },
   {
-    key: "loan-interest-calculator",
-    label: "Loan Interest Calculator",
+    key: "interest-calculator",
     href: "/loans/loan-interest-calculator",
-    description: "Estimate total interest and total payable amount.",
+    labelKey: "card_interest_title",
+    descKey: "card_interest_text",
   },
 ];
 
 export function LoanPageLinks({ currentPage }: LoanPageLinksProps) {
+  // Access the "details_section" within the "loans" scope
+  const t = useTranslations("loans.details_section");
+
   return (
-    <section className="mt-8 rounded-3xl  bg-white p-6  sm:p-8">
+    <section className="mt-8 rounded-3xl bg-white p-6 sm:p-8">
       <SectionHeading
-        eyebrow="Loan Pages"
-        title="Loan Details and Tools"
-      description={
-    <>
-      Navigate between <span className="font-bold text-[18px]">loan categories</span>,{" "}
-      <span className="font-bold text-[18px]">EMI calculator</span>, and{" "}
-      <span className="font-bold text-[18px]">loan interest calculator</span> pages.
-    </>
-  }
+        eyebrow={t("eyebrow")}
+        title={t("title")}
+        description={t("description")}
       />
 
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
@@ -66,23 +66,23 @@ export function LoanPageLinks({ currentPage }: LoanPageLinksProps) {
             <Link
               key={page.key}
               href={page.href}
-              aria-current={isCurrent ? "page" : undefined}
-              className={` shadow-[0_4px_10px_rgba(12,49,72,0.1)] p-5 transition ${
+              aria-current={isCurrent ? 'page' : undefined}
+              className={`shadow-[0_4px_10px_rgba(12,49,72,0.1)] p-5 transition rounded-xl border ${
                 isCurrent
-                  ? "border-[#0d837f]/40 bg-teal-mid"
-                  : "border-[#d7e6ee] bg-[#f9fcfe] hover:-translate-y-1 hover:border-[#0d837f]/40"
+                  ? 'border-[#0d837f]/40 bg-[#0d837f] text-white'
+                  : 'border-[#d7e6ee] bg-[#f9fcfe] hover:-translate-y-1 hover:border-[#0d837f]/40'
               }`}
             >
-              <h3 className={`text-lg font-semibold text-[#123451] ${isCurrent ? "text-white" : ""}`}>{page.label}</h3>
-              <p className={`mt-2 text-[16px] leading-6 text-slate-600 ${isCurrent ? "text-white" : ""}`}>{page.description}</p>
+              <h3 className={`text-lg font-semibold ${isCurrent ? 'text-white' : 'text-[#123451]'}`}>
+                {t(page.labelKey as any)}
+              </h3>
+              <p className={`mt-2 text-[16px] leading-6 ${isCurrent ? 'text-white/90' : 'text-slate-600'}`}>
+                {t(page.descKey as any)}
+              </p>
               <span
-                className={`mt-4 inline-flex rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-[0.08em] ${
-                  isCurrent
-                    ? "bg-white text-[#0d837f]"
-                    : "bg-white text-[#0d837f]"
-                }`}
+                className="mt-4 inline-flex rounded-full bg-white px-3 py-1 text-xs font-semibold uppercase tracking-[0.08em] text-[#0d837f]"
               >
-                {isCurrent ? "Current" : "Open"}
+                {isCurrent ? t("btn_current") : t("btn_open")}
               </span>
             </Link>
           );

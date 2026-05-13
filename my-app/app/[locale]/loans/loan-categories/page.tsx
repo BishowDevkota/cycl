@@ -2,33 +2,36 @@ import { LoanCategoriesTable } from "@/components/loans/LoanCategoriesTable";
 import { LoanPageLinks } from "@/components/loans/LoanPageLinks";
 import { PublicPageShell } from "@/components/public/PublicPageShell";
 import { SectionHeading } from "@/components/public/SectionHeading";
+import { getTranslations } from "next-intl/server";
 
-export default function LoanCategoriesPage() {
+export default async function LoanCategoriesPage() {
+  const t = await getTranslations("loan-categories");
+
   return (
     <PublicPageShell
     imageUrl="/banner/banner.jpg"
-      eyebrow="Loans"
-      title="Loan Categories"
-      description="Detailed listing of loan categories and annual interest rates for public reference."
+      eyebrow={t("banner_title")}
+      title={t("banner_title")}
+      description={t("banner_description")}
       actions={[
-        { label: "EMI Calculator", href: "/loans/emi-calculator" },
+        { label: t("emi_calculator_btn"), href: "/loans/emi-calculator" },
         {
-          label: "Loan Interest Calculator",
+          label: t("interest_calculator_btn"),
           href: "/loans/loan-interest-calculator",
         },
       ]}
     >
       <section className=" bg-white p-6 sm:p-8">
         <SectionHeading
-          eyebrow="Loan Categories"
-          title="Loan Category Interest Matrix"
-          description="First loan subpage showing the complete requested category and interest-rate listing."
+          eyebrow={t("section_eyebrow")}
+          title={t("section_title")}
+          description={t("section_description")}
         />
 
         <LoanCategoriesTable />
       </section>
 
-      <LoanPageLinks currentPage="loan-categories" />
+      <LoanPageLinks currentPage="categories" />
     </PublicPageShell>
   );
 }

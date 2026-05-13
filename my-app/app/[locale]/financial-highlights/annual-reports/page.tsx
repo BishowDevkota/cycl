@@ -1,58 +1,29 @@
 import { PublicPageShell } from "@/components/public/PublicPageShell";
 import { SectionHeading } from "@/components/public/SectionHeading";
+import { getTranslations } from "next-intl/server";
 
 const BASE = "/financial%20highlights/Annual%20report";
 
-/**
- * Every PDF in /public/financial highlights/Annual report/
- * `label`  — display name shown on the card (exact filename, no extension)
- * `file`   — exact filename on disk (used to build the download URL)
+/** 
+ * Keep the file mapping static to ensure correct downloads, 
+ * but we will pull the display labels from the JSON.
  */
-const REPORTS = [
-  {
-    label: "Annual report 2075/2076",
-    file: "Annual report 2075:2076.pdf",
-  },
-  {
-    label: "Annual report 2076/2077",
-    file: "Annual report  2076:2077.pdf", // double space as on disk
-  },
-  {
-    label: "Annual report 2077/2078",
-    file: "Annual report 2077:2078.pdf",
-  },
-  {
-    label: "Annual report 2078/2079",
-    file: "Annual report 2078:2079.pdf",
-  },
-  {
-    label: "Annual report 2079/2080",
-    file: "Annual report 2079:2080.pdf",
-  },
-  {
-    label: "Annual report 2080/2081",
-    file: "Annual report 2080:2081.pdf",
-  },
-  {
-    label: "SGM Report 2078",
-    file: "SGM Report 2078.pdf",
-  },
-  {
-    label: "SGM REPORT 2079",
-    file: "SGM REPORT 2079.pdf",
-  },
-  {
-    label: "base rate",
-    file: "base rate.pdf",
-  },
-] as const;
+const FILE_MAP = [
+  "Annual report 2075:2076.pdf",
+  "Annual report  2076:2077.pdf",
+  "Annual report 2077:2078.pdf",
+  "Annual report 2078:2079.pdf",
+  "Annual report 2079:2080.pdf",
+  "Annual report 2080:2081.pdf",
+  "SGM Report 2078.pdf",
+  "SGM REPORT 2079.pdf",
+  "base rate.pdf",
+];
 
-/** Encode a filename for use in a URL (spaces → %20, preserves colons) */
 function encodeFileName(name: string): string {
   return name.split("").map((ch) => (ch === " " ? "%20" : ch)).join("");
 }
 
-/** Full-width icon banner — occupies exactly the top half of the card */
 function PdfIconBanner({ label }: { label: string }) {
   return (
     <div className="w-full h-1/2 min-h-32 flex items-center justify-center bg-white">
@@ -66,53 +37,56 @@ function PdfIconBanner({ label }: { label: string }) {
   );
 }
 
-export default function AnnualReportsPage() {
+export default async function AnnualReportsPage() {
+  const t = await getTranslations("annual_reports");
+
+  // Fetch the localized report titles from JSON
+  const reportData = t.raw("documents_section.data") as Array<{ title: string }>;
+
   return (
     <PublicPageShell
       imageUrl="/banner/banner.jpg"
-      eyebrow="Financial Highlights"
-      title="Annual Reports"
-      description="Browse annual disclosures and downloadable report attachments in a card-based grid layout."
+      eyebrow={t("banner.title")}
+      title={t("banner.title")}
+      description={t("banner.description")}
       actions={[
-        { label: "Back to Highlights", href: "/financial-highlights" },
-        { label: "View Quarterly Reports", href: "/financial-highlights/quarterly-reports" },
+        { label: t("banner.btn_back"), href: "/financial-highlights" },
+        { label: t("banner.btn_quarterly"), href: "/financial-highlights/quarterly-reports" },
       ]}
     >
       <section className="bg-white p-6 sm:p-8">
         <SectionHeading
-          eyebrow="Attachments"
-          title="Annual Report Documents"
-          description="Attachment cards are structured for CMS-managed files and metadata."
+          eyebrow={t("documents_section.eyebrow")}
+          title={t("documents_section.title")}
+          description={t("documents_section.description")}
         />
 
         <div className="grid gap-8 sm:grid-cols-2 xl:grid-cols-3">
-          {REPORTS.map(({ label, file }) => {
-            const downloadUrl = `${BASE}/${encodeFileName(file)}`;
+          {reportData.map((report, index) => {
+            const fileName = FILE_MAP[index];
+            const downloadUrl = `${BASE}/${encodeFileName(fileName)}`;
 
             return (
               <article
-                key={file}
-                className="flex flex-col bg-teal-mid shadow-md text-white overflow-hidden transition duration-200 hover:-translate-y-0.5 hover:shadow-lg hover:brightness-75"
+                key={fileName}
+                className="flex flex-col bg-[#0d837f] shadow-md text-white overflow-hidden transition duration-200 hover:-translate-y-0.5 hover:shadow-lg hover:brightness-95"
               >
-                {/* ── Top half: PDF icon ── */}
-                <PdfIconBanner label={label} />
+                <PdfIconBanner label={report.title} />
 
-                {/* ── Bottom half: metadata + download button ── */}
                 <div className="flex flex-col flex-1 px-4 pt-4 pb-4">
-                  <p className="text-xs font-bold uppercase tracking-[ 0.2em] text-white/70">
-                    PDF
+                  <p className="text-xs font-bold uppercase tracking-widest text-white/70">
+                    {t("documents_section.card_format")}
                   </p>
                   <h3 className="mt-1 text-sm font-semibold text-white leading-snug">
-                    {label}
+                    {report.title}
                   </h3>
 
                   <div className="mt-auto pt-4">
                     <a
                       href={downloadUrl}
-                      download={label + ".pdf"}
-                      className="inline-flex items-center gap-2 bg-white px-3 py-1.5 text-xs font-semibold text-teal-deep transition hover:brightness-110"
+                      download={fileName}
+                      className="inline-flex items-center gap-2 bg-white px-3 py-1.5 text-xs font-semibold text-[#0d837f] transition hover:bg-[#f8fafc]"
                     >
-                      {/* Small download icon inside the button */}
                       <svg
                         viewBox="0 0 16 16"
                         fill="none"
@@ -136,7 +110,7 @@ export default function AnnualReportsPage() {
                           strokeLinecap="round"
                         />
                       </svg>
-                      Download
+                      {t("documents_section.btn_download")}
                     </a>
                   </div>
                 </div>
