@@ -2,6 +2,18 @@
 
 import { useCallback, useEffect, useState } from "react";
 import type { HeroSection, HeroSlide } from "@/services/hero-service";
+import { 
+  Plus, 
+  Trash2, 
+  Image as ImageIcon, 
+  Save, 
+  X, 
+  Edit3, 
+  Settings, 
+  ChevronRight,
+  CheckCircle2,
+  RefreshCw
+} from "lucide-react";
 
 type HeroSlideInput = HeroSlide & { clientId: string };
 
@@ -45,10 +57,23 @@ export default function HeroManagement() {
   const [error, setError] = useState<string>("");
   const [editingId, setEditingId] = useState<string | null>(null);
   const [uploadingSlideId, setUploadingSlideId] = useState<string | null>(null);
-  const [removedImagePublicIds, setRemovedImagePublicIds] = useState<string[]>(
-    [],
-  );
+  const [removedImagePublicIds, setRemovedImagePublicIds] = useState<string[]>([]);
   const [formData, setFormData] = useState<HeroFormData>(createEmptyForm());
+  
+  // Last Synced Logic
+  const [lastSynced, setLastSynced] = useState<Date>(new Date());
+  const [syncLabel, setSyncLabel] = useState<string>("Just now");
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const seconds = Math.floor((new Date().getTime() - lastSynced.getTime()) / 1000);
+      if (seconds < 60) setSyncLabel("Just now");
+      else if (seconds < 3600) setSyncLabel(`${Math.floor(seconds / 60)}m ago`);
+      else setSyncLabel(`${Math.floor(seconds / 3600)}h ago`);
+    }, 10000); // Update label every 10 seconds
+
+    return () => clearInterval(interval);
+  }, [lastSynced]);
 
   const fetchHeroes = useCallback(async () => {
     try {
@@ -56,6 +81,8 @@ export default function HeroManagement() {
       if (!response.ok) throw new Error("Failed to fetch");
       const data = await response.json();
       setHeroes(Array.isArray(data) ? data : []);
+      setLastSynced(new Date());
+      setSyncLabel("Just now");
     } catch {
       setError("Failed to load hero sections");
     } finally {
@@ -67,27 +94,11 @@ export default function HeroManagement() {
     const timerId = window.setTimeout(() => {
       void fetchHeroes();
     }, 0);
-
-    return () => {
-      window.clearTimeout(timerId);
-    };
+    return () => window.clearTimeout(timerId);
   }, [fetchHeroes]);
 
   const handleActiveChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, isActive: e.target.checked });
-  };
-
-  const handleSlideChange = (
-    slideId: string,
-    field: keyof HeroSlideInput,
-    value: string,
-  ) => {
-    setFormData((prev) => ({
-      ...prev,
-      slides: prev.slides.map((slide) =>
-        slide.clientId === slideId ? { ...slide, [field]: value } : slide,
-      ),
-    }));
   };
 
   const handleAddSlide = () => {
@@ -99,21 +110,11 @@ export default function HeroManagement() {
 
   const handleRemoveSlide = (slideId: string) => {
     setFormData((prev) => {
-      const slideToRemove = prev.slides.find(
-        (slide) => slide.clientId === slideId,
-      );
-
+      const slideToRemove = prev.slides.find((s) => s.clientId === slideId);
       if (slideToRemove?.imagePublicId) {
-        setRemovedImagePublicIds((current) => [
-          ...current,
-          slideToRemove.imagePublicId,
-        ]);
+        setRemovedImagePublicIds((curr) => [...curr, slideToRemove.imagePublicId]);
       }
-
-      const remainingSlides = prev.slides.filter(
-        (slide) => slide.clientId !== slideId,
-      );
-
+      const remainingSlides = prev.slides.filter((s) => s.clientId !== slideId);
       return {
         ...prev,
         slides: remainingSlides.length > 0 ? remainingSlides : [createEmptySlide()],
@@ -121,13 +122,9 @@ export default function HeroManagement() {
     });
   };
 
-  const handleSlideImageUpload = async (
-    slideId: string,
-    e: React.ChangeEvent<HTMLInputElement>,
-  ) => {
+  const handleSlideImageUpload = async (slideId: string, e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-
     const slide = formData.slides.find((item) => item.clientId === slideId);
     if (!slide) return;
 
@@ -135,15 +132,9 @@ export default function HeroManagement() {
     try {
       const uploadFormData = new FormData();
       uploadFormData.append("file", file);
-      if (slide.imagePublicId) {
-        uploadFormData.append("oldPublicId", slide.imagePublicId);
-      }
+      if (slide.imagePublicId) uploadFormData.append("oldPublicId", slide.imagePublicId);
 
-      const response = await fetch("/api/admin/upload", {
-        method: "POST",
-        body: uploadFormData,
-      });
-
+      const response = await fetch("/api/admin/upload", { method: "POST", body: uploadFormData });
       if (!response.ok) throw new Error("Upload failed");
       const result = await response.json();
 
@@ -151,12 +142,8 @@ export default function HeroManagement() {
         ...prev,
         slides: prev.slides.map((item) =>
           item.clientId === slideId
-            ? {
-                ...item,
-                imageUrl: result.secure_url,
-                imagePublicId: result.public_id,
-              }
-            : item,
+            ? { ...item, imageUrl: result.secure_url, imagePublicId: result.public_id }
+            : item
         ),
       }));
     } catch {
@@ -168,7 +155,6 @@ export default function HeroManagement() {
 
   const handleEdit = (hero: HeroSection) => {
     const slides = hero.slides?.length ? hero.slides : [];
-
     setEditingId(hero._id?.toString() || null);
     setRemovedImagePublicIds([]);
     setFormData({
@@ -179,59 +165,29 @@ export default function HeroManagement() {
       "subtitle-en": hero["subtitle-en"] || hero.subtitle || "",
       "subtitle-ne": hero["subtitle-ne"] || hero.subtitle || "",
       isActive: hero.isActive,
-      slides:
-        slides.length > 0
-          ? slides.map((slide) => ({
-              ...slide,
-              clientId: crypto.randomUUID(),
-            }))
+      slides: slides.length > 0
+          ? slides.map((slide) => ({ ...slide, clientId: crypto.randomUUID() }))
           : [createEmptySlide()],
     });
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   const handleSave = async () => {
-    if (!formData.slides.length) {
-      setError("At least one slide is required");
-      return;
-    }
-
     const titleEn = formData["title-en"].trim() || formData.title.trim();
     const titleNe = formData["title-ne"].trim() || titleEn;
     const subtitleEn = formData["subtitle-en"].trim() || formData.subtitle.trim();
     const subtitleNe = formData["subtitle-ne"].trim() || subtitleEn;
 
-    if (!titleEn || !titleNe) {
-      setError("Both English and Nepali hero titles are required");
-      return;
-    }
-
-    const missingSlide = formData.slides.find(
-      (slide) => !slide.imageUrl || !slide.imagePublicId,
-    );
-
-    if (missingSlide) {
-      setError("Each slide needs a background image");
-      return;
-    }
+    if (!titleEn || !titleNe) return setError("Both English and Nepali titles are required");
+    if (formData.slides.some(s => !s.imageUrl)) return setError("Each slide needs a background image");
 
     try {
-      const url = editingId
-        ? `/api/admin/home/hero?id=${editingId}`
-        : "/api/admin/home/hero";
+      const url = editingId ? `/api/admin/home/hero?id=${editingId}` : "/api/admin/home/hero";
       const method = editingId ? "PUT" : "POST";
-
       const payload = {
-        title: titleEn,
-        subtitle: subtitleEn,
-        "title-en": titleEn,
-        "title-ne": titleNe,
-        "subtitle-en": subtitleEn,
-        "subtitle-ne": subtitleNe,
-        isActive: formData.isActive,
-        slides: formData.slides.map((slide) => ({
-          imageUrl: slide.imageUrl,
-          imagePublicId: slide.imagePublicId,
-        })),
+        title: titleEn, subtitle: subtitleEn, "title-en": titleEn, "title-ne": titleNe,
+        "subtitle-en": subtitleEn, "subtitle-ne": subtitleNe, isActive: formData.isActive,
+        slides: formData.slides.map((s) => ({ imageUrl: s.imageUrl, imagePublicId: s.imagePublicId })),
         ...(editingId ? { removedImagePublicIds } : {}),
       };
 
@@ -242,7 +198,6 @@ export default function HeroManagement() {
       });
 
       if (!response.ok) throw new Error("Save failed");
-
       setFormData(createEmptyForm());
       setEditingId(null);
       setRemovedImagePublicIds([]);
@@ -254,292 +209,221 @@ export default function HeroManagement() {
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm("Are you sure you want to delete this hero section?")) return;
-
+    if (!confirm("Are you sure?")) return;
     try {
-      const response = await fetch(`/api/admin/home/hero?id=${id}`, {
-        method: "DELETE",
-      });
-
+      const response = await fetch(`/api/admin/home/hero?id=${id}`, { method: "DELETE" });
       if (!response.ok) throw new Error("Delete failed");
       await fetchHeroes();
     } catch {
-      setError("Failed to delete hero section");
+      setError("Failed to delete");
     }
   };
 
-  const handleCancel = () => {
-    setEditingId(null);
-    setFormData(createEmptyForm());
-    setRemovedImagePublicIds([]);
-    setError("");
-  };
-
-  if (loading) return <div className="p-6">Loading...</div>;
+  if (loading) return <div className="p-12 text-slate-400 animate-pulse">Loading Workspace...</div>;
 
   return (
-    <div className="max-w-6xl mx-auto p-6">
-      <h1 className="text-3xl font-bold mb-2">Homepage Management</h1>
-      <p className="text-base text-gray-600 mb-6">
-        Manage the content that appears on the public homepage.
-      </p>
-
-      {error && (
-        <div className="mb-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded">
-          {error}
+    <div className="min-h-screen bg-[#F0F2F5] text-[#334155] font-sans pb-20">
+      <header className="sticky top-0 z-10 bg-white border-b border-slate-200 px-8 py-3 flex items-center justify-between">
+        <div className="flex items-center gap-4">
+          <nav className="flex items-center text-sm font-medium text-slate-500">
+            <span className="cursor-default">Home</span>
+            <ChevronRight size={16} className="mx-2 opacity-30" />
+            <span className="text-slate-900 cursor-default">Hero Section</span>
+          </nav>
         </div>
-      )}
+        <div className="flex items-center gap-4">
+          <div className="flex items-center gap-1.5 text-xs text-slate-400 font-medium">
+            <RefreshCw size={12} className={loading ? "animate-spin" : ""} />
+            <span className="hidden sm:inline">Last synced: {syncLabel}</span>
+          </div>
+          <button 
+            onClick={handleSave}
+            disabled={uploadingSlideId !== null}
+            className="bg-[#40C9C0] hover:bg-[#34b1a9] text-white px-5 py-2 rounded-md font-semibold text-sm transition-all flex items-center gap-2 shadow-sm disabled:opacity-50 cursor-pointer"
+          >
+            <Save size={16} />
+            {editingId ? "UPDATE CHANGES" : "SAVE CHANGES"}
+          </button>
+        </div>
+      </header>
 
-      <div className="bg-white  shadow-lg p-6 mb-8">
-        <div className="mb-6">
-          <p className="text-base font-semibold text-zinc-500">Hero Section</p>
-          <h2 className="text-2xl font-semibold">
-            {editingId ? "Edit Hero Section" : "Create New Hero Section"}
-          </h2>
-          <p className="text-base text-zinc-500 mt-1">
-            Control the hero carousel shown at the top of the homepage, including the universal title and description.
-          </p>
+      <main className="max-w-7xl mx-auto mt-8 px-6 grid grid-cols-1 lg:grid-cols-3 gap-8">
+        
+        <div className="lg:col-span-2 space-y-4">
+          {error && (
+            <div className="p-4 bg-red-50 border-l-4 border-red-400 text-red-700 text-sm rounded shadow-sm">
+              {error}
+            </div>
+          )}
+
+          <div className="bg-[#F8FAFC] rounded-xl border border-slate-200 overflow-hidden shadow-sm">
+            <div className="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-white">
+              <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400">Content Configuration</h3>
+              <Settings size={14} className="text-slate-300" />
+            </div>
+            
+            <div className="p-6 space-y-8">
+              <div className="space-y-2">
+                <div className="flex items-center gap-2">
+                  <div className="flex gap-1">
+                    <div className="w-1 h-1 rounded-full bg-slate-300"></div>
+                    <div className="w-1 h-1 rounded-full bg-slate-300"></div>
+                    <div className="w-1 h-1 rounded-full bg-slate-300"></div>
+                  </div>
+                  <label className="text-xs font-bold text-slate-700">TITLE (ENGLISH) <span className="text-[#40C9C0] ml-1">REQUIRED</span></label>
+                </div>
+                <input
+                  type="text"
+                  value={formData["title-en"]}
+                  onChange={(e) => setFormData({...formData, title: e.target.value, "title-en": e.target.value})}
+                  className="w-full bg-white border border-slate-200 rounded-md px-4 py-3 text-sm focus:ring-2 focus:ring-[#40C9C0]/20 focus:border-[#40C9C0] outline-none transition-all shadow-inner"
+                  placeholder="The main hero headline..."
+                />
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-xs font-bold text-slate-700 pl-5">TITLE (NEPALI) <span className="text-[#40C9C0] ml-1">REQUIRED</span></label>
+                <input
+                  type="text"
+                  value={formData["title-ne"]}
+                  onChange={(e) => setFormData({...formData, "title-ne": e.target.value})}
+                  className="w-full bg-white border border-slate-200 rounded-md px-4 py-3 text-sm focus:ring-2 focus:ring-[#40C9C0]/20 focus:border-[#40C9C0] outline-none transition-all shadow-inner"
+                  placeholder="नेपाली शीर्षक..."
+                />
+              </div>
+
+              <div className="space-y-2">
+                <div className="flex justify-between items-center">
+                  <label className="text-xs font-bold text-slate-700 pl-5">DESCRIPTION (EN/NE)</label>
+                  <span className="text-[10px] text-slate-400 font-medium">RICH TEXT SUPPORTED</span>
+                </div>
+                <div className="grid grid-cols-1 gap-4">
+                  <textarea
+                    value={formData["subtitle-en"]}
+                    onChange={(e) => setFormData({...formData, subtitle: e.target.value, "subtitle-en": e.target.value})}
+                    rows={4}
+                    className="w-full bg-white border border-slate-200 rounded-md px-4 py-3 text-sm outline-none shadow-inner"
+                    placeholder="English description..."
+                  />
+                  <textarea
+                    value={formData["subtitle-ne"]}
+                    onChange={(e) => setFormData({...formData, "subtitle-ne": e.target.value})}
+                    rows={4}
+                    className="w-full bg-white border border-slate-200 rounded-md px-4 py-3 text-sm outline-none shadow-inner"
+                    placeholder="नेपाली विवरण..."
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-[#F8FAFC] rounded-xl border border-slate-200 overflow-hidden shadow-sm">
+            <div className="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-white">
+              <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400">Slides Carousel <span className="ml-2 text-[10px] bg-slate-100 px-2 py-0.5 rounded text-slate-500">ARRAY</span></h3>
+              <button onClick={handleAddSlide} className="text-[#40C9C0] hover:text-[#34b1a9] flex items-center gap-1 text-xs font-bold cursor-pointer">
+                <Plus size={14} /> ADD SLIDE
+              </button>
+            </div>
+
+            <div className="p-6 space-y-4">
+              {formData.slides.map((slide, index) => (
+                <div key={slide.clientId} className="bg-white border border-slate-200 rounded-lg p-4 group relative transition-all hover:shadow-sm">
+                  <div className="flex items-center justify-between mb-4">
+                    <span className="text-[10px] font-black text-slate-300">SLIDE_0{index + 1}</span>
+                    <button onClick={() => handleRemoveSlide(slide.clientId)} className="text-slate-300 hover:text-red-500 transition-colors cursor-pointer">
+                      <Trash2 size={16} />
+                    </button>
+                  </div>
+                  
+                  <div className="flex gap-4">
+                    <div className="w-24 h-24 bg-slate-50 border-2 border-dashed border-slate-200 rounded-lg flex flex-col items-center justify-center overflow-hidden shrink-0">
+                      {slide.imageUrl ? (
+                        <img src={slide.imageUrl} className="w-full h-full object-cover" alt="Slide" />
+                      ) : (
+                        <ImageIcon size={20} className="text-slate-300" />
+                      )}
+                    </div>
+                    <div className="flex-1 space-y-3">
+                      <label className="block">
+                        <span className="text-[10px] font-bold text-slate-500 uppercase">Background Image</span>
+                        <div className="mt-1 flex items-center gap-2">
+                          <input
+                            type="file"
+                            accept="image/*"
+                            onChange={(e) => handleSlideImageUpload(slide.clientId, e)}
+                            className="text-xs text-slate-500 file:mr-4 file:py-1 file:px-3 file:rounded file:border-0 file:text-xs file:font-semibold file:bg-[#40C9C0]/10 file:text-[#40C9C0] hover:file:bg-[#40C9C0]/20 cursor-pointer"
+                          />
+                        </div>
+                      </label>
+                      {uploadingSlideId === slide.clientId && <div className="h-1 w-full bg-slate-100 rounded overflow-hidden"><div className="h-full bg-[#40C9C0] animate-progress w-1/2"></div></div>}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
 
         <div className="space-y-6">
-          <div className="grid gap-6 sm:grid-cols-2">
-            <div>
-              <label className="block text-base font-medium mb-2">Hero Title (English) *</label>
-              <input
-                type="text"
-                value={formData["title-en"]}
-                onChange={(e) =>
-                  setFormData({
-                    ...formData,
-                    title: e.target.value,
-                    "title-en": e.target.value,
-                  })
-                }
-                placeholder="Enter English hero title"
-                className="w-full px-4 py-2 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-              <p className="mt-2 text-sm text-gray-500">
-                This title appears when the site is viewed in English.
-              </p>
+          <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm">
+            <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-4">Publishing</h3>
+            <div className="flex items-center justify-between p-3 bg-slate-50 rounded-lg border border-slate-100">
+              <span className="text-sm font-medium text-slate-600">Active Status</span>
+              <label className="relative inline-flex items-center cursor-pointer">
+                <input type="checkbox" checked={formData.isActive} onChange={handleActiveChange} className="sr-only peer" />
+                <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#40C9C0]"></div>
+              </label>
             </div>
-            <div>
-              <label className="block text-base font-medium mb-2">Hero Title (Nepali) *</label>
-              <input
-                type="text"
-                value={formData["title-ne"]}
-                onChange={(e) =>
-                  setFormData({
-                    ...formData,
-                    "title-ne": e.target.value,
-                  })
-                }
-                placeholder="नेपाली शीर्षक प्रविष्ट गर्नुहोस्"
-                className="w-full px-4 py-2 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-              <p className="mt-2 text-sm text-gray-500">
-                This title appears when the site is viewed in Nepali.
-              </p>
-            </div>
-          </div>
-
-          <div className="grid gap-6 sm:grid-cols-2">
-            <div>
-              <label className="block text-base font-medium mb-2">Hero Description (English)</label>
-              <textarea
-                value={formData["subtitle-en"]}
-                onChange={(e) =>
-                  setFormData({
-                    ...formData,
-                    subtitle: e.target.value,
-                    "subtitle-en": e.target.value,
-                  })
-                }
-                placeholder="Enter English hero description"
-                rows={3}
-                className="w-full px-4 py-2 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-              <p className="mt-2 text-sm text-gray-500">
-                This description appears when the site is viewed in English.
-              </p>
-            </div>
-            <div>
-              <label className="block text-base font-medium mb-2">Hero Description (Nepali)</label>
-              <textarea
-                value={formData["subtitle-ne"]}
-                onChange={(e) =>
-                  setFormData({
-                    ...formData,
-                    "subtitle-ne": e.target.value,
-                  })
-                }
-                placeholder="नेपाली विवरण प्रविष्ट गर्नुहोस्"
-                rows={3}
-                className="w-full px-4 py-2 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-              <p className="mt-2 text-sm text-gray-500">
-                This description appears when the site is viewed in Nepali.
-              </p>
-            </div>
-          </div>
-
-          <div className="space-y-6">
-            <div className="flex items-center justify-between">
-              <h3 className="text-xl font-semibold">Slides</h3>
-              <button
-                type="button"
-                onClick={handleAddSlide}
-                className="px-4 py-2 bg-teal-deep text-white  hover:bg-teal-700 hover:cursor-pointer hover:-translate-y-1 transition-all"
-              >
-                Add Slide
-              </button>
-            </div>
-
-            {formData.slides.map((slide, index) => (
-              <div
-                key={slide.clientId}
-                className="border border-gray-200 p-4 space-y-4"
-              >
-                <div className="flex items-center justify-between">
-                  <h4 className="text-lg font-semibold">Slide {index + 1}</h4>
-                  <button
-                    type="button"
-                    onClick={() => handleRemoveSlide(slide.clientId)}
-                    className="text-base bg-red-500 hover:bg-red-700 text-white py-2 px-4 hover:cursor-pointer hover:-translate-y-1 transition-all"
-                  >
-                    Remove slide
-                  </button>
-                </div>
-
-
-                <div>
-                  <label className="block text-base font-medium mb-2">
-                    Background Image *
-                  </label>
-                  {slide.imageUrl && (
-                    <div className="mb-4 relative">
-                      <img
-                        src={slide.imageUrl}
-                        alt="Preview"
-                        className="w-full h-48 object-cover"
-                      />
-                    </div>
-                  )}
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={(e) => handleSlideImageUpload(slide.clientId, e)}
-                    disabled={uploadingSlideId === slide.clientId}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                  {uploadingSlideId === slide.clientId && (
-                    <p className="mt-2 text-blue-600">Uploading...</p>
-                  )}
-                </div>
-
-              </div>
-            ))}
-          </div>
-
-          <div className="flex items-center">
-            <input
-              type="checkbox"
-              checked={formData.isActive}
-              onChange={handleActiveChange}
-              className="h-4 w-4 border-gray-300 rounded"
-            />
-            <label className="ml-2 block text-sm font-medium">
-              Set as active hero section
-            </label>
-          </div>
-
-          <div className="flex gap-4 pt-4">
-            <button
-              onClick={handleSave}
-              disabled={uploadingSlideId !== null}
-              className="px-6 py-2 bg-blue-600 text-white hover:bg-blue-700 hover:cursor-pointer disabled:opacity-50 hover:-translate-y-1 transition-all"
-            >
-              {editingId ? "Update" : "Create"}
-            </button>
             {editingId && (
-              <button
-                onClick={handleCancel}
-                className="px-6 py-2 bg-gray-400 text-white rounded-lg hover:bg-gray-500"
-              >
-                Cancel
-              </button>
+               <button onClick={() => { setEditingId(null); setFormData(createEmptyForm()); }} className="w-full mt-4 flex items-center justify-center gap-2 py-2 text-xs font-bold text-slate-400 hover:text-slate-600 transition-colors cursor-pointer">
+                 <X size={14} /> CANCEL EDITING
+               </button>
             )}
           </div>
-        </div>
-      </div>
 
-      <div className="space-y-4">
-        <h2 className="text-2xl font-semibold mb-4">Hero Sections</h2>
-        {heroes.length === 0 ? (
-          <p className="text-gray-600">No hero sections yet</p>
-        ) : (
-          heroes.map((hero) => (
-            <div
-              key={hero._id?.toString()}
-              className="bg-white shadow-lg p-6"
-            >
-              <div className="flex gap-6">
-                <div className="w-40 h-40 shrink-0">
-                  {hero.slides?.[0]?.imageUrl ? (
-                    <img
-                      src={hero.slides[0].imageUrl}
-                      alt={hero.title || "Hero slide preview"}
-                      className="w-full h-full object-cover rounded-lg"
-                    />
-                  ) : (
-                    <div className="w-full h-full rounded-lg bg-zinc-100 flex items-center justify-center text-sm text-zinc-500">
-                      No image
-                    </div>
-                  )}
-                </div>
-                <div className="flex-1">
-                  <div className="flex items-start justify-between">
-                    <div>
-                      <h3 className="text-xl font-semibold">Hero Section</h3>
-                      <p className="text-gray-600 mt-2">
-                        {hero["title-en"] || hero.title || "No title set"}
-                      </p>
-                      {hero["title-ne"] ? (
-                        <p className="text-sm text-gray-500 mt-1">{hero["title-ne"]}</p>
-                      ) : null}
-                      {hero["subtitle-en"] ? (
-                        <p className="text-sm text-gray-500 mt-1">{hero["subtitle-en"]}</p>
-                      ) : null}
-                      <p className="text-gray-600 mt-2">
-                        {(hero.slides?.length || 0)} slide
-                        {hero.slides?.length === 1 ? "" : "s"}
-                      </p>
-                    </div>
-                    {hero.isActive && (
-                      <span className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-semibold">
-                        Active
-                      </span>
-                    )}
-                  </div>
-                  <div className="flex gap-4 mt-4">
-                    <button
-                      onClick={() => handleEdit(hero)}
-                      className="px-4 py-2 bg-blue-600 text-white hover:bg-blue-700 hover:cursor-pointer hover:-translate-y-1 transition-all"
-                    >
-                      Edit
-                    </button>
-                    <button
-                      onClick={() => handleDelete(hero._id?.toString() || "")}
-                      className="px-4 py-2 hover:cursor-pointer bg-red-600 text-white hover:bg-red-700 hover:-translate-y-1 ease-out transition-all"
-                    >
-                      Delete
-                    </button>
-                  </div>
-                </div>
-              </div>
+          <div className="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm">
+            <div className="px-6 py-4 border-b border-slate-100 bg-[#F8FAFC]">
+              <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400">Existing Sections</h3>
             </div>
-          ))
-        )}
-      </div>
+            <div className="divide-y divide-slate-50 max-h-[500px] overflow-y-auto">
+              {heroes.length === 0 ? (
+                <p className="p-6 text-xs text-slate-400 italic">No sections created yet.</p>
+              ) : (
+                heroes.map((hero) => (
+                  <div key={hero._id?.toString()} className="p-4 hover:bg-slate-50 transition-colors group">
+                    <div className="flex gap-3">
+                      <div className="w-12 h-12 rounded bg-slate-100 shrink-0 overflow-hidden">
+                        {hero.slides?.[0]?.imageUrl && <img src={hero.slides[0].imageUrl} className="w-full h-full object-cover opacity-80" />}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2">
+                          <h4 className="text-sm font-bold text-slate-700 truncate">{hero["title-en"] || "Untitled"}</h4>
+                          {hero.isActive && <CheckCircle2 size={12} className="text-[#40C9C0]" />}
+                        </div>
+                        <p className="text-[10px] text-slate-400 font-medium">{hero.slides?.length || 0} Slides</p>
+                        <div className="flex gap-3 mt-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                          <button onClick={() => handleEdit(hero)} className="text-[10px] font-bold text-[#40C9C0] flex items-center gap-1 cursor-pointer hover:underline"><Edit3 size={10} /> EDIT</button>
+                          <button onClick={() => handleDelete(hero._id?.toString() || "")} className="text-[10px] font-bold text-red-400 flex items-center gap-1 cursor-pointer hover:underline"><Trash2 size={10} /> DELETE</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
+          </div>
+        </div>
+      </main>
+
+      <style jsx global>{`
+        @keyframes progress {
+          0% { transform: translateX(-100%); }
+          100% { transform: translateX(200%); }
+        }
+        .animate-progress {
+          animation: progress 1.5s infinite linear;
+        }
+      `}</style>
     </div>
   );
 }
