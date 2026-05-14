@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 
 interface SubmitStepProps {
@@ -23,8 +23,26 @@ export default function SubmitStep({
     additionalApplicationTypes: "",
     confirmationChecked: false,
   });
+  const [applicationFee, setApplicationFee] = useState<number>(100);
 
-  const handleChange = (
+   useEffect(() => {
+     const fetchVacancy = async () => {
+       try {
+         const res = await fetch(`/api/vacancies/${vacancyId}`);
+         if (res.ok) {
+           const data = await res.json();
+           if (data.applicationFee) {
+             setApplicationFee(data.applicationFee);
+           }
+         }
+       } catch (err) {
+         console.error("Failed to fetch vacancy:", err);
+       }
+     };
+     void fetchVacancy();
+   }, [vacancyId]);
+
+   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
     const { name, value, type } = e.target;
@@ -119,12 +137,12 @@ export default function SubmitStep({
     }
   };
 
-  return (
-    <div className="space-y-6">
-      <div className="rounded-lg border border-yellow-200 bg-yellow-50 px-4 py-3 text-sm font-medium text-yellow-800">
-        <p className="font-bold mb-1">Important Notice:</p>
-        <p>Your application will be saved with payment status "NOT PAID". To appear in the interview and have your application considered valid, you must complete the payment. The admit card will only be available after payment.</p>
-      </div>
+   return (
+     <div className="space-y-6">
+        <div className="rounded-lg border border-yellow-200 bg-yellow-50 px-4 py-3 text-sm font-medium text-yellow-800">
+          <p className="font-bold mb-1">Important Notice:</p>
+          <p>Your application will be saved with payment status 'NOT PAID'. To appear in the interview and have your application considered valid, you must complete the payment of <span className="font-semibold">NPR {applicationFee}</span>. The admit card will only be available after payment.</p>
+        </div>
 
       <div>
         <p className="text-lg font-semibold text-blue-600 mb-6">

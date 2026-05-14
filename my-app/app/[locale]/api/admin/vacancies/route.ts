@@ -72,28 +72,38 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       );
     }
 
-    const body = await request.json();
-    const {
-      titleEn,
-      titleNp,
-      descriptionEn,
-      descriptionNp,
-      department,
-      location,
-      salary,
-      vacancyType,
-      applicationDeadline,
-      ageRestriction,
-      experienceRestriction,
-    } = body;
+     const body = await request.json();
+     const {
+       titleEn,
+       titleNp,
+       descriptionEn,
+       descriptionNp,
+       department,
+       location,
+       salary,
+       applicationFee,
+       vacancyType,
+       applicationDeadline,
+       ageRestriction,
+       experienceRestriction,
+     } = body;
 
-    // Validate required fields
-    if (!titleEn || !titleNp || !descriptionEn || !descriptionNp || !department || !location || !vacancyType) {
-      return NextResponse.json(
-        { error: "Missing required fields" },
-        { status: 400 },
-      );
-    }
+     // Validate required fields
+     if (!titleEn || !titleNp || !descriptionEn || !descriptionNp || !department || !location || !vacancyType || applicationFee === undefined) {
+       return NextResponse.json(
+         { error: "Missing required fields" },
+         { status: 400 },
+       );
+     }
+
+     // Validate applicationFee
+     const fee = Number(applicationFee);
+     if (isNaN(fee) || fee < 0) {
+       return NextResponse.json(
+         { error: "Application fee must be a non-negative number" },
+         { status: 400 },
+       );
+     }
 
     // Validate vacancy type
     if (!["open_competition", "internal_competition"].includes(vacancyType)) {
@@ -115,21 +125,22 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       }
     }
 
-    const vacancy = await createVacancy({
-      titleEn,
-      titleNp,
-      descriptionEn,
-      descriptionNp,
-      department,
-      location,
-      salary: salary || undefined,
-      vacancyType: vacancyType as VacancyType,
-      applicationDeadline: applicationDeadline ? new Date(applicationDeadline) : undefined,
-      ageRestriction: ageRestriction || {},
-      experienceRestriction: experienceRestriction || {},
-      isActive: true,
-      createdBy: new ObjectId(session.sub),
-    });
+     const vacancy = await createVacancy({
+       titleEn,
+       titleNp,
+       descriptionEn,
+       descriptionNp,
+       department,
+       location,
+       salary: salary || undefined,
+       applicationFee: fee,
+       vacancyType: vacancyType as VacancyType,
+       applicationDeadline: applicationDeadline ? new Date(applicationDeadline) : undefined,
+       ageRestriction: ageRestriction || {},
+       experienceRestriction: experienceRestriction || {},
+       isActive: true,
+       createdBy: new ObjectId(session.sub),
+     });
 
     return NextResponse.json(
       {

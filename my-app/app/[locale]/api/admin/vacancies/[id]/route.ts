@@ -117,21 +117,22 @@ export async function PUT(
       );
     }
 
-    const body = await request.json();
-    const {
-      titleEn,
-      titleNp,
-      descriptionEn,
-      descriptionNp,
-      department,
-      location,
-      salary,
-      vacancyType,
-      applicationDeadline,
-      ageRestriction,
-      experienceRestriction,
-      isActive,
-    } = body;
+     const body = await request.json();
+     const {
+       titleEn,
+       titleNp,
+       descriptionEn,
+       descriptionNp,
+       department,
+       location,
+       salary,
+       applicationFee,
+       vacancyType,
+       applicationDeadline,
+       ageRestriction,
+       experienceRestriction,
+       isActive,
+     } = body;
 
     // Validate age restrictions
     if (ageRestriction) {
@@ -145,20 +146,30 @@ export async function PUT(
       }
     }
 
-    const updates: any = {};
+     const updates: any = {};
 
-    if (titleEn) updates.titleEn = titleEn;
-    if (titleNp) updates.titleNp = titleNp;
-    if (descriptionEn) updates.descriptionEn = descriptionEn;
-    if (descriptionNp) updates.descriptionNp = descriptionNp;
-    if (department) updates.department = department;
-    if (location) updates.location = location;
-    if (salary) updates.salary = salary;
-    if (vacancyType) updates.vacancyType = vacancyType;
-    if (applicationDeadline) updates.applicationDeadline = new Date(applicationDeadline);
-    if (ageRestriction) updates.ageRestriction = ageRestriction;
-    if (experienceRestriction) updates.experienceRestriction = experienceRestriction;
-    if (typeof isActive === "boolean") updates.isActive = isActive;
+     if (titleEn) updates.titleEn = titleEn;
+     if (titleNp) updates.titleNp = titleNp;
+     if (descriptionEn) updates.descriptionEn = descriptionEn;
+     if (descriptionNp) updates.descriptionNp = descriptionNp;
+     if (department) updates.department = department;
+     if (location) updates.location = location;
+     if (salary) updates.salary = salary;
+     if (applicationFee !== undefined) {
+       const fee = Number(applicationFee);
+       if (isNaN(fee) || fee < 0) {
+         return NextResponse.json(
+           { error: "Application fee must be a non-negative number" },
+           { status: 400 },
+         );
+       }
+       updates.applicationFee = fee;
+     }
+     if (vacancyType) updates.vacancyType = vacancyType;
+     if (applicationDeadline) updates.applicationDeadline = new Date(applicationDeadline);
+     if (ageRestriction) updates.ageRestriction = ageRestriction;
+     if (experienceRestriction) updates.experienceRestriction = experienceRestriction;
+     if (typeof isActive === "boolean") updates.isActive = isActive;
 
     const updatedVacancy = await updateVacancy(id, updates);
 

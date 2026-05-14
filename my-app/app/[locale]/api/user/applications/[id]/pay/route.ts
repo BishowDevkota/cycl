@@ -3,6 +3,7 @@ import { ObjectId } from "mongodb";
 import { cookies } from "next/headers";
 import { verifyUserSession, USER_SESSION_COOKIE } from "@/lib/user-session";
 import { getApplicationById, updateApplication } from "@/services/vacancy-application-service";
+import { getVacancyById } from "@/services/vacancy-service";
 import { createEsewaInitPayload, getEsewaConfig } from "@/lib/esewa";
 
 interface RouteParams {
@@ -42,8 +43,13 @@ export async function POST(
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
-    const body = await request.json();
-    const amount = typeof body.amount === "number" ? body.amount : 100;
+    // Get vacancy to retrieve application fee
+    const vacancy = await getVacancyById(application.vacancyId.toString());
+    if (!vacancy) {
+      return NextResponse.json({ error: "Vacancy not found" }, { status: 404 });
+    }
+
+    const amount = vacancy.applicationFee || 100;
 
     const txPrefix = new Date().toISOString().slice(2, 10).replace(/-/g, "");
     const txSuffix = Math.random().toString(36).slice(2, 8);

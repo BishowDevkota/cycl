@@ -12,6 +12,7 @@ type VacancyFormState = {
   department: string;
   location: string;
   salary: string;
+  applicationFee: string;
   applicationDeadline: string;
   vacancyType: VacancyType;
   minAge: string;
@@ -40,6 +41,7 @@ export default function VacancyForm({
     department: initialData?.department || "",
     location: initialData?.location || "",
     salary: initialData?.salary || "",
+    applicationFee: (initialData as any)?.applicationFee?.toString() || "100",
     applicationDeadline: initialData?.applicationDeadline
       ? new Date(initialData.applicationDeadline).toISOString().split("T")[0]
       : "",
@@ -56,48 +58,54 @@ export default function VacancyForm({
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setError("");
-    setLoading(true);
+   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+     e.preventDefault();
+     setError("");
+     setLoading(true);
 
-    if (
-      !formData.titleEn ||
-      !formData.titleNp ||
-      !formData.descriptionEn ||
-      !formData.descriptionNp ||
-      !formData.department ||
-      !formData.location
-    ) {
-      setError("Please fill in all required fields.");
-      setLoading(false);
-      return;
-    }
+     const fee = Number(formData.applicationFee);
+     if (
+       !formData.titleEn ||
+       !formData.titleNp ||
+       !formData.descriptionEn ||
+       !formData.descriptionNp ||
+       !formData.department ||
+       !formData.location ||
+       !formData.applicationFee ||
+       isNaN(fee) ||
+       fee < 0
+     ) {
+       setError("Please fill in all required fields with valid values (application fee must be a non-negative number).");
+       setLoading(false);
+       return;
+     }
 
-    try {
-      const payload = {
-        titleEn: formData.titleEn,
-        titleNp: formData.titleNp,
-        descriptionEn: formData.descriptionEn,
-        descriptionNp: formData.descriptionNp,
-        department: formData.department,
-        location: formData.location,
-        salary: formData.salary || undefined,
-        vacancyType: formData.vacancyType,
-        applicationDeadline: formData.applicationDeadline
-          ? new Date(formData.applicationDeadline)
-          : undefined,
-        ageRestriction: {
-          minAge: formData.minAge ? Number.parseInt(formData.minAge, 10) : undefined,
-          maxAge: formData.maxAge ? Number.parseInt(formData.maxAge, 10) : undefined,
-        },
-        experienceRestriction: {
-          minYears: formData.minExperienceYears
-            ? Number.parseInt(formData.minExperienceYears, 10)
-            : undefined,
-        },
-        isActive: true,
-      };
+     try {
+       const fee = Number(formData.applicationFee);
+       const payload = {
+         titleEn: formData.titleEn,
+         titleNp: formData.titleNp,
+         descriptionEn: formData.descriptionEn,
+         descriptionNp: formData.descriptionNp,
+         department: formData.department,
+         location: formData.location,
+         salary: formData.salary || undefined,
+         applicationFee: fee,
+         vacancyType: formData.vacancyType,
+         applicationDeadline: formData.applicationDeadline
+           ? new Date(formData.applicationDeadline)
+           : undefined,
+         ageRestriction: {
+           minAge: formData.minAge ? Number.parseInt(formData.minAge, 10) : undefined,
+           maxAge: formData.maxAge ? Number.parseInt(formData.maxAge, 10) : undefined,
+         },
+         experienceRestriction: {
+           minYears: formData.minExperienceYears
+             ? Number.parseInt(formData.minExperienceYears, 10)
+             : undefined,
+         },
+         isActive: true,
+       };
 
       const method = isEditing ? "PUT" : "POST";
       const url = isEditing
@@ -209,30 +217,49 @@ export default function VacancyForm({
           />
         </div>
 
-        <div className={fieldCard}>
-          <label className="mb-3 block text-sm font-medium text-slate-800">
-            Salary{" "}
-            <span className="text-xs font-normal text-gray-400">(optional)</span>
-          </label>
-          <input
-            type="text" name="salary" value={formData.salary}
-            onChange={handleInputChange} placeholder="e.g., NPR 50,000 – 70,000"
-            className={inputCls}
-          />
-        </div>
+         <div className={fieldCard}>
+           <label className="mb-3 block text-sm font-medium text-slate-800">
+             Salary{" "}
+             <span className="text-xs font-normal text-gray-400">(optional)</span>
+           </label>
+           <input
+             type="text" name="salary" value={formData.salary}
+             onChange={handleInputChange} placeholder="e.g., NPR 50,000 – 70,000"
+             className={inputCls}
+           />
+         </div>
 
-        <div className={fieldCard}>
-          <label className="mb-3 block text-sm font-medium text-slate-800">
-            Application Deadline{" "}
-            <span className="text-xs font-normal text-gray-400">(optional)</span>
-          </label>
-          <input
-            type="date" name="applicationDeadline"
-            value={formData.applicationDeadline}
-            onChange={handleInputChange}
-            className={inputCls}
-          />
-        </div>
+         <div className={fieldCard}>
+           <label className="mb-3 block text-sm font-medium text-slate-800">
+             Application Fee (NPR) <span className="text-red-500">*</span>
+           </label>
+           <input
+             type="number"
+             name="applicationFee"
+             value={formData.applicationFee}
+             onChange={handleInputChange}
+             placeholder="e.g., 100"
+             min="0"
+             step="1"
+             className={inputCls}
+           />
+           <p className="mt-1 text-xs text-gray-500">
+             Amount to be paid by applicants via eSewa
+           </p>
+         </div>
+
+         <div className={fieldCard}>
+           <label className="mb-3 block text-sm font-medium text-slate-800">
+             Application Deadline{" "}
+             <span className="text-xs font-normal text-gray-400">(optional)</span>
+           </label>
+           <input
+             type="date" name="applicationDeadline"
+             value={formData.applicationDeadline}
+             onChange={handleInputChange}
+             className={inputCls}
+           />
+         </div>
       </div>
 
       {/* ── Section: Description ── */}

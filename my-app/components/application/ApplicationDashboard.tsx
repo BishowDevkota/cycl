@@ -16,6 +16,7 @@ interface ApplicationItem {
   _id: string;
   vacancyId: string;
   vacancyTitle: string;
+  applicationFee: number;
   status: "submitted" | "reviewed" | "selected" | "rejected";
   createdAt: string;
   hasAdmitCardPdf: boolean;
@@ -127,12 +128,6 @@ export default function ApplicationDashboard() {
     try {
       const response = await fetch(`/api/user/applications/${selectedApplication._id}/pay`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          amount: 100,
-        }),
       });
 
       if (!response.ok) {
@@ -260,14 +255,15 @@ export default function ApplicationDashboard() {
                      <p className="text-sm font-medium text-yellow-800 mb-3">
                        <span className="font-bold">Notice:</span> Your payment status is pending.
                        You cannot appear in the interview and your application will not be considered valid
-                       until the payment is completed. Please make the payment to download the admit card.
+                       until the payment of <span className="font-semibold">NPR {selectedApplication.applicationFee}</span> is completed.
+                       Please make the payment to download the admit card.
                      </p>
                      <button
                        onClick={handlePayNow}
                        disabled={paying}
                        className="rounded-full bg-orange-500 px-6 py-2 text-sm font-bold text-white transition hover:bg-orange-600 disabled:bg-orange-300 disabled:cursor-not-allowed"
                      >
-                       {paying ? "Processing..." : "Pay Now with eSewa"}
+                       {paying ? "Processing..." : `Pay Now with eSewa (NPR ${selectedApplication.applicationFee})`}
                      </button>
                    </div>
                  )}
@@ -327,22 +323,22 @@ export default function ApplicationDashboard() {
                   </div>
                 </div>
 
-                <div className="flex flex-col items-start justify-between gap-4 border-t border-[#c9e7e2] bg-white px-6 py-5 md:flex-row md:items-center md:px-8">
-                  <p className="text-sm text-[#3f6863]">
-                    Download and keep this admit card for future recruitment process.
-                  </p>
-                  <button
-                    onClick={handleDownload}
-                    disabled={downloading || !selectedApplication.hasPaid}
-                    className={`rounded-full px-6 py-3 text-sm font-bold text-white transition ${
-                      downloading || !selectedApplication.hasPaid
-                        ? "cursor-not-allowed bg-[#9dbdb8]"
-                        : "bg-[#ea580c] hover:bg-[#c74300]"
-                    }`}
-                  >
-                    {downloading ? "Preparing PDF..." : selectedApplication.hasPaid ? "Download Now" : "Pay to Download"}
-                  </button>
-                </div>
+                 <div className="flex flex-col items-start justify-between gap-4 border-t border-[#c9e7e2] bg-white px-6 py-5 md:flex-row md:items-center md:px-8">
+                   <p className="text-sm text-[#3f6863]">
+                     Download and keep this admit card for future recruitment process.
+                   </p>
+                   <button
+                     onClick={handleDownload}
+                     disabled={downloading || !selectedApplication.hasPaid}
+                     className={`rounded-full px-6 py-3 text-sm font-bold text-white transition ${
+                       downloading || !selectedApplication.hasPaid
+                         ? "cursor-not-allowed bg-[#9dbdb8]"
+                         : "bg-[#ea580c] hover:bg-[#c74300]"
+                     }`}
+                   >
+                     {downloading ? "Preparing PDF..." : selectedApplication.hasPaid ? "Download Now" : `Pay NPR ${selectedApplication.applicationFee} to Download`}
+                   </button>
+                 </div>
               </div>
             )}
 

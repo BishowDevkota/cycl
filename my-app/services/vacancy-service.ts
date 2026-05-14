@@ -25,6 +25,7 @@ export interface Vacancy {
   applicationDeadline?: Date;
   ageRestriction: AgeRestriction; // min and max age requirements
   experienceRestriction: ExperienceRestriction; // minimum years of experience required
+  applicationFee?: number; // optional: defaults to 100 if not set
   isActive: boolean;
   createdAt: Date;
   updatedAt: Date;

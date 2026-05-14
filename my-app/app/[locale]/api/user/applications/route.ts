@@ -60,24 +60,25 @@ export async function GET(_request: NextRequest): Promise<NextResponse> {
           .filter((value: unknown) => typeof value === "string" && value.trim().length > 0)
           .join(" ");
 
-        return {
-          _id: app._id?.toString(),
-          vacancyId: app.vacancyId.toString(),
-          vacancyTitle: vacancy?.titleEn || vacancy?.titleNp || "Deleted Job",
-          status: app.status,
-          createdAt: app.createdAt,
-          hasAdmitCardPdf: Boolean(app.pdfCloudinaryPublicId),
-          paymentStatus: paymentStatus,
-          hasPaid: hasPaid,
-          admitCard: {
-            fullName: fullName || app.userFullName,
-            email: contactDetails.email || app.userEmail,
-            phone: contactDetails.mobile || app.userPhone,
-            citizenshipNumber: personalDetails.citizenshipNumber || "",
-            dobAD: personalDetails.dobAD || "",
-            photoUrl: photoResponse?.fileUrl || "",
-          },
-        };
+         return {
+           _id: app._id?.toString(),
+           vacancyId: app.vacancyId.toString(),
+           vacancyTitle: vacancy?.titleEn || vacancy?.titleNp || "Deleted Job",
+           applicationFee: vacancy?.applicationFee || 100,
+           status: app.status,
+           createdAt: app.createdAt,
+           hasAdmitCardPdf: Boolean(app.pdfCloudinaryPublicId),
+           paymentStatus: paymentStatus,
+           hasPaid: hasPaid,
+           admitCard: {
+             fullName: fullName || app.userFullName,
+             email: contactDetails.email || app.userEmail,
+             phone: contactDetails.mobile || app.userPhone,
+             citizenshipNumber: personalDetails.citizenshipNumber || "",
+             dobAD: personalDetails.dobAD || "",
+             photoUrl: photoResponse?.fileUrl || "",
+           },
+         };
       }),
     );
 
