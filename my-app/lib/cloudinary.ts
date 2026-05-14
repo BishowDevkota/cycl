@@ -28,7 +28,6 @@ export function getCloudinaryRawPdfUrl(publicId: string): string {
   return cloudinary.url(publicId, {
     secure: true,
     resource_type: "raw",
-    format: "pdf",
   });
 }
 
@@ -70,14 +69,20 @@ export async function uploadPDFToCloudinary(
     const uploadStream = cloudinary.uploader.upload_stream(
       {
         resource_type: "raw",
-        format: "pdf",
         folder: folder,
         public_id: fileName.replace(/\.[^/.]+$/, ""),
       },
       (error, result) => {
         if (error) {
-          reject(new Error("Failed to upload PDF to Cloudinary"));
+          console.error("Cloudinary upload error:", JSON.stringify(error, null, 2));
+          reject(new Error(`Failed to upload PDF to Cloudinary: ${error.message}`));
         } else if (result) {
+          console.log("Cloudinary upload result:", {
+            public_id: result.public_id,
+            secure_url: result.secure_url,
+            resource_type: result.resource_type,
+            version: result.version,
+          });
           resolve({
             secure_url: result.secure_url,
             public_id: result.public_id,

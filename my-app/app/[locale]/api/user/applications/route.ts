@@ -18,7 +18,6 @@ function parseJsonObject(value: unknown): Record<string, any> {
 
 export async function GET(_request: NextRequest): Promise<NextResponse> {
   try {
-    // Verify user is logged in
     const cookieStore = await cookies();
     const token = cookieStore.get(USER_SESSION_COOKIE)?.value;
 
@@ -37,10 +36,8 @@ export async function GET(_request: NextRequest): Promise<NextResponse> {
       );
     }
 
-    // Get all applications for this user
     const applications = await getApplicationsByUserId(session.sub);
 
-    // Enrich with vacancy title
     const enrichedApplications = await Promise.all(
       applications.map(async (app) => {
         const vacancy = await getVacancyById(app.vacancyId);
@@ -51,9 +48,13 @@ export async function GET(_request: NextRequest): Promise<NextResponse> {
           (response) => response.fieldId === "contactDetails",
         );
         const photoResponse = app.responses.find((response) => response.fieldId === "photo");
+        const paymentResponse = app.responses.find((response) => response.fieldId === "paymentData");
 
         const personalDetails = parseJsonObject(personalDetailsResponse?.value);
         const contactDetails = parseJsonObject(contactDetailsResponse?.value);
+        const paymentData = parseJsonObject(paymentResponse?.value);
+        const paymentStatus = paymentData?.status || "NOT_PAID";
+        const hasPaid = paymentStatus === "COMPLETE" && paymentData?.verified === true;
 
         const fullName = [personalDetails.firstName, personalDetails.lastName]
           .filter((value: unknown) => typeof value === "string" && value.trim().length > 0)
@@ -66,6 +67,8 @@ export async function GET(_request: NextRequest): Promise<NextResponse> {
           status: app.status,
           createdAt: app.createdAt,
           hasAdmitCardPdf: Boolean(app.pdfCloudinaryPublicId),
+          paymentStatus: paymentStatus,
+          hasPaid: hasPaid,
           admitCard: {
             fullName: fullName || app.userFullName,
             email: contactDetails.email || app.userEmail,

@@ -20,6 +20,33 @@ export default function DocumentStep({
     setLocalData(formData.documents || {});
   }, [formData.documents]);
 
+  useEffect(() => {
+    const photo = localData.photo;
+
+    if (!photo) {
+      setPhotoPreview(null);
+      return;
+    }
+
+    if (typeof photo === "string") {
+      setPhotoPreview(photo);
+      return;
+    }
+
+    if (photo instanceof File) {
+      const previewUrl = URL.createObjectURL(photo);
+      setPhotoPreview(previewUrl);
+
+      return () => {
+        URL.revokeObjectURL(previewUrl);
+      };
+    }
+
+    if (photo.dataUrl) {
+      setPhotoPreview(photo.dataUrl);
+    }
+  }, [localData.photo]);
+
   const handleFileChange = (field: "photo" | "cv", fileList: FileList | null) => {
     const file = fileList?.[0] || null;
     const updated = {

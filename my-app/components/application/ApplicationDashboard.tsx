@@ -19,6 +19,8 @@ interface ApplicationItem {
   status: "submitted" | "reviewed" | "selected" | "rejected";
   createdAt: string;
   hasAdmitCardPdf: boolean;
+  paymentStatus: string;
+  hasPaid: boolean;
   admitCard: AdmitCard;
 }
 
@@ -27,11 +29,12 @@ export default function ApplicationDashboard() {
   const searchParams = useSearchParams();
   const router = useRouter();
 
-  const [applications, setApplications] = useState<ApplicationItem[]>([]);
-  const [selectedId, setSelectedId] = useState("");
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
-  const [downloading, setDownloading] = useState(false);
+   const [applications, setApplications] = useState<ApplicationItem[]>([]);
+   const [selectedId, setSelectedId] = useState("");
+   const [loading, setLoading] = useState(true);
+   const [error, setError] = useState("");
+   const [downloading, setDownloading] = useState(false);
+   const [paying, setPaying] = useState(false);
 
   useEffect(() => {
     const fetchDashboard = async () => {
@@ -81,6 +84,11 @@ export default function ApplicationDashboard() {
       return;
     }
 
+    if (!selectedApplication.hasPaid) {
+      setError("Your payment is pending. You cannot download the admit card until payment is completed. Please make the payment to appear in the interview.");
+      return;
+    }
+
     setDownloading(true);
     setError("");
 
@@ -107,6 +115,53 @@ export default function ApplicationDashboard() {
       setError("Unable to download admit card right now.");
     } finally {
       setDownloading(false);
+    }
+  };
+
+  const handlePayNow = async () => {
+    if (!selectedApplication || paying) return;
+
+    setPaying(true);
+    setError("");
+
+    try {
+      const response = await fetch(`/api/user/applications/${selectedApplication._id}/pay`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          amount: 100,
+        }),
+      });
+
+      if (!response.ok) {
+        const data = await response.json().catch(() => ({}));
+        throw new Error(data.error || "Failed to initiate payment");
+      }
+
+      const data = await response.json();
+      const { formUrl, payload } = data;
+
+      // Create and submit form to eSewa
+      const form = document.createElement("form");
+      form.method = "POST";
+      form.action = formUrl;
+
+      Object.entries(payload).forEach(([key, value]) => {
+        const input = document.createElement("input");
+        input.type = "hidden";
+        input.name = key;
+        input.value = String(value);
+        form.appendChild(input);
+      });
+
+      document.body.appendChild(form);
+      form.submit();
+    } catch (err: any) {
+      console.error("Payment initiation error:", err);
+      setError(err.message || "Failed to initiate payment. Please try again.");
+      setPaying(false);
     }
   };
 
@@ -185,6 +240,13 @@ export default function ApplicationDashboard() {
                   <p className="mt-1 text-xs text-[#4b726f]">
                     {new Date(app.createdAt).toLocaleDateString()}
                   </p>
+                  <div className={`mt-2 inline-block rounded-full px-2 py-0.5 text-xs font-medium ${
+                    app.hasPaid
+                      ? "bg-green-100 text-green-700"
+                      : "bg-yellow-100 text-yellow-700"
+                  }`}>
+                    Payment: {app.hasPaid ? "PAID" : "PENDING"}
+                  </div>
                 </button>
               ))}
             </div>
@@ -193,6 +255,22 @@ export default function ApplicationDashboard() {
           <section className="rounded-3xl border border-[#8bc7bf] bg-white p-4 shadow-[0_28px_70px_-45px_rgba(12,76,71,0.8)] md:p-8">
             {selectedApplication && (
               <div className="mx-auto max-w-3xl overflow-hidden rounded-3xl border-2 border-[#0f766e]">
+                 {!selectedApplication.hasPaid && (
+                   <div className="bg-yellow-50 border-b border-yellow-200 px-6 py-4">
+                     <p className="text-sm font-medium text-yellow-800 mb-3">
+                       <span className="font-bold">Notice:</span> Your payment status is pending.
+                       You cannot appear in the interview and your application will not be considered valid
+                       until the payment is completed. Please make the payment to download the admit card.
+                     </p>
+                     <button
+                       onClick={handlePayNow}
+                       disabled={paying}
+                       className="rounded-full bg-orange-500 px-6 py-2 text-sm font-bold text-white transition hover:bg-orange-600 disabled:bg-orange-300 disabled:cursor-not-allowed"
+                     >
+                       {paying ? "Processing..." : "Pay Now with eSewa"}
+                     </button>
+                   </div>
+                 )}
                 <div className="relative bg-[linear-gradient(120deg,#0f766e_0%,#0e9d92_45%,#14b8a6_100%)] px-6 py-6 text-white md:px-8">
                   <p className="text-xs uppercase tracking-[0.2em] text-[#d3fffa]">Recruitment Admit Card</p>
                   <h3 className="mt-2 text-3xl font-black">{selectedApplication.vacancyTitle}</h3>
@@ -255,14 +333,14 @@ export default function ApplicationDashboard() {
                   </p>
                   <button
                     onClick={handleDownload}
-                    disabled={downloading}
+                    disabled={downloading || !selectedApplication.hasPaid}
                     className={`rounded-full px-6 py-3 text-sm font-bold text-white transition ${
-                      downloading
+                      downloading || !selectedApplication.hasPaid
                         ? "cursor-not-allowed bg-[#9dbdb8]"
                         : "bg-[#ea580c] hover:bg-[#c74300]"
                     }`}
                   >
-                    {downloading ? "Preparing PDF..." : "Download Now"}
+                    {downloading ? "Preparing PDF..." : selectedApplication.hasPaid ? "Download Now" : "Pay to Download"}
                   </button>
                 </div>
               </div>

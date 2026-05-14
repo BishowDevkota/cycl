@@ -17,6 +17,67 @@ interface FormData {
   education: any[];
   experience: any[];
   documents: any;
+  payment?: any;
+}
+
+interface StoredDocumentFile {
+  name: string;
+  type: string;
+  size: number;
+  dataUrl: string;
+}
+
+function isFileLike(value: unknown): value is File {
+  return typeof File !== "undefined" && value instanceof File;
+}
+
+function fileToDataUrl(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(String(reader.result || ""));
+    reader.onerror = () => reject(new Error("Failed to read file"));
+    reader.readAsDataURL(file);
+  });
+}
+
+async function serializeDocumentFile(value: unknown): Promise<StoredDocumentFile | null> {
+  if (!isFileLike(value)) {
+    const documentValue = value as Partial<StoredDocumentFile> | null | undefined;
+    if (documentValue?.dataUrl && documentValue?.name) {
+      return {
+        name: documentValue.name,
+        type: documentValue.type || "application/octet-stream",
+        size: documentValue.size || 0,
+        dataUrl: documentValue.dataUrl,
+      };
+    }
+
+    return null;
+  }
+
+  return {
+    name: value.name,
+    type: value.type || "application/octet-stream",
+    size: value.size,
+    dataUrl: await fileToDataUrl(value),
+  };
+}
+
+async function restoreDocumentFile(value: unknown): Promise<File | null> {
+  const documentValue = value as Partial<StoredDocumentFile> | null | undefined;
+  if (!documentValue?.dataUrl || !documentValue?.name) {
+    if (isFileLike(value)) {
+      return value;
+    }
+
+    return null;
+  }
+
+  const response = await fetch(documentValue.dataUrl);
+  const blob = await response.blob();
+  return new File([blob], documentValue.name, {
+    type: documentValue.type || blob.type || "application/octet-stream",
+  });
 }
 
 export default function ApplicationForm() {
@@ -26,6 +87,7 @@ export default function ApplicationForm() {
   const { t } = useVacancyLanguage();
   const vacancyId = params.id as string;
   const stepContainerRef = useRef<HTMLDivElement | null>(null);
+  const draftStorageKey = `application-draft:${vacancyId}`;
 
   const [currentStep, setCurrentStep] = useState(0);
   const [formData, setFormData] = useState<FormData>({
@@ -38,6 +100,74 @@ export default function ApplicationForm() {
   const [jobDetails, setJobDetails] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [stepError, setStepError] = useState("");
+  const restoringDraftRef = useRef(true);
+
+  useEffect(() => {
+    const restoreDraft = async () => {
+      try {
+        const storedDraft = window.sessionStorage.getItem(draftStorageKey);
+        if (storedDraft) {
+          const parsedDraft = JSON.parse(storedDraft) as Partial<{ currentStep: number; formData: FormData }>;
+          const restoredDocuments = parsedDraft.formData?.documents
+            ? {
+                photo: await restoreDocumentFile((parsedDraft.formData.documents as any).photo),
+                cv: await restoreDocumentFile((parsedDraft.formData.documents as any).cv),
+              }
+            : undefined;
+
+          if (parsedDraft.formData) {
+            setFormData((prev) => ({
+              ...prev,
+              ...parsedDraft.formData,
+              payment: undefined,
+              ...(restoredDocuments ? { documents: restoredDocuments } : {}),
+            }));
+          }
+          if (typeof parsedDraft.currentStep === "number") {
+            setCurrentStep(parsedDraft.currentStep);
+          }
+        }
+      } catch (error) {
+        console.error("Failed to restore application draft:", error);
+      } finally {
+        restoringDraftRef.current = false;
+      }
+    };
+
+    void restoreDraft();
+  }, [draftStorageKey]);
+
+  useEffect(() => {
+    if (restoringDraftRef.current) {
+      return;
+    }
+
+    const persistDraft = async () => {
+    try {
+      const documents = formData.documents || {};
+      const serializedDocuments = {
+        photo: await serializeDocumentFile(documents.photo),
+        cv: await serializeDocumentFile(documents.cv),
+      };
+
+      window.sessionStorage.setItem(
+        draftStorageKey,
+        JSON.stringify({
+          currentStep,
+          formData: {
+            ...formData,
+            payment: undefined,
+            documents: serializedDocuments,
+          },
+        }),
+      );
+    } catch (error) {
+      console.error("Failed to save application draft:", error);
+    }
+    };
+
+    void persistDraft();
+  }, [currentStep, draftStorageKey, formData]);
 
   const steps = [
     { label: "आधारभूत", component: BasicDetailsStep },
@@ -168,7 +298,7 @@ export default function ApplicationForm() {
       setStepError("कृपया यस चरणका सबै अनिवार्य विवरण भर्नुहोस्।");
       const firstInvalidField = stepContainerRef.current?.querySelector("input:invalid, select:invalid, textarea:invalid");
       if (firstInvalidField instanceof HTMLElement) {
-        firstInvalidField.reportValidity();
+        (firstInvalidField as HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement).reportValidity();
       }
       return;
     }
@@ -192,7 +322,7 @@ export default function ApplicationForm() {
     }));
   };
 
-  const CurrentStepComponent = steps[currentStep].component;
+  const CurrentStepComponent = steps[currentStep].component as any;
 
   if (loading) {
     return (

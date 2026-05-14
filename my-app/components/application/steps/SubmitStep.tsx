@@ -43,12 +43,21 @@ export default function SubmitStep({
   };
 
   const handleSaveAndContinue = () => {
-    // Save draft
     onUpdate("submitData", submitData);
-    // In a real app, save to backend here
   };
 
   const handleSubmit = async () => {
+    const docs = formData.documents || {};
+    const hasPhoto = docs.photo instanceof File;
+    const hasCv = docs.cv instanceof File;
+
+    if (!hasPhoto || !hasCv) {
+      setError(
+        "Your documents (photo and CV) were not persisted after payment. Please go back to the Documents step and re-upload them, then return here to submit."
+      );
+      return;
+    }
+
     if (!submitData.primaryApplicationType) {
       setError("Please select a primary application type");
       return;
@@ -67,15 +76,20 @@ export default function SubmitStep({
     try {
       const payload = new FormData();
 
-      // Attach structured JSON fields
       payload.append("personalDetails", JSON.stringify(formData.personalDetails || {}));
       payload.append("contactDetails", JSON.stringify(formData.contactDetails || {}));
       payload.append("education", JSON.stringify(formData.education || []));
       payload.append("experience", JSON.stringify(formData.experience || []));
       payload.append("submitData", JSON.stringify(submitData || {}));
 
-      // Attach files if present
-      const docs = formData.documents || {};
+      const paymentData = {
+        verified: false,
+        status: "NOT_PAID",
+        amount: 0,
+        verifiedAt: new Date().toISOString(),
+      };
+      payload.append("paymentData", JSON.stringify(paymentData));
+
       if (docs.photo instanceof File) {
         payload.append("photo", docs.photo);
       }
@@ -85,7 +99,6 @@ export default function SubmitStep({
 
       const response = await fetch(`/api/vacancies/${vacancyId}/apply`, {
         method: "POST",
-        // NOTE: Do not set Content-Type for FormData — browser sets it
         body: payload,
       });
 
@@ -97,12 +110,8 @@ export default function SubmitStep({
         return;
       }
 
-      // Success - redirect to dashboard
       const submittedId = data.applicationId;
-      const target = submittedId
-        ? `/${params.locale}/dashboard/applications?applicationId=${submittedId}`
-        : `/${params.locale}/dashboard/applications`;
-      router.push(target);
+      router.push(`/${params.locale}/dashboard/applications?applicationId=${submittedId}`);
     } catch (err) {
       console.error("Submit error:", err);
       setError("An error occurred while submitting");
@@ -112,12 +121,16 @@ export default function SubmitStep({
 
   return (
     <div className="space-y-6">
+      <div className="rounded-lg border border-yellow-200 bg-yellow-50 px-4 py-3 text-sm font-medium text-yellow-800">
+        <p className="font-bold mb-1">Important Notice:</p>
+        <p>Your application will be saved with payment status "NOT PAID". To appear in the interview and have your application considered valid, you must complete the payment. The admit card will only be available after payment.</p>
+      </div>
+
       <div>
         <p className="text-lg font-semibold text-blue-600 mb-6">
           Input following information to Apply for the Job
         </p>
 
-        {/* Application Types */}
         <div className="grid grid-cols-2 gap-6 mb-8">
           <div>
             <label className="block text-sm font-semibold text-gray-800 mb-3">
@@ -152,7 +165,6 @@ export default function SubmitStep({
           </div>
         </div>
 
-        {/* Confirmation Checkbox */}
         <div className="mb-8">
           <label className="flex items-center gap-3 cursor-pointer">
             <input
@@ -169,7 +181,6 @@ export default function SubmitStep({
           </label>
         </div>
 
-        {/* Error Message */}
         {error && (
           <div className="bg-red-50 border border-red-200 text-red-700 p-4 rounded mb-6">
             {error}
@@ -177,7 +188,6 @@ export default function SubmitStep({
         )}
       </div>
 
-      {/* Action Buttons */}
       <div className="flex justify-end gap-3 pt-6 border-t border-[#d6e6ed]">
         <button
           onClick={handleSaveAndContinue}
@@ -195,7 +205,7 @@ export default function SubmitStep({
               : "bg-[#f5ad4a] text-white hover:bg-[#e8990d]"
           }`}
         >
-          {loading ? "Submitting..." : "Save and Continue"}
+          {loading ? "Submitting..." : "Submit Application (Payment Pending)"}
         </button>
       </div>
     </div>

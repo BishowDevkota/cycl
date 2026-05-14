@@ -5,7 +5,7 @@ export interface ApplicationResponse {
   fieldId: string;
   fieldLabel: string;
   fieldType: "text" | "email" | "phone" | "textarea" | "select" | "checkbox" | "pdf";
-  value: string | boolean | string[]; // for pdf type, this is the cloudinary public_id
+  value: string | boolean | string[];
   fileUrl?: string;
 }
 
@@ -18,7 +18,8 @@ export interface VacancyApplication {
   userPhone: string;
   responses: ApplicationResponse[];
   status: "submitted" | "reviewed" | "selected" | "rejected";
-  pdfCloudinaryPublicId?: string; // for the generated thank you PDF
+  pdfCloudinaryPublicId?: string;
+  payment?: string;
   createdAt: Date;
   updatedAt: Date;
 }

@@ -3,7 +3,7 @@ import { ObjectId } from "mongodb";
 import { cookies } from "next/headers";
 import { USER_SESSION_COOKIE, verifyUserSession } from "@/lib/user-session";
 import { getApplicationById, updateApplication } from "@/services/vacancy-application-service";
-import { getCloudinaryRawPdfUrl, uploadPDFToCloudinary } from "@/lib/cloudinary";
+import { uploadPDFToCloudinary } from "@/lib/cloudinary";
 import { getVacancyById } from "@/services/vacancy-service";
 import { generateApplicationAdmitCardPDF } from "@/lib/pdf";
 
@@ -64,70 +64,73 @@ export async function GET(
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
-    // Backfill old applications: generate admit card on-demand if missing.
+    const paymentResponse = application.responses.find(
+      (response) => response.fieldId === "paymentData",
+    );
+    const paymentData = parseJsonObject(paymentResponse?.value);
+    const paymentStatus = paymentData?.status || "NOT_PAID";
+    const paymentVerified = paymentData?.verified === true || paymentStatus === "COMPLETE";
+
+    if (paymentStatus !== "COMPLETE" || !paymentVerified) {
+      return NextResponse.json(
+        { error: "Payment is required before downloading the admit card. Your application will not be considered valid until payment is completed." },
+        { status: 402 }
+      );
+    }
+
+    const personalDetailsResponse = application.responses.find(
+      (response) => response.fieldId === "personalDetails",
+    );
+    const contactDetailsResponse = application.responses.find(
+      (response) => response.fieldId === "contactDetails",
+    );
+    const photoResponse = application.responses.find(
+      (response) => response.fieldId === "photo",
+    );
+
+    const personalDetails = parseJsonObject(personalDetailsResponse?.value);
+    const contactDetails = parseJsonObject(contactDetailsResponse?.value);
+    const vacancy = await getVacancyById(application.vacancyId);
+
+    const firstName = asString(personalDetails.firstName);
+    const lastName = asString(personalDetails.lastName);
+    const fullName = `${firstName} ${lastName}`.trim() || application.userFullName;
+
+    console.log(`[Admit Card] Generating PDF for application ${id}`);
+    const pdfBuffer = await generateApplicationAdmitCardPDF({
+      applicationId: application._id?.toString() || id,
+      fullName,
+      email: asString(contactDetails.email) || application.userEmail,
+      phone: asString(contactDetails.mobile) || application.userPhone,
+      jobTitle: vacancy?.titleEn || vacancy?.titleNp || "Applied Position",
+      appliedDate: application.createdAt,
+      citizenshipNumber: asString(personalDetails.citizenshipNumber),
+      dobAD: asString(personalDetails.dobAD),
+      photoUrl: photoResponse?.fileUrl,
+    });
+
+    console.log(`[Admit Card] PDF generated successfully, size: ${pdfBuffer.length} bytes`);
+
     if (!application.pdfCloudinaryPublicId) {
-      const personalDetailsResponse = application.responses.find(
-        (response) => response.fieldId === "personalDetails",
-      );
-      const contactDetailsResponse = application.responses.find(
-        (response) => response.fieldId === "contactDetails",
-      );
-      const photoResponse = application.responses.find(
-        (response) => response.fieldId === "photo",
-      );
-
-      const personalDetails = parseJsonObject(personalDetailsResponse?.value);
-      const contactDetails = parseJsonObject(contactDetailsResponse?.value);
-      const vacancy = await getVacancyById(application.vacancyId);
-
-      const firstName = asString(personalDetails.firstName);
-      const lastName = asString(personalDetails.lastName);
-      const fullName = `${firstName} ${lastName}`.trim() || application.userFullName;
-
-      const pdfBuffer = await generateApplicationAdmitCardPDF({
-        applicationId: application._id?.toString() || id,
-        fullName,
-        email: asString(contactDetails.email) || application.userEmail,
-        phone: asString(contactDetails.mobile) || application.userPhone,
-        jobTitle: vacancy?.titleEn || vacancy?.titleNp || "Applied Position",
-        appliedDate: application.createdAt,
-        citizenshipNumber: asString(personalDetails.citizenshipNumber),
-        dobAD: asString(personalDetails.dobAD),
-        photoUrl: photoResponse?.fileUrl,
-      });
-
-      const { public_id } = await uploadPDFToCloudinary(
-        pdfBuffer,
+      uploadPDFToCloudinary(
+        Buffer.from(pdfBuffer),
         `admit-card-${application._id?.toString() || id}.pdf`,
         "application-admit-cards",
-      );
-
-      await updateApplication(application._id || id, {
-        pdfCloudinaryPublicId: public_id,
-      });
-
-      return new NextResponse(pdfBuffer, {
-        status: 200,
-        headers: {
-          "Content-Type": "application/pdf",
-          "Content-Disposition": `attachment; filename="admit-card-${id}.pdf"`,
-        },
-      });
+      )
+        .then((result) => {
+          console.log(`[Admit Card] Cloudinary upload successful, public_id: ${result.public_id}`);
+          updateApplication(application._id || id, {
+            pdfCloudinaryPublicId: result.public_id,
+          }).catch((err) => {
+            console.error(`[Admit Card] Failed to update application with public_id: ${err}`);
+          });
+        })
+        .catch((err) => {
+          console.error(`[Admit Card] Background Cloudinary upload failed: ${err}`);
+        });
     }
 
-    const pdfUrl = getCloudinaryRawPdfUrl(application.pdfCloudinaryPublicId);
-    const pdfResponse = await fetch(pdfUrl);
-
-    if (!pdfResponse.ok) {
-      return NextResponse.json(
-        { error: "Failed to fetch admit card" },
-        { status: 502 },
-      );
-    }
-
-    const pdfBuffer = Buffer.from(await pdfResponse.arrayBuffer());
-
-    return new NextResponse(pdfBuffer, {
+    return new NextResponse(pdfBuffer as unknown as BodyInit, {
       status: 200,
       headers: {
         "Content-Type": "application/pdf",
@@ -135,9 +138,9 @@ export async function GET(
       },
     });
   } catch (error) {
-    console.error("Error downloading admit card:", error);
+    console.error(`[Admit Card] Error generating admit card:`, error);
     return NextResponse.json(
-      { error: "Failed to download admit card" },
+      { error: "Failed to generate admit card" },
       { status: 500 },
     );
   }

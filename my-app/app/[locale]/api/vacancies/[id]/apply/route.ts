@@ -8,6 +8,7 @@ import {
   createApplication,
   getUserApplicationForVacancy,
   ApplicationResponse,
+  updateApplication,
 } from "@/services/vacancy-application-service";
 import { generateApplicationAdmitCardPDF } from "@/lib/pdf";
 import { uploadPDFToCloudinary, uploadApplicationFileToCloudinary } from "@/lib/cloudinary";
@@ -23,7 +24,6 @@ export async function POST(
   { params }: RouteParams,
 ): Promise<NextResponse> {
   try {
-    // Verify user is logged in
     const cookieStore = await cookies();
     const token = cookieStore.get(USER_SESSION_COOKIE)?.value;
 
@@ -52,7 +52,6 @@ export async function POST(
 
     const { id: vacancyId } = await params;
 
-    // Validate vacancy ID
     if (!ObjectId.isValid(vacancyId)) {
       return NextResponse.json(
         { error: "Invalid vacancy ID" },
@@ -60,7 +59,6 @@ export async function POST(
       );
     }
 
-    // Check if user already applied
     const existingApplication = await getUserApplicationForVacancy(
       user._id!,
       vacancyId,
@@ -72,7 +70,6 @@ export async function POST(
       );
     }
 
-    // Get vacancy
     const vacancy = await getVacancyById(vacancyId);
     if (!vacancy) {
       return NextResponse.json(
@@ -89,64 +86,59 @@ export async function POST(
     }
 
     const formData = await request.formData();
-      const responses: ApplicationResponse[] = [];
-      const uploadedFiles: { publicId: string; fieldId: string }[] = [];
-    
-      // Validate eligibility restrictions
-      const applicantPersonal = JSON.parse(formData.get("personalDetails")?.toString() || "{}");
-    
-      // Check age restrictions
-      if (vacancy.ageRestriction?.minAge || vacancy.ageRestriction?.maxAge) {
-        const dobAD = applicantPersonal.dobAD;
-        if (dobAD) {
-          const birthDate = new Date(dobAD);
-          const today = new Date();
-          let age = today.getFullYear() - birthDate.getFullYear();
-          const monthDiff = today.getMonth() - birthDate.getMonth();
-        
-          if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
-            age--;
-          }
-        
-          if (vacancy.ageRestriction.minAge && age < vacancy.ageRestriction.minAge) {
-            return NextResponse.json(
-              { error: `You must be at least ${vacancy.ageRestriction.minAge} years old to apply for this position` },
-              { status: 400 },
-            );
-          }
-        
-          if (vacancy.ageRestriction.maxAge && age > vacancy.ageRestriction.maxAge) {
-            return NextResponse.json(
-              { error: `You must be no older than ${vacancy.ageRestriction.maxAge} years old to apply for this position` },
-              { status: 400 },
-            );
-          }
+    const responses: ApplicationResponse[] = [];
+
+    const applicantPersonal = JSON.parse(formData.get("personalDetails")?.toString() || "{}");
+
+    if (vacancy.ageRestriction?.minAge || vacancy.ageRestriction?.maxAge) {
+      const dobAD = applicantPersonal.dobAD;
+      if (dobAD) {
+        const birthDate = new Date(dobAD);
+        const today = new Date();
+        let age = today.getFullYear() - birthDate.getFullYear();
+        const monthDiff = today.getMonth() - birthDate.getMonth();
+
+        if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+          age--;
         }
-      }
-    
-      // Check experience restrictions
-      if (vacancy.experienceRestriction?.minYears) {
-        const experience = JSON.parse(formData.get("experience")?.toString() || "[]");
-        let totalYears = 0;
-      
-        for (const exp of experience) {
-          if (exp.serviceFrom && exp.serviceTo) {
-            const fromDate = new Date(exp.serviceFrom);
-            const toDate = new Date(exp.serviceTo);
-            const yearsInJob = (toDate.getTime() - fromDate.getTime()) / (1000 * 60 * 60 * 24 * 365.25);
-            totalYears += yearsInJob;
-          }
-        }
-      
-        if (totalYears < vacancy.experienceRestriction.minYears) {
+
+        if (vacancy.ageRestriction.minAge && age < vacancy.ageRestriction.minAge) {
           return NextResponse.json(
-            { error: `You must have at least ${vacancy.experienceRestriction.minYears} years of experience to apply for this position` },
+            { error: `You must be at least ${vacancy.ageRestriction.minAge} years old to apply for this position` },
+            { status: 400 },
+          );
+        }
+
+        if (vacancy.ageRestriction.maxAge && age > vacancy.ageRestriction.maxAge) {
+          return NextResponse.json(
+            { error: `You must be no older than ${vacancy.ageRestriction.maxAge} years old to apply for this position` },
             { status: 400 },
           );
         }
       }
+    }
 
-    // If the client sent our structured application payload (JSON parts + files), handle that first
+    if (vacancy.experienceRestriction?.minYears) {
+      const experience = JSON.parse(formData.get("experience")?.toString() || "[]");
+      let totalYears = 0;
+
+      for (const exp of experience) {
+        if (exp.serviceFrom && exp.serviceTo) {
+          const fromDate = new Date(exp.serviceFrom);
+          const toDate = new Date(exp.serviceTo);
+          const yearsInJob = (toDate.getTime() - fromDate.getTime()) / (1000 * 60 * 60 * 24 * 365.25);
+          totalYears += yearsInJob;
+        }
+      }
+
+      if (totalYears < vacancy.experienceRestriction.minYears) {
+        return NextResponse.json(
+          { error: `You must have at least ${vacancy.experienceRestriction.minYears} years of experience to apply for this position` },
+          { status: 400 },
+        );
+      }
+    }
+
     if (formData.has("personalDetails") || formData.has("submitData")) {
       try {
         const structuredPersonal = JSON.parse(formData.get("personalDetails")?.toString() || "{}");
@@ -154,6 +146,10 @@ export async function POST(
         const education = JSON.parse(formData.get("education")?.toString() || "[]");
         const experience = JSON.parse(formData.get("experience")?.toString() || "[]");
         const submit = JSON.parse(formData.get("submitData")?.toString() || "{}");
+        const payment = JSON.parse(formData.get("paymentData")?.toString() || "{}");
+
+        const paymentStatus = payment?.status || "NOT_PAID";
+        const paymentVerified = paymentStatus === "COMPLETE" && payment?.verified === true;
 
         responses.push({
           fieldId: "personalDetails",
@@ -169,7 +165,6 @@ export async function POST(
           value: JSON.stringify(contact),
         });
 
-        // Store education entries as submitted (no document attachments)
         responses.push({
           fieldId: "education",
           fieldLabel: "Education",
@@ -191,7 +186,13 @@ export async function POST(
           value: JSON.stringify(submit),
         });
 
-        // Handle files (photo, cv) if present
+        responses.push({
+          fieldId: "paymentData",
+          fieldLabel: "Payment Data",
+          fieldType: "text",
+          value: JSON.stringify({ ...payment, status: paymentStatus, verified: paymentVerified }),
+        });
+
         const photo = formData.get("photo") as File | null;
         if (photo && photo.size > 0) {
           const buffer = await photo.arrayBuffer();
@@ -209,8 +210,6 @@ export async function POST(
             value: public_id,
             fileUrl: secure_url,
           });
-
-          uploadedFiles.push({ publicId: public_id, fieldId: "photo" });
         }
 
         const cv = formData.get("cv") as File | null;
@@ -230,22 +229,18 @@ export async function POST(
             value: public_id,
             fileUrl: secure_url,
           });
-
-          uploadedFiles.push({ publicId: public_id, fieldId: "cv" });
         }
       } catch (err) {
         console.error("Failed to parse structured application form data:", err);
         return NextResponse.json({ error: "Invalid application data" }, { status: 400 });
       }
     } else {
-      // Legacy dynamic formFields are no longer supported. Expect structured payload.
       return NextResponse.json(
         { error: "Unsupported application format. Please use the standard application form." },
         { status: 400 },
       );
     }
 
-    // Create application record
     const application = await createApplication({
       vacancyId: new ObjectId(vacancyId),
       userId: user._id!,
@@ -277,43 +272,36 @@ export async function POST(
       }
     };
 
-    // Generate admit card PDF
-    try {
-      const personalDetails = parseJsonObject(getResponseValue("personalDetails"));
-      const contactDetails = parseJsonObject(getResponseValue("contactDetails"));
-      const photoResponse = responses.find((item) => item.fieldId === "photo");
+    const personalDetails = parseJsonObject(getResponseValue("personalDetails"));
+    const contactDetails = parseJsonObject(getResponseValue("contactDetails"));
+    const photoResponse = responses.find((item) => item.fieldId === "photo");
 
-      const candidateName = [personalDetails.firstName, personalDetails.lastName]
-        .filter((value: unknown) => typeof value === "string" && value.trim().length > 0)
-        .join(" ");
+    const candidateName = [personalDetails.firstName, personalDetails.lastName]
+      .filter((value: unknown) => typeof value === "string" && value.trim().length > 0)
+      .join(" ");
 
-      const pdfBuffer = await generateApplicationAdmitCardPDF({
-        applicationId: application._id?.toString() || "",
-        fullName: candidateName || user.fullName,
-        email: contactDetails.email || user.email,
-        phone: contactDetails.mobile || user.phone,
-        jobTitle: vacancy.titleEn || vacancy.titleNp || "",
-        appliedDate: application.createdAt,
-        citizenshipNumber: personalDetails.citizenshipNumber,
-        dobAD: personalDetails.dobAD,
-        photoUrl: photoResponse?.fileUrl,
-      });
+    const pdfBuffer = await generateApplicationAdmitCardPDF({
+      applicationId: application._id?.toString() || "",
+      fullName: candidateName || user.fullName,
+      email: contactDetails.email || user.email,
+      phone: contactDetails.mobile || user.phone,
+      jobTitle: vacancy.titleEn || vacancy.titleNp || "",
+      appliedDate: application.createdAt,
+      citizenshipNumber: personalDetails.citizenshipNumber,
+      dobAD: personalDetails.dobAD,
+      photoUrl: photoResponse?.fileUrl,
+    });
 
-      const { public_id } = await uploadPDFToCloudinary(
-        pdfBuffer,
-        `admit-card-${application._id?.toString()}.pdf`,
-        "application-admit-cards",
-      );
+    const { public_id } = await uploadPDFToCloudinary(
+      pdfBuffer,
+      `admit-card-${application._id?.toString()}.pdf`,
+      "application-admit-cards",
+    );
 
-      // Update application with PDF reference
-      await (await import("@/services/vacancy-application-service")).updateApplication(
-        application._id!,
-        { pdfCloudinaryPublicId: public_id },
-      );
-    } catch (error) {
-      console.error("Failed to generate or upload admit card PDF:", error);
-      // Continue anyway - application is created even if admit card generation fails
-    }
+    await updateApplication(
+      application._id!,
+      { pdfCloudinaryPublicId: public_id },
+    );
 
     return NextResponse.json(
       {
