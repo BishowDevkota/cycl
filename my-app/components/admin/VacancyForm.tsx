@@ -3,6 +3,19 @@
 import { useState, FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { Vacancy, VacancyType } from "@/services/vacancy-service";
+import { 
+  Briefcase, 
+  FileText, 
+  Layers, 
+  ShieldAlert, 
+  X, 
+  Check, 
+  Trash2, 
+  Calendar, 
+  MapPin, 
+  DollarSign, 
+  Building 
+} from "lucide-react";
 
 type VacancyFormState = {
   titleEn: string;
@@ -33,7 +46,7 @@ export default function VacancyForm({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  const [formData, setFormData] = useState<VacancyFormState>({
+  const defaultState: VacancyFormState = {
     titleEn: (initialData as any)?.titleEn || "",
     titleNp: (initialData as any)?.titleNp || "",
     descriptionEn: (initialData as any)?.descriptionEn || "",
@@ -49,63 +62,64 @@ export default function VacancyForm({
     minAge: initialData?.ageRestriction?.minAge?.toString() || "",
     maxAge: initialData?.ageRestriction?.maxAge?.toString() || "",
     minExperienceYears: initialData?.experienceRestriction?.minYears?.toString() || "",
-  });
+  };
+
+  const [formData, setFormData] = useState<VacancyFormState>(defaultState);
 
   const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
-     e.preventDefault();
-     setError("");
-     setLoading(true);
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setError("");
+    setLoading(true);
 
-     const fee = Number(formData.applicationFee);
-     if (
-       !formData.titleEn ||
-       !formData.titleNp ||
-       !formData.descriptionEn ||
-       !formData.descriptionNp ||
-       !formData.department ||
-       !formData.location ||
-       !formData.applicationFee ||
-       isNaN(fee) ||
-       fee < 0
-     ) {
-       setError("Please fill in all required fields with valid values (application fee must be a non-negative number).");
-       setLoading(false);
-       return;
-     }
+    const fee = Number(formData.applicationFee);
+    if (
+      !formData.titleEn ||
+      !formData.titleNp ||
+      !formData.descriptionEn ||
+      !formData.descriptionNp ||
+      !formData.department ||
+      !formData.location ||
+      !formData.applicationFee ||
+      isNaN(fee) ||
+      fee < 0
+    ) {
+      setError("Please fill in all required fields with valid values (application fee must be a non-negative number).");
+      setLoading(false);
+      return;
+    }
 
-     try {
-       const fee = Number(formData.applicationFee);
-       const payload = {
-         titleEn: formData.titleEn,
-         titleNp: formData.titleNp,
-         descriptionEn: formData.descriptionEn,
-         descriptionNp: formData.descriptionNp,
-         department: formData.department,
-         location: formData.location,
-         salary: formData.salary || undefined,
-         applicationFee: fee,
-         vacancyType: formData.vacancyType,
-         applicationDeadline: formData.applicationDeadline
-           ? new Date(formData.applicationDeadline)
-           : undefined,
-         ageRestriction: {
-           minAge: formData.minAge ? Number.parseInt(formData.minAge, 10) : undefined,
-           maxAge: formData.maxAge ? Number.parseInt(formData.maxAge, 10) : undefined,
-         },
-         experienceRestriction: {
-           minYears: formData.minExperienceYears
-             ? Number.parseInt(formData.minExperienceYears, 10)
-             : undefined,
-         },
-         isActive: true,
-       };
+    try {
+      const payload = {
+        titleEn: formData.titleEn,
+        titleNp: formData.titleNp,
+        descriptionEn: formData.descriptionEn,
+        descriptionNp: formData.descriptionNp,
+        department: formData.department,
+        location: formData.location,
+        salary: formData.salary || undefined,
+        applicationFee: fee,
+        vacancyType: formData.vacancyType,
+        applicationDeadline: formData.applicationDeadline
+          ? new Date(formData.applicationDeadline)
+          : undefined,
+        ageRestriction: {
+          minAge: formData.minAge ? Number.parseInt(formData.minAge, 10) : undefined,
+          maxAge: formData.maxAge ? Number.parseInt(formData.maxAge, 10) : undefined,
+        },
+        experienceRestriction: {
+          minYears: formData.minExperienceYears
+            ? Number.parseInt(formData.minExperienceYears, 10)
+            : undefined,
+        },
+        isActive: true,
+      };
 
       const method = isEditing ? "PUT" : "POST";
       const url = isEditing
@@ -133,316 +147,280 @@ export default function VacancyForm({
     }
   };
 
-  const inputCls =
-    "w-full border-0 border-b border-slate-200 bg-transparent pb-2 pt-1 text-sm text-slate-800 placeholder:text-gray-400 outline-none transition-all focus:border-b-2 focus:border-teal-mid";
-
-  const fieldCard =
-    "bg-white p-5 shadow-sm ring-1 ring-black/5 transition-shadow focus-within:ring-2 focus-within:ring-teal-mid/20";
+  // Modernized design tokens (All rounded-xl/rounded-lg modified to rounded-none)
+  // Text sizes updated: labels to sm/font-extrabold, titles to font-black/text-xl, sub-sections to font-extrabold/text-sm
+  const labelCls = "block text-sm font-extrabold text-slate-700 mb-1.5 flex items-center gap-1";
+  const inputCls = "w-full rounded-none border border-slate-200 bg-white px-3.5 py-2 text-sm text-slate-800 placeholder:text-slate-400 outline-none transition duration-200 focus:border-teal-600 focus:ring-2 focus:ring-teal-600/10 hover:border-slate-300";
+  const selectCls = "w-full rounded-none border border-slate-200 bg-white px-3.5 py-2 text-sm text-slate-800 outline-none transition duration-200 focus:border-teal-600 focus:ring-2 focus:ring-teal-600/10 hover:border-slate-300 appearance-none bg-[url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%2364748B%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E')] bg-[length:0.65rem_auto] bg-[right_1rem_center] bg-no-repeat";
+  const cardCls = "bg-white p-6 rounded-none border border-slate-200/80 shadow-sm";
+  const sectionTitleCls = "text-sm font-extrabold uppercase tracking-wider text-teal-800 flex items-center gap-2 mb-4 pb-2 border-b border-slate-100";
 
   return (
-    <form onSubmit={handleSubmit} className="flex w-full flex-col gap-4 pb-16">
+    <div className="min-h-screen bg-slate-50/50 py-8">
+      <form onSubmit={handleSubmit} className="mx-auto max-w-7xl flex w-full flex-col gap-6 px-4 pb-16">
+        
+        {/* Error Alert */}
+        {error && (
+          <div className="flex items-start gap-3 rounded-none border border-red-200 bg-red-50 p-4 text-sm text-red-800 shadow-sm animate-in fade-in-50 duration-200">
+            <ShieldAlert className="h-5 w-5 text-red-600 shrink-0 mt-0.5" />
+            <div>
+              <span className="font-extrabold text-sm">Submission Error:</span> {error}
+            </div>
+          </div>
+        )}
 
-      {/* Error */}
-      {error && (
-        <div className="border-l-4 border-red-500 bg-red-50 px-5 py-3 text-sm text-red-700">
-          {error}
-        </div>
-      )}
-
-      {/* Header card */}
-      <div
-        className="w-full overflow-hidden bg-white shadow-sm ring-1 ring-black/5"
-        style={{ borderTop: "6px solid #005B5C" }}
-      >
-        <div className="border-t border-mint px-6 py-5">
-          <h1 className="mb-1 text-xl font-semibold text-teal-deep">
-            {isEditing ? "Edit Vacancy" : "Create Job Vacancy"}
-          </h1>
-          <p className="text-sm text-gray-500">
-            Fill in the details below to {isEditing ? "update" : "publish"} a job listing.{" "}
-            Fields marked <span className="text-red-500">*</span> are required.
-          </p>
-        </div>
-      </div>
-
-      {/* ── Section: Basic Info ── */}
-      <div className="w-full bg-white px-6 py-3 shadow-sm ring-1 ring-black/5 border-l-4 border-teal-mid">
-        <p className="text-xs font-semibold uppercase tracking-[0.14em] text-teal-mid">
-          Basic Information
-        </p>
-      </div>
-
-      <div className="grid w-full grid-cols-1 gap-4 md:grid-cols-2">
-        <div className={fieldCard}>
-          <label className="mb-3 block text-sm font-medium text-slate-800">
-            Job Title (English) <span className="text-red-500">*</span>
-          </label>
-          <input
-            type="text" name="titleEn" value={formData.titleEn}
-            onChange={handleInputChange} placeholder="e.g., Senior Developer"
-            className={inputCls}
-          />
+        {/* Header Banner */}
+        <div className="overflow-hidden rounded-none border border-slate-200 bg-white shadow-sm relative">
+          <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-teal-700 to-emerald-600" />
+          <div className="px-6 py-6 sm:px-8">
+            <h1 className="text-2xl font-black tracking-tight text-slate-900 sm:text-3xl">
+              {isEditing ? "Edit Vacancy Details" : "Create Job Vacancy"}
+            </h1>
+            <p className="mt-2 text-sm text-slate-500 leading-relaxed font-medium">
+              Fill out the required information below to configure and {isEditing ? "update" : "publish"} this career opening. Fields dynamic with an asterisk (<span className="text-rose-500 font-black">*</span>) are mandatory.
+            </p>
+          </div>
         </div>
 
-        <div className={fieldCard}>
-          <label className="mb-3 block text-sm font-medium text-slate-800">
-            Job Title (Nepali) <span className="text-red-500">*</span>
-          </label>
-          <input
-            type="text" name="titleNp" value={formData.titleNp}
-            onChange={handleInputChange} placeholder="e.g., वरिष्ठ विकासकर्ता"
-            className={inputCls}
-          />
+        {/* Section: Basic Info */}
+        <div className={cardCls}>
+          <h2 className={sectionTitleCls}>
+            <Briefcase className="h-4 w-4 text-teal-600" /> Basic Information
+          </h2>
+          
+          <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
+            <div>
+              <label className={labelCls}>
+                Job Title (English) <span className="text-rose-500">*</span>
+              </label>
+              <input
+                type="text" name="titleEn" value={formData.titleEn}
+                onChange={handleInputChange} placeholder="e.g., Senior Full Stack Engineer"
+                className={inputCls}
+              />
+            </div>
+
+            <div>
+              <label className={labelCls}>
+                Job Title (Nepali) <span className="text-rose-500">*</span>
+              </label>
+              <input
+                type="text" name="titleNp" value={formData.titleNp}
+                onChange={handleInputChange} placeholder="e.g., वरिष्ठ सफ्टवेयर इन्जिनियर"
+                className={inputCls}
+              />
+            </div>
+
+            <div>
+              <label className={labelCls}>
+                <Building className="h-3.5 w-3.5 text-slate-500" /> Department <span className="text-rose-500">*</span>
+              </label>
+              <input
+                type="text" name="department" value={formData.department}
+                onChange={handleInputChange} placeholder="e.g., Engineering / IT"
+                className={inputCls}
+              />
+            </div>
+
+            <div>
+              <label className={labelCls}>
+                <MapPin className="h-3.5 w-3.5 text-slate-500" /> Location <span className="text-rose-500">*</span>
+              </label>
+              <input
+                type="text" name="location" value={formData.location}
+                onChange={handleInputChange} placeholder="e.g., Kathmandu, Nepal"
+                className={inputCls}
+              />
+            </div>
+
+            <div>
+              <label className={labelCls}>
+                <DollarSign className="h-3.5 w-3.5 text-slate-500" /> Salary
+                <span className="text-xs font-semibold text-slate-400">(Optional)</span>
+              </label>
+              <input
+                type="text" name="salary" value={formData.salary}
+                onChange={handleInputChange} placeholder="e.g., NPR 80,000 - 120,000"
+                className={inputCls}
+              />
+            </div>
+
+            <div>
+              <label className={labelCls}>
+                Application Fee (NPR) <span className="text-rose-500">*</span>
+              </label>
+              <div className="relative">
+                <input
+                  type="number" name="applicationFee" value={formData.applicationFee}
+                  onChange={handleInputChange} placeholder="100" min="0" step="1"
+                  className={inputCls}
+                />
+              </div>
+              <p className="mt-1.5 text-xs text-slate-500 font-semibold flex items-center gap-1">
+                Processed instantly for applicants using secure integrated merchants (e.g., eSewa).
+              </p>
+            </div>
+          </div>
         </div>
 
-        <div className={fieldCard}>
-          <label className="mb-3 block text-sm font-medium text-slate-800">
-            Department <span className="text-red-500">*</span>
-          </label>
-          <input
-            type="text" name="department" value={formData.department}
-            onChange={handleInputChange} placeholder="e.g., IT"
-            className={inputCls}
-          />
+        {/* Section: Description */}
+        <div className={cardCls}>
+          <h2 className={sectionTitleCls}>
+            <FileText className="h-4 w-4 text-teal-600" /> Job Descriptions
+          </h2>
+          
+          <div className="space-y-5">
+            <div>
+              <label className={labelCls}>
+                Full Description (English) <span className="text-rose-500">*</span>
+              </label>
+              <textarea
+                name="descriptionEn" value={formData.descriptionEn}
+                onChange={handleInputChange}
+                placeholder="Outline the core responsibilities, tech stacks, workflow, and cultural benefits..."
+                rows={5}
+                className={inputCls + " resize-y min-h-[120px]"}
+              />
+            </div>
+
+            <div>
+              <label className={labelCls}>
+                Full Description (Nepali) <span className="text-rose-500">*</span>
+              </label>
+              <textarea
+                name="descriptionNp" value={formData.descriptionNp}
+                onChange={handleInputChange}
+                placeholder="कामको विवरण, जिम्मेवारीहरू र आवश्यक प्रविधिको योग्यता उल्लेख गर्नुहोस्..."
+                rows={5}
+                className={inputCls + " resize-y min-h-[120px]"}
+              />
+            </div>
+          </div>
         </div>
 
-        <div className={fieldCard}>
-          <label className="mb-3 block text-sm font-medium text-slate-800">
-            Location <span className="text-red-500">*</span>
-          </label>
-          <input
-            type="text" name="location" value={formData.location}
-            onChange={handleInputChange} placeholder="e.g., Kathmandu"
-            className={inputCls}
-          />
+        {/* Section: Configuration & Thresholds */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Box Left: Metadata */}
+          <div className={cardCls}>
+            <h2 className={sectionTitleCls}>
+              <Layers className="h-4 w-4 text-teal-600" /> Vacancy Matrix
+            </h2>
+            <div className="space-y-4">
+              <div>
+                <label className={labelCls}>Vacancy Classification <span className="text-rose-500">*</span></label>
+                <select
+                  name="vacancyType" value={formData.vacancyType}
+                  onChange={handleInputChange} className={selectCls}
+                >
+                  <option value="open_competition">Open Competition</option>
+                  <option value="internal_competition">Internal Competition</option>
+                </select>
+              </div>
+
+              <div>
+                <label className={labelCls}>
+                  <Calendar className="h-3.5 w-3.5 text-slate-500" /> Application Deadline 
+                  <span className="text-xs font-semibold text-slate-400">(Optional)</span>
+                </label>
+                <input
+                  type="date" name="applicationDeadline" value={formData.applicationDeadline}
+                  onChange={handleInputChange} className={inputCls}
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Box Right: Eligibility Rules */}
+          <div className={cardCls}>
+            <h2 className={sectionTitleCls}>
+              <ShieldAlert className="h-4 w-4 text-teal-600" /> Eligibility Gates
+            </h2>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className={labelCls}>Min Age <span className="text-xs font-semibold text-slate-400">(Yrs)</span></label>
+                <input
+                  type="number" name="minAge" value={formData.minAge}
+                  onChange={handleInputChange} placeholder="18" min="0" max="100"
+                  className={inputCls}
+                />
+              </div>
+              <div>
+                <label className={labelCls}>Max Age <span className="text-xs font-semibold text-slate-400">(Yrs)</span></label>
+                <input
+                  type="number" name="maxAge" value={formData.maxAge}
+                  onChange={handleInputChange} placeholder="60" min="0" max="100"
+                  className={inputCls}
+                />
+              </div>
+              <div className="col-span-2">
+                <label className={labelCls}>Minimum Professional Experience</label>
+                <input
+                  type="number" name="minExperienceYears" value={formData.minExperienceYears}
+                  onChange={handleInputChange} placeholder="e.g., 3 Years" min="0" max="45"
+                  className={inputCls}
+                />
+              </div>
+            </div>
+          </div>
         </div>
 
-         <div className={fieldCard}>
-           <label className="mb-3 block text-sm font-medium text-slate-800">
-             Salary{" "}
-             <span className="text-xs font-normal text-gray-400">(optional)</span>
-           </label>
-           <input
-             type="text" name="salary" value={formData.salary}
-             onChange={handleInputChange} placeholder="e.g., NPR 50,000 – 70,000"
-             className={inputCls}
-           />
-         </div>
-
-         <div className={fieldCard}>
-           <label className="mb-3 block text-sm font-medium text-slate-800">
-             Application Fee (NPR) <span className="text-red-500">*</span>
-           </label>
-           <input
-             type="number"
-             name="applicationFee"
-             value={formData.applicationFee}
-             onChange={handleInputChange}
-             placeholder="e.g., 100"
-             min="0"
-             step="1"
-             className={inputCls}
-           />
-           <p className="mt-1 text-xs text-gray-500">
-             Amount to be paid by applicants via eSewa
-           </p>
-         </div>
-
-         <div className={fieldCard}>
-           <label className="mb-3 block text-sm font-medium text-slate-800">
-             Application Deadline{" "}
-             <span className="text-xs font-normal text-gray-400">(optional)</span>
-           </label>
-           <input
-             type="date" name="applicationDeadline"
-             value={formData.applicationDeadline}
-             onChange={handleInputChange}
-             className={inputCls}
-           />
-         </div>
-      </div>
-
-      {/* ── Section: Description ── */}
-      <div className="w-full bg-white px-6 py-3 shadow-sm ring-1 ring-black/5 border-l-4 border-teal-mid">
-        <p className="text-xs font-semibold uppercase tracking-[0.14em] text-teal-mid">
-          Job Description
-        </p>
-      </div>
-
-      <div className={`${fieldCard} w-full`}>
-        <label className="mb-3 block text-sm font-medium text-slate-800">
-          Full Description (English) <span className="text-red-500">*</span>
-        </label>
-        <textarea
-          name="descriptionEn" value={formData.descriptionEn}
-          onChange={handleInputChange}
-          placeholder="Describe responsibilities, requirements, and benefits…"
-          rows={7}
-          className={inputCls + " resize-y"}
-        />
-      </div>
-
-      <div className={`${fieldCard} w-full`}>
-        <label className="mb-3 block text-sm font-medium text-slate-800">
-          Full Description (Nepali) <span className="text-red-500">*</span>
-        </label>
-        <textarea
-          name="descriptionNp" value={formData.descriptionNp}
-          onChange={handleInputChange}
-          placeholder="जिम्मेवारीहरू, आवश्यकताहरू र सुविधाहरू वर्णन गर्नुहोस्…"
-          rows={7}
-          className={inputCls + " resize-y"}
-        />
-      </div>
-
-      {/* ── Section: Vacancy Details ── */}
-      <div className="w-full bg-white px-6 py-3 shadow-sm ring-1 ring-black/5 border-l-4 border-teal-mid">
-        <p className="text-xs font-semibold uppercase tracking-[0.14em] text-teal-mid">
-          Vacancy Details
-        </p>
-      </div>
-
-      <div className="grid w-full grid-cols-1 gap-4 md:grid-cols-2">
-        <div className={fieldCard}>
-          <label className="mb-3 block text-sm font-medium text-slate-800">
-            Vacancy Type <span className="text-red-500">*</span>
-          </label>
-          <select
-            name="vacancyType"
-            value={formData.vacancyType}
-            onChange={(e) =>
-              setFormData((prev) => ({
-                ...prev,
-                vacancyType: e.target.value as VacancyType,
-              }))
-            }
-            className={inputCls}
-          >
-            <option value="open_competition">Open Competition</option>
-            <option value="internal_competition">Internal Competition</option>
-          </select>
-        </div>
-
-        <div className={fieldCard}>
-          <label className="mb-3 block text-sm font-medium text-slate-800">
-            Application Deadline{" "}
-            <span className="text-xs font-normal text-gray-400">(optional)</span>
-          </label>
-          <input
-            type="date"
-            name="applicationDeadline"
-            value={formData.applicationDeadline}
-            onChange={handleInputChange}
-            className={inputCls}
-          />
-        </div>
-      </div>
-
-      {/* ── Section: Eligibility Restrictions ── */}
-      <div className="w-full bg-white px-6 py-3 shadow-sm ring-1 ring-black/5 border-l-4 border-teal-mid">
-        <p className="text-xs font-semibold uppercase tracking-[0.14em] text-teal-mid">
-          Eligibility Restrictions
-        </p>
-      </div>
-
-      <div className="grid w-full grid-cols-1 gap-4 md:grid-cols-3">
-        <div className={fieldCard}>
-          <label className="mb-3 block text-sm font-medium text-slate-800">
-            Minimum Age{" "}
-            <span className="text-xs font-normal text-gray-400">(optional)</span>
-          </label>
-          <input
-            type="number"
-            name="minAge"
-            value={formData.minAge}
-            onChange={handleInputChange}
-            placeholder="e.g., 18"
-            min="0"
-            max="100"
-            className={inputCls}
-          />
-        </div>
-
-        <div className={fieldCard}>
-          <label className="mb-3 block text-sm font-medium text-slate-800">
-            Maximum Age{" "}
-            <span className="text-xs font-normal text-gray-400">(optional)</span>
-          </label>
-          <input
-            type="number"
-            name="maxAge"
-            value={formData.maxAge}
-            onChange={handleInputChange}
-            placeholder="e.g., 65"
-            min="0"
-            max="100"
-            className={inputCls}
-          />
-        </div>
-
-        <div className={fieldCard}>
-          <label className="mb-3 block text-sm font-medium text-slate-800">
-            Minimum Experience (Years){" "}
-            <span className="text-xs font-normal text-gray-400">(optional)</span>
-          </label>
-          <input
-            type="number"
-            name="minExperienceYears"
-            value={formData.minExperienceYears}
-            onChange={handleInputChange}
-            placeholder="e.g., 3"
-            min="0"
-            max="60"
-            className={inputCls}
-          />
-        </div>
-      </div>
-
-      {/* ── Actions ── */}
-      <div className="mt-4 flex w-full items-center justify-between border-t border-slate-200 pt-6 pb-8">
-        <button
-          type="button"
-          onClick={() => {
-            if (confirm("Clear all fields?")) {
-              setFormData({
-                titleEn: "",
-                titleNp: "",
-                descriptionEn: "",
-                descriptionNp: "",
-                department: "",
-                location: "",
-                salary: "",
-                applicationDeadline: "",
-                vacancyType: "open_competition",
-                minAge: "",
-                maxAge: "",
-                minExperienceYears: "",
-              } as any);
-            }
-          }}
-          className="border border-teal-mid bg-white px-5 py-2 text-sm font-medium text-teal-mid transition hover:bg-teal-mid/8"
-        >
-          Clear form
-        </button>
-
-        <div className="flex items-center gap-3">
+        {/* Form Action Controls */}
+        <div className="mt-2 flex flex-col sm:flex-row items-center justify-between gap-4 border-t border-slate-200 pt-6">
           <button
             type="button"
-            onClick={() => router.back()}
-            className="border border-teal-mid bg-white px-5 py-2 text-sm font-medium text-teal-mid transition hover:bg-teal-mid/8"
+            onClick={() => {
+              if (confirm("Are you sure you want to completely clear this form? Data will be lost.")) {
+                setFormData({
+                  titleEn: "",
+                  titleNp: "",
+                  descriptionEn: "",
+                  descriptionNp: "",
+                  department: "",
+                  location: "",
+                  salary: "",
+                  applicationFee: "100", // Maintain safe fallback
+                  applicationDeadline: "",
+                  vacancyType: "open_competition",
+                  minAge: "",
+                  maxAge: "",
+                  minExperienceYears: "",
+                });
+              }
+            }}
+            className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 rounded-none border border-slate-200 bg-white px-4 py-2 text-sm font-extrabold text-slate-600 transition hover:bg-slate-50 hover:text-red-600 focus:outline-none focus:ring-2 focus:ring-red-500/20"
           >
-            Cancel
+            <Trash2 className="h-4 w-4" /> Clear form
           </button>
-          <button
-            type="submit"
-            disabled={loading}
-            className="border border-teal-mid bg-white px-6 py-2 text-sm font-medium text-teal-mid shadow-sm transition hover:bg-teal-mid/8 disabled:opacity-50"
-          >
-            {loading ? "Saving…" : isEditing ? "Update Vacancy" : "Create Vacancy"}
-          </button>
-        </div>
-      </div>
 
-    </form>
+          <div className="flex w-full sm:w-auto items-center gap-3">
+            <button
+              type="button"
+              onClick={() => router.back()}
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 rounded-none border border-slate-200 bg-white px-4 py-2 text-sm font-extrabold text-slate-700 transition hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-slate-500/20"
+            >
+              <X className="h-4 w-4" /> Cancel
+            </button>
+            
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 rounded-none bg-teal-700 px-5 py-2 text-sm font-extrabold text-white shadow-sm transition hover:bg-teal-800 focus:outline-none focus:ring-2 focus:ring-teal-600/20 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {loading ? (
+                <>
+                  <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                  Saving...
+                </>
+              ) : (
+                <>
+                  <Check className="h-4 w-4" /> {isEditing ? "Update Listing" : "Publish Vacancy"}
+                </>
+              )}
+            </button>
+          </div>
+        </div>
+
+      </form>
+    </div>
   );
 }

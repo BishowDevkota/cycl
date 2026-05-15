@@ -166,7 +166,7 @@ export default function VacanciesPage(): React.JSX.Element {
                             {isLoggedIn ? (
                               <Link
                                 href={`/${locale}/vacancies/${vacancy.id}/apply`}
-                                className="inline-flex items-center justify-center rounded bg-[#0d837f] px-4 py-1.5 text-xs font-semibold text-white transition hover:bg-[#08716e] whitespace-nowrap"
+                                className="inline-flex items-center justify-center rounded bg-[#0d837f] px-4 py-1.5 text-sm font-semibold text-white transition hover:bg-[#08716e] whitespace-nowrap"
                               >
                                 Apply Now
                               </Link>
@@ -191,7 +191,7 @@ export default function VacanciesPage(): React.JSX.Element {
                                 }
                                 router.push(`/${locale}/login?next=${encodeURIComponent(next)}`);
                               }}
-                              className="inline-flex items-center justify-center rounded bg-[#0a6b68] px-4 py-1.5 text-xs font-semibold text-white transition hover:bg-[#085856] whitespace-nowrap"
+                              className="inline-flex items-center justify-center rounded bg-[#0a6b68] px-4 py-1.5 text-sm font-semibold text-white transition hover:bg-[#085856] whitespace-nowrap"
                             >
                               {t("vacancy.viewDetails")}
                             </button>
