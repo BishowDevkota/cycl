@@ -75,7 +75,7 @@ const utilityLinks = [
   { label: "Notices", href: "/notices" },
 ];
 
-const row = "mx-auto flex w-full max-w-screen-2xl items-center justify-between px-6 xl:px-10";
+const row = "mx-auto flex w-full max-w-screen-2xl items-center justify-between px-4 sm:px-6 xl:px-10";
 
 export function TopContactBar() {
   const pathname = usePathname();
@@ -134,17 +134,17 @@ export function TopContactBar() {
     <>
       {/* Top Utility Bar */}
       <div className="w-full bg-[#005d59] text-white">
-        <div className={`${row} h-12`}>
-          <div className="flex min-w-0 items-center gap-6 text-sm font-medium sm:text-base">
-            <Link href={phoneLink} className="inline-flex min-w-0 items-center gap-2 hover:text-zinc-200">
+        <div className={`${row} min-h-12 py-2 sm:py-0 flex-wrap gap-y-2`}>
+          <div className="flex min-w-0 flex-wrap items-center gap-3 sm:gap-6 text-xs sm:text-sm font-medium md:text-base">
+            <Link href={phoneLink} className="inline-flex min-w-0 items-center gap-2 hover:text-zinc-200 break-all">
               <span>{phoneText}</span>
             </Link>
-            <Link href={emailLink} className="inline-flex min-w-0 items-center gap-2 hover:text-zinc-200">
+            <Link href={emailLink} className="inline-flex min-w-0 items-center gap-2 hover:text-zinc-200 break-all">
               <span>{emailText}</span>
             </Link>
           </div>
 
-          <div className="flex items-center gap-6 text-sm lg:text-base">
+          <div className="flex items-center gap-4 sm:gap-6 text-xs sm:text-sm lg:text-base ml-auto sm:ml-0">
             {/* Language Switcher - Desktop */}
             <div className="hidden items-center gap-2 lg:flex border-r border-white/20 pr-6 mr-1">
               <HiOutlineTranslate className="h-5 w-5 text-white/80" />
@@ -175,20 +175,20 @@ export function TopContactBar() {
 
       {/* Main Navbar */}
       <div className="sticky top-0 z-50 w-full border-b border-zinc-200/80 bg-white shadow-[0_8px_22px_rgba(7,100,110,0.12)]">
-        <div className={`${row} min-h-20`}>
-          <Link href="/" className="flex shrink-0 items-center">
+        <div className={`${row} min-h-16 lg:min-h-20 gap-4`}>
+          <Link href="/" className="flex shrink-0 items-center py-2">
             <Image
               src="/cyc-logo.jpg"
               alt="Logo"
               width={400}
               height={150}
               priority
-              className="h-10 w-auto lg:h-14"
+              className="h-8 w-auto sm:h-10 lg:h-14"
             />
           </Link>
 
-          <div className="hidden items-center gap-x-8 xl:flex 2xl:gap-x-10 ml-10 2xl:ml-16">
-            <nav className="flex items-center gap-x-8 whitespace-nowrap text-base font-semibold text-zinc-800 2xl:gap-x-10">
+          <div className="hidden items-center xl:flex xl:gap-x-5 2xl:gap-x-10 ml-4 2xl:ml-16">
+            <nav className="flex items-center xl:gap-x-5 whitespace-nowrap xl:text-sm 2xl:text-base font-semibold text-zinc-800 2xl:gap-x-10">
               {navItems.map((item) => {
                 const isActive = isNavItemActive(item);
                 const hasDropdown = Boolean(item.children?.length);
@@ -196,7 +196,7 @@ export function TopContactBar() {
                   <div key={item.label} className="group relative">
                     <Link
                       href={item.href}
-                      className={`relative inline-flex items-center gap-1 py-2 font-semibold transition-colors duration-200 ${
+                      className={`relative inline-flex items-center gap-1 py-4 font-semibold transition-colors duration-200 ${
                         isActive ? "text-[#005d59]" : "text-zinc-800 hover:text-[#005d59]"
                       }`}
                     >
@@ -207,14 +207,14 @@ export function TopContactBar() {
                         }`} />
                       </span>
                       {hasDropdown && (
-                        <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <svg className="h-4 w-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                           <path d="m6 9 6 6 6-6" />
                         </svg>
                       )}
                     </Link>
 
                     {hasDropdown && (
-                      <div className="pointer-events-none absolute left-1/2 top-full z-90 w-72 -translate-x-1/2 pt-4 opacity-0 transition-all duration-200 group-hover:pointer-events-auto group-hover:opacity-100">
+                      <div className="pointer-events-none absolute left-1/2 top-full z-90 w-72 -translate-x-1/2 pt-2 opacity-0 transition-all duration-200 group-hover:pointer-events-auto group-hover:opacity-100">
                         <div className="overflow-hidden border border-[#d8e6ee] bg-white p-2 shadow-[0_24px_36px_rgba(6,61,73,0.2)]">
                           {item.children?.map((child) => {
                             const childIsActive = isActiveRoute(child.href);
@@ -242,7 +242,7 @@ export function TopContactBar() {
 
             <Link
               href="/vacancies"
-              className="shrink-0 rounded-lg px-5 py-2.5 text-base font-semibold text-white transition-opacity duration-200 hover:opacity-90"
+              className="shrink-0 rounded-lg xl:px-4 2xl:px-5 py-2.5 xl:text-sm 2xl:text-base font-semibold text-white transition-opacity duration-200 hover:opacity-90"
               style={{ backgroundColor: "#005b5c" }}
             >
               Career
@@ -250,19 +250,19 @@ export function TopContactBar() {
           </div>
 
           {/* Mobile Actions: Language + Menu */}
-          <div className="flex items-center gap-4 xl:hidden">
+          <div className="flex items-center gap-2 sm:gap-4 xl:hidden shrink-0">
             <button
               onClick={() => handleLanguageChange(currentLocale === 'en' ? 'ne' : 'en')}
-              className="flex items-center gap-1 rounded-lg border border-zinc-300 px-3 py-1.5 text-sm font-semibold text-zinc-700"
+              className="flex items-center gap-1 rounded-lg border border-zinc-300 px-2 sm:px-3 py-1.5 text-xs sm:text-sm font-semibold text-zinc-700 whitespace-nowrap"
             >
-              <MdLanguage className="h-4 w-4 text-[#005d59]" />
+              <MdLanguage className="h-4 w-4 shrink-0 text-[#005d59]" />
               {currentLocale === 'en' ? 'NE' : 'EN'}
             </button>
 
             <button
               type="button"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="grid h-10 w-10 place-items-center rounded-lg border border-zinc-300 text-zinc-700"
+              className="grid h-9 w-9 sm:h-10 sm:w-10 place-items-center rounded-lg border border-zinc-300 text-zinc-700"
             >
               {mobileMenuOpen ? "✕" : "☰"}
             </button>
@@ -271,11 +271,11 @@ export function TopContactBar() {
 
         {/* Mobile Dropdown */}
         {mobileMenuOpen && (
-          <div className="border-t border-zinc-200 px-6 py-4 xl:hidden">
-            <div className="mx-auto flex w-full max-w-screen-2xl flex-col gap-4 text-lg font-medium text-zinc-800">
+          <div className="border-t border-zinc-200 px-4 sm:px-6 py-4 xl:hidden max-h-[calc(100vh-5rem)] overflow-y-auto">
+            <div className="mx-auto flex w-full max-w-screen-2xl flex-col gap-4 text-base sm:text-lg font-medium text-zinc-800">
               {navItems.map((item) => (
-                <div key={item.label} className="rounded-xl border border-zinc-200/80 bg-white/75 p-3">
-                  <div className="flex flex-col gap-2">
+                <div key={item.label} className="rounded-xl border border-zinc-200/80 bg-white/75 p-2 sm:p-3">
+                  <div className="flex flex-col gap-1 sm:gap-2">
                     <Link
                       href={item.href}
                       className="inline-flex w-full items-center justify-between rounded-lg px-2 py-2"
@@ -287,7 +287,7 @@ export function TopContactBar() {
                       <Link
                         key={child.href}
                         href={child.href}
-                        className="ml-4 block rounded px-2 py-2 text-base font-medium text-zinc-700 hover:bg-gray-50"
+                        className="ml-4 block rounded px-2 py-2 text-sm sm:text-base font-medium text-zinc-700 hover:bg-gray-50"
                         onClick={() => setMobileMenuOpen(false)}
                       >
                         {child.label}
