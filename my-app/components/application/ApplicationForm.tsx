@@ -10,6 +10,8 @@ import ExperienceStep from "./steps/ExperienceStep";
 import DocumentStep from "./steps/DocumentStep";
 import PreviewStep from "./steps/PreviewStep";
 import SubmitStep from "./steps/SubmitStep";
+import Link from "next/dist/client/link";
+import { ArrowLeft} from "lucide-react";
 
 interface FormData {
   personalDetails: any;
@@ -333,6 +335,11 @@ export default function ApplicationForm() {
   }
 
   return (
+    <div>
+      <Link href="/vacancies" className="mb-4 inline-flex items-center text-base text-[#0d837f] hover:underline font-bold">
+        <ArrowLeft className="mr-2 h-5 w-5" />
+        Back to Apply
+      </Link>
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
       <header className="bg-[#0d837f] text-white shadow-md p-6">
@@ -415,6 +422,7 @@ export default function ApplicationForm() {
           </div>
         </div>
       </div>
+    </div>
     </div>
   );
 }

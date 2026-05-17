@@ -6,44 +6,51 @@ import { signUserSession, USER_SESSION_COOKIE } from "@/lib/user-session";
 export async function POST(request: NextRequest): Promise<NextResponse> {
   try {
     const body = await request.json();
-    const { email, password } = body;
+    const { email, password, token } = body;
 
-    // Validate required fields
-    if (!email || !password) {
-      return NextResponse.json(
-        { error: "Email and password are required" },
-        { status: 400 },
-      );
+    // 1. Verify reCAPTCHA Token
+    if (!token) {
+      return NextResponse.json({ success: false, error: "Captcha token is missing" }, { status: 400 });
     }
 
-    // Find user by email
+    const recaptchaRes = await fetch(
+      `https://www.google.com/recaptcha/api/siteverify?secret=${process.env.RECAPTCHA_SECRET_KEY}&response=${token}`,
+      { method: "POST" }
+    );
+    const recaptchaData = await recaptchaRes.json();
+
+    if (!recaptchaData.success) {
+      return NextResponse.json({ success: false, error: "reCAPTCHA verification failed" }, { status: 400 });
+    }
+
+    // 2. Validate required fields
+    if (!email || !password) {
+      return NextResponse.json({ success: false, error: "Email and password are required" }, { status: 400 });
+    }
+
+    // 3. Find user by email
     const user = await getUserByEmail(email);
     if (!user) {
-      return NextResponse.json(
-        { error: "Invalid email or password" },
-        { status: 401 },
-      );
+      return NextResponse.json({ success: false, error: "Invalid email or password" }, { status: 401 });
     }
 
-    // Verify password
+    // 4. Verify password
     const isPasswordValid = await bcrypt.compare(password, user.passwordHash);
     if (!isPasswordValid) {
-      return NextResponse.json(
-        { error: "Invalid email or password" },
-        { status: 401 },
-      );
+      return NextResponse.json({ success: false, error: "Invalid email or password" }, { status: 401 });
     }
 
-    // Create session
-    const token = await signUserSession({
+    // 5. Create session
+    const sessionToken = await signUserSession({
       userId: user._id!.toString(),
       email: user.email,
       fullName: user.fullName,
     });
 
-    // Set cookie
+    // 6. Set cookie & Success Response
     const response = NextResponse.json(
       {
+        success: true, // Crucial for handleCaptchaSubmit utility
         message: "Login successful",
         user: {
           id: user._id?.toString(),
@@ -55,7 +62,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       { status: 200 },
     );
 
-    response.cookies.set(USER_SESSION_COOKIE, token, {
+    response.cookies.set(USER_SESSION_COOKIE, sessionToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "lax",
@@ -65,9 +72,6 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     return response;
   } catch (error) {
     console.error("Login error:", error);
-    return NextResponse.json(
-      { error: "Internal server error" },
-      { status: 500 },
-    );
+    return NextResponse.json({ success: false, error: "Internal server error" }, { status: 500 });
   }
 }
