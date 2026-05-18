@@ -2,14 +2,11 @@
 
 import Link from "next/link";
 import type { ReactNode } from "react";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react"; // Removed useEffect
 import { usePathname, useParams, useRouter } from "next/navigation";
 import { VacancyLanguageProvider, useVacancyLanguage } from "./VacancyLanguageContext";
-
-type UserInfo = {
-  fullName?: string;
-  email?: string;
-};
+// 1. Import NextAuth client hooks
+import { useSession, signOut } from "next-auth/react";
 
 function VacancyShellContent({ children }: { children: ReactNode }) {
   const { language, setLanguage } = useVacancyLanguage();
@@ -17,33 +14,10 @@ function VacancyShellContent({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
   const locale = (params.locale as string) || "en";
-  const [user, setUser] = useState<UserInfo | null>(null);
+  
+  // 2. Use the session hook instead of useState/useEffect
+  const { data: session, status } = useSession();
   const [profileMenuOpen, setProfileMenuOpen] = useState(false);
-
-  useEffect(() => {
-    let isMounted = true;
-
-    const fetchUser = async () => {
-      try {
-        const response = await fetch("/api/auth/me", { cache: "no-store" });
-        if (!response.ok) {
-          if (isMounted) setUser(null);
-          return;
-        }
-
-        const data = await response.json();
-        if (isMounted) setUser(data.user || null);
-      } catch {
-        if (isMounted) setUser(null);
-      }
-    };
-
-    void fetchUser();
-
-    return () => {
-      isMounted = false;
-    };
-  }, []);
 
   const menuItems = useMemo(
     () => [
@@ -60,21 +34,18 @@ function VacancyShellContent({ children }: { children: ReactNode }) {
     if (href === `/${locale}/vacancies`) {
       return pathname === `/${locale}/vacancies` || pathname.startsWith(`/${locale}/vacancies/`);
     }
-
     return pathname === href || pathname.startsWith(`${href}/`);
   };
 
+  // 3. Update Logout to use NextAuth signOut
   const handleLogout = async () => {
-    try {
-      await fetch("/api/auth/logout", { method: "POST" });
-    } finally {
-      router.push(`/${locale}/login`);
-    }
+    await signOut({ callbackUrl: `/${locale}/login` });
   };
 
-  const hasUser = Boolean(user);
-  const userName = user?.fullName || "उम्मेदवार";
-  const userEmail = user?.email || "अतिथि पहुँच";
+  // 4. Derive user status from session
+  const hasUser = status === "authenticated";
+  const userName = session?.user?.name || "उम्मेदवार";
+  const userEmail = session?.user?.email || "अतिथि पहुँच";
 
   return (
     <div className="min-h-screen bg-[#edf3f6] text-slate-800">
@@ -94,9 +65,7 @@ function VacancyShellContent({ children }: { children: ReactNode }) {
                   <button
                     onClick={() => setLanguage("en")}
                     className={`transition-all font-semibold text-sm ${
-                      language === "en"
-                        ? "text-white underline underline-offset-2"
-                        : "text-white/60 hover:text-white/90"
+                      language === "en" ? "text-white underline underline-offset-2" : "text-white/60 hover:text-white/90"
                     }`}
                   >
                     EN
@@ -105,22 +74,29 @@ function VacancyShellContent({ children }: { children: ReactNode }) {
                   <button
                     onClick={() => setLanguage("ne")}
                     className={`transition-all font-semibold text-sm ${
-                      language === "ne"
-                        ? "text-white underline underline-offset-2"
-                        : "text-white/60 hover:text-white/90"
+                      language === "ne" ? "text-white underline underline-offset-2" : "text-white/60 hover:text-white/90"
                     }`}
                   >
                     नेपाली
                   </button>
                 </div>
-                {hasUser ? (
+
+                {/* Loading state (Optional: prevents flickering during check) */}
+                {status === "loading" ? (
+                   <div className="h-8 w-8 animate-pulse rounded-full bg-white/20" />
+                ) : hasUser ? (
                   <>
                     <button
                       type="button"
                       onClick={() => setProfileMenuOpen((value) => !value)}
                       className="flex items-center gap-3 rounded-full bg-white/15 px-3 py-2 text-sm font-semibold transition hover:bg-white/25"
                     >
-                      <span className="grid h-8 w-8 place-items-center rounded-full bg-white text-[#10a34d]">👤</span>
+                      {/* Show Google Image if available, otherwise Icon */}
+                      {session.user?.image ? (
+                        <img src={session.user.image} className="h-8 w-8 rounded-full border border-white/50" alt="" />
+                      ) : (
+                        <span className="grid h-8 w-8 place-items-center rounded-full bg-white text-[#10a34d]">👤</span>
+                      )}
                       <span className="hidden sm:block">{userName}</span>
                     </button>
                     <button
@@ -144,22 +120,16 @@ function VacancyShellContent({ children }: { children: ReactNode }) {
                 {profileMenuOpen && hasUser && (
                   <div className="absolute right-0 top-full z-50 mt-3 w-56 overflow-hidden rounded-lg border border-[#d5e2ea] bg-white text-slate-700 shadow-xl">
                     <div className="border-b border-[#e5edf2] px-4 py-3">
-                      <p className="font-semibold text-slate-800">{userName}</p>
-                      <p className="text-xs text-slate-500">{userEmail}</p>
+                      <p className="font-semibold text-slate-800 truncate">{userName}</p>
+                      <p className="text-xs text-slate-500 truncate">{userEmail}</p>
                     </div>
+                    {/* ... (rest of your menu buttons remain the same) */}
                     <button
                       type="button"
                       onClick={() => router.push(`/${locale}/dashboard/profile`)}
                       className="block w-full px-4 py-3 text-left text-sm font-medium hover:bg-[#f3f9fb]"
                     >
                       प्रोफाइल
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => router.push(`/${locale}/dashboard/change-password`)}
-                      className="block w-full px-4 py-3 text-left text-sm font-medium hover:bg-[#f3f9fb]"
-                    >
-                      पासवर्ड परिवर्तन
                     </button>
                     <button
                       type="button"

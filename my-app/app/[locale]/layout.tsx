@@ -9,6 +9,7 @@ import GoToTopButton from "@/components/GoToTopButton";
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages } from 'next-intl/server';
 import { notFound } from 'next/navigation';
+import { SessionProvider } from "next-auth/react";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -48,12 +49,14 @@ export default async function RootLayout({
       suppressHydrationWarning
     >
       <body className="min-h-full flex flex-col">
-        <NextIntlClientProvider messages={messages}>
-          <TopContactBar />
-          {children}
-          <GoToTopButton />
-          <BottomMarquee />
-        </NextIntlClientProvider>
+        <SessionProvider>
+           <NextIntlClientProvider messages={messages}>
+              <TopContactBar />
+              {children}
+              <GoToTopButton />
+              <BottomMarquee />
+            </NextIntlClientProvider>
+        </SessionProvider>
       </body>
     </html>
   );
